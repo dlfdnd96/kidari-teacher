@@ -1,9 +1,8 @@
 interface Props {
 	size?: number
-	className?: string
 }
 
-export const NaverCafeIcon = ({ size = 24, className = '' }: Props) => {
+export const NaverCafeIcon = ({ size = 24 }: Props) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

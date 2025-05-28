@@ -1,5 +1,6 @@
 import React from 'react'
 import { NaverCafeIcon } from '@/components/icons'
+import Image from 'next/image'
 
 export default function Home() {
 	return (
@@ -11,7 +12,9 @@ export default function Home() {
 			<section className="relative max-w-4xl mx-auto pt-8 sm:pt-16 pb-12 sm:pb-20 px-4 sm:px-8 text-center">
 				<div className="mb-8">
 					<div className="inline-flex items-center justify-center w-80 sm:w-120 h-60 sm:h-80 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl mb-6 shadow-xl p-4 overflow-hidden border border-gray-200/50 dark:border-gray-700/50">
-						<img
+						<Image
+							width={1000}
+							height={1000}
 							src="/images/main.png"
 							alt="키다리 선생님 대표 이미지"
 							className="w-full h-full object-contain"
@@ -145,7 +148,7 @@ export default function Home() {
 					<div className="space-y-4 sm:space-y-6">
 						<div className="relative bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 p-4 sm:p-6 rounded-2xl border-l-4 border-blue-500">
 							<div className="text-xl sm:text-2xl absolute -top-1 sm:-top-2 -left-1 sm:-left-2 text-blue-500">
-								"
+								{`"`}
 							</div>
 							<p className="text-sm sm:text-base text-gray-700 dark:text-gray-200 italic leading-relaxed">
 								아이들이 적극적으로 질문하는 경우가 드문데, 직업인과의 대화때는
@@ -156,7 +159,7 @@ export default function Home() {
 
 						<div className="relative bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 p-4 sm:p-6 rounded-2xl border-l-4 border-purple-500">
 							<div className="text-xl sm:text-2xl absolute -top-1 sm:-top-2 -left-1 sm:-left-2 text-purple-500">
-								"
+								{`"`}
 							</div>
 							<p className="text-sm sm:text-base text-gray-700 dark:text-gray-200 italic leading-relaxed">
 								나이 차이가 많이 나지 않으신 분들이 오시다보니 학생들이
@@ -167,7 +170,7 @@ export default function Home() {
 
 						<div className="relative bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-600 p-4 sm:p-6 rounded-2xl border-l-4 border-indigo-500">
 							<div className="text-xl sm:text-2xl absolute -top-1 sm:-top-2 -left-1 sm:-left-2 text-indigo-500">
-								"
+								{`"`}
 							</div>
 							<p className="text-sm sm:text-base text-gray-700 dark:text-gray-200 italic leading-relaxed">
 								같은 말이라도 선생님들이 이야기하면 잘 듣지 않는데, 아무래도
@@ -493,7 +496,9 @@ export default function Home() {
 				<div className="mb-6 sm:mb-8">
 					<div className="group relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2">
 						<div className="aspect-[16/9] sm:aspect-[21/9] relative overflow-hidden">
-							<img
+							<Image
+								width={1000}
+								height={1000}
 								src="/images/lecture_001.png"
 								alt="키다리 선생님 메인 활동 현장"
 								className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -515,7 +520,9 @@ export default function Home() {
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
 					<div className="group relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 						<div className="aspect-[4/3] relative overflow-hidden">
-							<img
+							<Image
+								width={1000}
+								height={1000}
 								src="/images/lecture_002.png"
 								alt="학생들과의 질의응답 시간"
 								className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -547,7 +554,9 @@ export default function Home() {
 
 					<div className="group relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 						<div className="aspect-[4/3] relative overflow-hidden">
-							<img
+							<Image
+								width={1000}
+								height={1000}
 								src="/images/lecture_003.png"
 								alt="전문직 소개 및 경험 공유"
 								className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
