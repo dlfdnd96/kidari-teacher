@@ -264,36 +264,74 @@ export default function Home() {
 								봉사 가능일
 							</h3>
 						</div>
-						<div className="space-y-3 sm:space-y-4">
-							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+
+						{/* 주요 선호 시간 */}
+						<div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl border-2 border-blue-200 dark:border-blue-600">
 								<div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
 									<span className="text-white font-bold text-sm sm:text-base">
 										✓
 									</span>
 								</div>
-								<div>
+								<div className="flex-1">
 									<div className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
 										금요일 저녁 7시
 									</div>
+									<div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+										주요 선호 시간
+									</div>
 								</div>
 							</div>
-							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl border-2 border-purple-200 dark:border-purple-600">
 								<div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
 									<span className="text-white font-bold text-sm sm:text-base">
 										✓
 									</span>
 								</div>
-								<div>
+								<div className="flex-1">
 									<div className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
 										토요일 오전 10시
+									</div>
+									<div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+										주요 선호 시간
 									</div>
 								</div>
 							</div>
 						</div>
-						<div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border-l-4 border-yellow-400">
+
+						{/* 기타 가능 시간 */}
+						<div className="mb-4 sm:mb-6">
+							<h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+								기타 가능 시간
+							</h4>
+							<div className="grid grid-cols-2 gap-2 sm:gap-3">
+								<div className="flex items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg opacity-75 hover:opacity-100 transition-opacity">
+									<div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-400 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+										<span className="text-white font-bold text-xs">○</span>
+									</div>
+									<div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+										평일
+									</div>
+								</div>
+								<div className="flex items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg opacity-75 hover:opacity-100 transition-opacity">
+									<div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-400 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+										<span className="text-white font-bold text-xs">○</span>
+									</div>
+									<div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+										일요일
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div className="p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border-l-4 border-yellow-400">
 							<p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
 								사회인 봉사 동아리임을 고려하여, 직장인 분들과 학교측의 가능한
-								봉사일
+								봉사일입니다.
+								<span className="font-medium text-yellow-700 dark:text-yellow-300">
+									금요일 저녁과 토요일 오전이 가장 선호되며
+								</span>
+								, 다른 시간대도 조율 가능합니다.
 							</p>
 						</div>
 					</div>
