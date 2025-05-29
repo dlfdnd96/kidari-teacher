@@ -1,6 +1,7 @@
 import React from 'react'
 import { NaverCafeIcon } from '@/components/icons'
 import Image from 'next/image'
+import { KakaoTalkIcon } from '@/components/icons/KakaoTalkIcon'
 
 export default function Home() {
 	return (
@@ -435,6 +436,17 @@ export default function Home() {
 									academi9@naver.com
 								</span>
 							</a>
+							<div className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full">
+								<span
+									className="mr-2 sm:mr-3 flex-shrink-0"
+									style={{ fontSize: '1.2rem', color: '#d32f2f' }}
+								>
+									<KakaoTalkIcon />
+								</span>
+								<span className="font-bold text-gray-800 dark:text-gray-200 text-base sm:text-lg">
+									jhp00707
+								</span>
+							</div>
 						</div>
 					</div>
 
