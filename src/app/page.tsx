@@ -371,7 +371,7 @@ export default function Home() {
 							<span className="text-xl sm:text-2xl text-white">👥</span>
 						</div>
 						<div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent mb-2">
-							2,500+
+							1,000+
 						</div>
 						<div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium">
 							참여 학생 수
