@@ -1,6 +1,7 @@
 import React from 'react'
 import { NaverCafeIcon } from '@/components/icons'
 import Image from 'next/image'
+import { KakaoTalkIcon } from '@/components/icons/KakaoTalkIcon'
 
 export default function Home() {
 	return (
@@ -263,36 +264,74 @@ export default function Home() {
 								봉사 가능일
 							</h3>
 						</div>
-						<div className="space-y-3 sm:space-y-4">
-							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+
+						{/* 주요 선호 시간 */}
+						<div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl border-2 border-blue-200 dark:border-blue-600">
 								<div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
 									<span className="text-white font-bold text-sm sm:text-base">
 										✓
 									</span>
 								</div>
-								<div>
+								<div className="flex-1">
 									<div className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
 										금요일 저녁 7시
 									</div>
+									<div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+										주요 선호 시간
+									</div>
 								</div>
 							</div>
-							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+							<div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl border-2 border-purple-200 dark:border-purple-600">
 								<div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
 									<span className="text-white font-bold text-sm sm:text-base">
 										✓
 									</span>
 								</div>
-								<div>
+								<div className="flex-1">
 									<div className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
 										토요일 오전 10시
+									</div>
+									<div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+										주요 선호 시간
 									</div>
 								</div>
 							</div>
 						</div>
-						<div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border-l-4 border-yellow-400">
+
+						{/* 기타 가능 시간 */}
+						<div className="mb-4 sm:mb-6">
+							<h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+								기타 가능 시간
+							</h4>
+							<div className="grid grid-cols-2 gap-2 sm:gap-3">
+								<div className="flex items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg opacity-75 hover:opacity-100 transition-opacity">
+									<div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-400 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+										<span className="text-white font-bold text-xs">○</span>
+									</div>
+									<div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+										평일
+									</div>
+								</div>
+								<div className="flex items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg opacity-75 hover:opacity-100 transition-opacity">
+									<div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-400 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+										<span className="text-white font-bold text-xs">○</span>
+									</div>
+									<div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+										일요일
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div className="p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border-l-4 border-yellow-400">
 							<p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
 								사회인 봉사 동아리임을 고려하여, 직장인 분들과 학교측의 가능한
-								봉사일
+								봉사일입니다.
+								<span className="font-medium text-yellow-700 dark:text-yellow-300">
+									금요일 저녁과 토요일 오전이 가장 선호되며
+								</span>
+								, 다른 시간대도 조율 가능합니다.
 							</p>
 						</div>
 					</div>
@@ -332,7 +371,7 @@ export default function Home() {
 							<span className="text-xl sm:text-2xl text-white">👥</span>
 						</div>
 						<div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent mb-2">
-							2,500+
+							1,000+
 						</div>
 						<div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium">
 							참여 학생 수
@@ -389,7 +428,7 @@ export default function Home() {
 				</div>
 			</section>
 
-			{/* 연락처 및 참여 방법 - 모바일 최적화 */}
+			{/* 연락처 및 참여 방법 */}
 			<section className="max-w-5xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
 				<div className="text-center mb-6 sm:mb-8">
 					<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -398,7 +437,7 @@ export default function Home() {
 					<div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
 				</div>
 
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
 					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
 						<div className="flex items-center mb-4 sm:mb-6">
 							<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
@@ -435,6 +474,17 @@ export default function Home() {
 									academi9@naver.com
 								</span>
 							</a>
+							<div className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full">
+								<span
+									className="mr-2 sm:mr-3 flex-shrink-0"
+									style={{ fontSize: '1.2rem', color: '#d32f2f' }}
+								>
+									<KakaoTalkIcon />
+								</span>
+								<span className="font-bold text-gray-800 dark:text-gray-200 text-base sm:text-lg">
+									jhp00707
+								</span>
+							</div>
 						</div>
 					</div>
 
@@ -471,10 +521,132 @@ export default function Home() {
 								</div>
 							</div>
 						</div>
-						<div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border-l-4 border-green-400">
-							<p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-								학교 측과 협의 후 봉사일자 확정하여 진행
-							</p>
+					</div>
+				</div>
+
+				{/* 봉사 활동 절차 안내 */}
+				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50">
+					<div className="flex items-center mb-6 sm:mb-8">
+						<div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-4">
+							<span className="text-xl sm:text-2xl text-white">📋</span>
+						</div>
+						<h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">
+							봉사 활동 진행 절차
+						</h3>
+					</div>
+
+					<div className="space-y-6 sm:space-y-8">
+						{/* 1단계 */}
+						<div className="flex items-center">
+							<div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg">
+								1
+							</div>
+							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
+								<h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-base sm:text-lg">
+									일정 수립
+								</h4>
+								<p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+									모임장(운영진)과 학교 진로 담당 선생님이 함께 봉사 일정을
+									협의하여 결정합니다.
+								</p>
+							</div>
+						</div>
+
+						{/* 2단계 */}
+						<div className="flex items-center">
+							<div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg">
+								2
+							</div>
+							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
+								<h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-base sm:text-lg">
+									봉사 희망자 신청 취합
+								</h4>
+								<div className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed space-y-3">
+									<p>
+										키다리 선생님 단톡방에서 결정된 일정에 따라 참석 여부 투표를
+										진행합니다.
+									</p>
+									<div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 p-3 rounded-xl border-l-4 border-orange-400">
+										<p className="text-sm text-orange-700 dark:text-orange-300">
+											<strong>참고:</strong> 학교 요청 등에 따라 인원 제한이
+											있을 수 있습니다.
+										</p>
+									</div>
+									<p>
+										봉사 신청이 마무리되면 실제 봉사 예정자들을 위한 별도
+										단톡방이 개설되어 상세 내용을 공지합니다.
+									</p>
+								</div>
+							</div>
+						</div>
+
+						{/* 3단계 */}
+						<div className="flex items-center">
+							<div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg">
+								3
+							</div>
+							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
+								<h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-base sm:text-lg">
+									교육 희망자 취합
+								</h4>
+								<div className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed space-y-3">
+									<p>
+										학교 진로 교육 선생님이 학생들의 교육 희망 분야를
+										취합합니다.
+									</p>
+									<div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-3 rounded-xl border-l-4 border-yellow-400">
+										<p className="text-sm text-yellow-700 dark:text-yellow-300">
+											<strong>주의:</strong> 상황에 따라 신청하였더라도 교육이
+											진행되지 않을 수 있습니다.
+										</p>
+										<ul className="mt-2 text-xs space-y-1">
+											<li>• 교육 희망 학생 수가 너무 적은 경우</li>
+											<li>• 동일 분야 강의자가 너무 많은 경우 등</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* 4단계 */}
+						<div className="flex items-center">
+							<div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg">
+								4
+							</div>
+							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
+								<h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-base sm:text-lg">
+									서류 제출 (필요시)
+								</h4>
+								<p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+									교육 전 성범죄 조회 동의서 등 필요 서류를 제출합니다.
+								</p>
+							</div>
+						</div>
+
+						{/* 5단계 */}
+						<div className="flex items-center">
+							<div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-pink-500 to-red-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg">
+								5
+							</div>
+							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
+								<h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-base sm:text-lg">
+									교육 당일 진행
+								</h4>
+								<div className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed space-y-3">
+									<p>봉사자가 직접 학교를 방문하여 진로 교육을 진행합니다.</p>
+									<div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-3 rounded-xl border-l-4 border-blue-400">
+										<h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">
+											당일 주의사항:
+										</h5>
+										<ul className="text-sm space-y-1">
+											<li>
+												• 교육 시간 10분 전까지 도착 (진로 담당 선생님과 인사)
+											</li>
+											<li>• 교육 자료는 USB 또는 개인 노트북으로 준비</li>
+										</ul>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
