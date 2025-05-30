@@ -2,12 +2,14 @@ import React from 'react'
 import { NaverCafeIcon } from '@/components/icons'
 import Image from 'next/image'
 import { KakaoTalkIcon } from '@/components/icons/KakaoTalkIcon'
+import Navbar from '@/components/layout/Navbar'
 
 export default function Home() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-indigo-900 dark:to-purple-900 relative overflow-hidden">
 			{/* Background Pattern */}
 			<div className="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px] opacity-5"></div>
+			<Navbar />
 
 			{/* 키다리 선생님 소개 섹션 - Hero Section */}
 			<section className="relative max-w-4xl mx-auto pt-8 sm:pt-16 pb-12 sm:pb-20 px-4 sm:px-8 text-center">
