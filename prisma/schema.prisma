@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_DATABASE_URL")
+}
+
+model User {
+  id            String       @id @default(cuid()) @map("id")
+  name          String?      @db.VarChar(255) @map("name")
+  email         String?      @db.VarChar(255) @unique @map("email")
+  emailVerified DateTime?    @db.Timestamptz() @map("email_verified")
+  image         String?      @map("image")
+  createdAt     DateTime     @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt     DateTime     @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt     DateTime?    @db.Timestamptz() @map("deleted_at")
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                         String    @id @default(cuid()) @map("id")
+  userId                     String    @map("user_id")
+  type                       String    @db.VarChar(255) @map("type")
+  provider                   String    @db.VarChar(255) @map("provider")
+  providerAccountId          String    @db.VarChar(255) @map("provider_account_id")
+  createdAt                  DateTime  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt                  DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt                  DateTime? @db.Timestamptz() @map("deleted_at")
+  refresh_token              String?   @db.Text @map("refresh_token")
+  access_token               String?   @db.Text @map("access_token")
+  expires_at                 Int?      @map("expires_at")
+  refresh_token_expires_in   Int?      @map("refresh_token_expires_in")
+  token_type                 String?   @db.VarChar(255) @map("token_type")
+  scope                      String?   @db.VarChar(255) @map("scope")
+  id_token                   String?   @db.Text @map("id_token")
+  session_state              String?   @db.VarChar(255) @map("session_state")
+  user                       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String    @id @default(cuid()) @map("id")
+  sessionToken String    @db.VarChar(255) @unique @map("session_token")
+  userId       String    @map("user_id")
+  expires      DateTime  @db.Timestamptz() @map("expires")
+  createdAt    DateTime  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt    DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt    DateTime? @db.Timestamptz() @map("deleted_at")
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String    @map("identifier")
+  token      String    @db.VarChar(255) @unique @map("token")
+  expires    DateTime  @db.Timestamptz() @map("expires")
+  createdAt  DateTime  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt  DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt  DateTime? @db.Timestamptz() @map("deleted_at")
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
