@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
-		async signIn({ user, account, profile }) {
+		async signIn({ account, profile }) {
 			if (account?.provider === 'google') {
 				return !!profile?.email_verified
 			}

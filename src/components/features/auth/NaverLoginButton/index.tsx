@@ -3,10 +3,9 @@
 import { signIn } from 'next-auth/react'
 import type { FC, ButtonHTMLAttributes } from 'react'
 
-export interface NaverLoginButtonProps
-	extends ButtonHTMLAttributes<HTMLButtonElement> {}
-
-const NaverLoginButton: FC<NaverLoginButtonProps> = (props) => (
+const NaverLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
+	props,
+) => (
 	<button
 		type="button"
 		aria-label="네이버로 로그인"

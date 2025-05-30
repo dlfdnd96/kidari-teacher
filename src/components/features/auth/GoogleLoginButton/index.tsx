@@ -3,10 +3,9 @@
 import { signIn } from 'next-auth/react'
 import type { FC, ButtonHTMLAttributes } from 'react'
 
-export interface GoogleLoginButtonProps
-	extends ButtonHTMLAttributes<HTMLButtonElement> {}
-
-const GoogleLoginButton: FC<GoogleLoginButtonProps> = (props) => (
+const GoogleLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
+	props,
+) => (
 	<button
 		type="button"
 		aria-label="구글로 로그인"

@@ -1,6 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 export default function AuthErrorPage() {
 	const searchParams = useSearchParams()
@@ -16,9 +17,9 @@ export default function AuthErrorPage() {
 		<div className="flex flex-col items-center justify-center min-h-screen">
 			<h1 className="text-2xl font-bold mb-4">로그인 오류</h1>
 			<p className="mb-4">{message}</p>
-			<a href="/" className="text-blue-500 underline">
+			<Link href="/" className="text-blue-500 underline">
 				메인으로 돌아가기
-			</a>
+			</Link>
 		</div>
 	)
 }

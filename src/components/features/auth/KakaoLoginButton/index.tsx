@@ -3,10 +3,9 @@
 import { signIn } from 'next-auth/react'
 import type { FC, ButtonHTMLAttributes } from 'react'
 
-export interface KakaoLoginButtonProps
-	extends ButtonHTMLAttributes<HTMLButtonElement> {}
-
-const KakaoLoginButton: FC<KakaoLoginButtonProps> = (props) => (
+const KakaoLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
+	props,
+) => (
 	<button
 		type="button"
 		aria-label="카카오로 로그인"
