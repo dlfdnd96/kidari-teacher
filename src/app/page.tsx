@@ -9,7 +9,13 @@ export default function Home() {
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-indigo-900 dark:to-purple-900 relative overflow-hidden">
 			{/* Background Pattern */}
 			<div className="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px] opacity-5"></div>
-			<Navbar />
+			{/* Navbar */}
+			<div className="relative z-10">
+				<Navbar />
+			</div>
+
+			{/* Smooth transition area */}
+			<div className="relative h-4 bg-gradient-to-b from-white/20 to-transparent dark:from-gray-900/20 pointer-events-none"></div>
 
 			{/* 키다리 선생님 소개 섹션 - Hero Section */}
 			<section className="relative max-w-4xl mx-auto pt-8 sm:pt-16 pb-12 sm:pb-20 px-4 sm:px-8 text-center">
