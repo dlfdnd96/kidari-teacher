@@ -47,3 +47,6 @@ next-env.d.ts
 # prisma
 prisma/migrations
 /src/generated/prisma
+
+# webstorm
+.idea/
