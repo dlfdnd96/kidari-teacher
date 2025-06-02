@@ -1,0 +1,262 @@
+name: Deploy to Staging VM
+
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  deploy-staging:
+    runs-on: [self-hosted, staging]
+    environment: staging
+
+    env:
+      NODE_ENV: staging
+      PORT: 3000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Send deployment start notification
+        run: |
+          curl -H "Content-Type: application/json" \
+              -X POST \
+              -d '{
+                "embeds": [{
+                  "title": "🚀 배포 시작",
+                  "description": "**develop** 브랜치 배포를 시작합니다.",
+                  "color": 3447003,
+                  "fields": [
+                    {
+                      "name": "브랜치",
+                      "value": "`${{ github.ref_name }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "커밋",
+                      "value": "`${{ github.sha }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "환경",
+                      "value": "**Staging**",
+                      "inline": true
+                    },
+                    {
+                      "name": "배포자",
+                      "value": "${{ github.actor }}",
+                      "inline": true
+                    }
+                  ],
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }]
+              }' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Create staging environment file
+        run: |
+          echo "Creating .env for staging environment..."
+
+          # GitHub Secrets에서 환경변수 파일 생성
+          cat > .env << 'EOF'
+          ${{ secrets.ENV_STAGING }}
+          EOF
+
+          # 추가 환경변수 설정
+          cat >> .env << EOF
+
+          # Build and deployment info
+          NODE_ENV=staging
+          NEXT_PUBLIC_ENVIRONMENT=staging
+          NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          NEXT_PUBLIC_COMMIT_SHA=${{ github.sha }}
+          NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
+          EOF
+
+          echo "✅ Staging environment file created"
+
+          # 환경변수 확인 (민감한 정보 제외)
+          echo "📋 Environment variables loaded:"
+          grep -E "^(NODE_ENV|NEXT_PUBLIC_ENVIRONMENT|POSTGRES_DB|POSTGRES_PORT)=" .env || true
+
+      - name: Validate environment variables
+        run: |
+          echo "🔍 Validating required environment variables..."
+
+          # 필수 환경변수 체크
+          required_vars=(
+            "POSTGRES_USER"
+            "POSTGRES_PASSWORD"
+            "POSTGRES_DB"
+            "POSTGRES_HOST"
+            "POSTGRES_PORT"
+            "POSTGRES_DATABASE_URL"
+            "NAVER_CLIENT_ID"
+            "NAVER_CLIENT_SECRET"
+            "KAKAO_CLIENT_ID"
+            "KAKAO_CLIENT_SECRET"
+            "GOOGLE_CLIENT_ID"
+            "GOOGLE_CLIENT_SECRET"
+          )
+
+          missing_vars=()
+          for var in "${required_vars[@]}"; do
+            if grep -q "^${var}=" .env && [ -n "$(grep "^${var}=" .env | cut -d'=' -f2)" ]; then
+              echo "✅ $var is set"
+            else
+              echo "❌ $var is missing or empty!"
+              missing_vars+=("$var")
+            fi
+          done
+
+          if [ ${#missing_vars[@]} -ne 0 ]; then
+            echo "💥 Missing required environment variables: ${missing_vars[*]}"
+            exit 1
+          fi
+
+          echo "✅ All required environment variables are validated!"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Next.js app
+        run: |
+          echo "🏗️ Building with staging configuration..."
+          pnpm build
+
+      - name: Create backup
+        run: |
+          BACKUP_DIR="$HOME/backups/nextjs-$(date +%Y%m%d_%H%M%S)"
+          mkdir -p $BACKUP_DIR
+          if pm2 list | grep -q nextjs-app; then
+            cp -r .next $BACKUP_DIR/ 2>/dev/null || true
+            cp package.json $BACKUP_DIR/ 2>/dev/null || true
+          fi
+          echo "Backup created at $BACKUP_DIR"
+
+      - name: Stop existing staging server
+        run: |
+          pm2 stop nextjs-app || true
+          pm2 delete nextjs-app || true
+
+      - name: Deploy to staging
+        run: |
+          pnpm install --prod --frozen-lockfile
+
+      - name: Start staging server
+        run: |
+          pm2 start ecosystem-staging.config.js --env staging
+          pm2 save
+
+      - name: Health check
+        run: |
+          sleep 10
+          curl -f http://localhost:3000 || exit 1
+
+      - name: Database connection test
+        run: |
+          if command -v psql &> /dev/null; then
+            DB_URL=$(grep POSTGRES_DATABASE_URL .env | cut -d'=' -f2)
+          psql "$DB_URL" -c "SELECT 1;" && echo "✅ Database connection successful"
+          fi
+
+      - name: Cleanup old backups
+        run: |
+          ls -t $HOME/backups/nextjs-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
+
+      - name: Notify deployment success
+        run: |
+          echo "🚀 Staging deployment completed on $(hostname)"
+          echo "Environment: staging"
+          echo "Database: $(grep POSTGRES_DB .env | cut -d'=' -f2)"
+          echo "Build time: $(grep NEXT_PUBLIC_BUILD_TIME .env | cut -d'=' -f2)"
+
+      - name: Send deployment success notification
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -X POST \
+              -d '{
+                "embeds": [{
+                  "title": "✅ 배포 성공",
+                  "description": "**Staging** 환경 배포가 성공적으로 완료되었습니다!",
+                  "color": 5763719,
+                  "fields": [
+                    {
+                      "name": "브랜치",
+                      "value": "`${{ github.ref_name }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "커밋 메시지",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "inline": false
+                    },
+                    {
+                      "name": "배포 URL",
+                      "value": "[https://staging.yoursite.com](https://staging.yoursite.com)",
+                      "inline": true
+                    },
+                    {
+                      "name": "서버",
+                      "value": "Development VM",
+                      "inline": true
+                    },
+                    {
+                      "name": "배포 시간",
+                      "value": "$(date +\"%Y-%m-%d %H:%M:%S KST\")",
+                      "inline": true
+                    }
+                  ],
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }]
+              }' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Send deployment failure notification
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -X POST \
+              -d '{
+                "embeds": [{
+                  "title": "❌ 배포 실패",
+                  "description": "**Staging** 환경 배포가 실패했습니다.",
+                  "color": 15158332,
+                  "fields": [
+                    {
+                      "name": "브랜치",
+                      "value": "`${{ github.ref_name }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "커밋",
+                      "value": "`${{ github.sha }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "실패 단계",
+                      "value": "${{ job.status }}",
+                      "inline": true
+                    },
+                    {
+                      "name": "로그 확인",
+                      "value": "[GitHub Actions 로그 보기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                      "inline": false
+                    }
+                  ],
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }]
+              }' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}

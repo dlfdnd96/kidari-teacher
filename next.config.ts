@@ -1,9 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  images: {
-    domains: ['localhost'],
-  },
-};
+	images: {
+		domains: ['localhost'],
+	},
+	compiler: {
+		removeConsole: process.env.NODE_ENV === 'production',
+	},
+}
 
-export default nextConfig;
+export default nextConfig
