@@ -20,58 +20,79 @@ jobs:
 
       - name: Send deployment start notification
         run: |
+          CURRENT_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          COMMIT_SHA="${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+          
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TRIGGER_TYPE="🔧 수동 배포"
-            TRIGGER_DESCRIPTION="**develop** 브랜치를 수동으로 배포합니다."
+            TRIGGER_DESCRIPTION="**master** 브랜치를 수동으로 배포합니다."
           else
             TRIGGER_TYPE="🚀 자동 배포"
-            TRIGGER_DESCRIPTION="**develop** 브랜치에 푸시되어 자동 배포합니다."
+            TRIGGER_DESCRIPTION="**master** 브랜치에 푸시되어 자동 배포합니다."
           fi
-        
-          curl -H "Content-Type: application/json" \
-              -X POST \
-              -d '{
-                "embeds": [{
-                  "title": "🔥 프로덕션 배포 시작",
-                  "description": "**master** 브랜치 프로덕션 배포를 시작합니다.",
-                  "color": 16776960,
-                  "fields": [
-                    {
-                      "name": "브랜치",
-                      "value": "`${{ github.ref_name }}`",
-                      "inline": true
-                    },
-                    {
-                      "name": "커밋",
-                      "value": "`${{ github.sha }}`",
-                      "inline": true
-                    },
-                    {
-                      "name": "환경",
-                      "value": "**🚨 PRODUCTION 🚨**",
-                      "inline": true
-                    },
-                    {
-                      "name": "배포자",
-                      "value": "${{ github.actor }}",
-                      "inline": true
-                    }
-                  ],
-                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-                }]
-              }' \
-              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+          cat > discord_payload.json << EOF
+          {
+            "embeds": [{
+              "title": "🔥 프로덕션 배포 시작",
+              "description": "**master** 브랜치 프로덕션 배포를 시작합니다.",
+              "color": 16776960,
+              "fields": [
+                {
+                  "name": "브랜치",
+                  "value": "\`${BRANCH_NAME}\`",
+                  "inline": true
+                },
+                {
+                  "name": "커밋",
+                  "value": "\`${COMMIT_SHA:0:8}\`",
+                  "inline": true
+                },
+                {
+                  "name": "환경",
+                  "value": "**🚨 PRODUCTION 🚨**",
+                  "inline": true
+                },
+                {
+                  "name": "배포자",
+                  "value": "${ACTOR}",
+                  "inline": true
+                }
+              ],
+              "timestamp": "${CURRENT_TIME}"
+            }]
+          }
+          EOF
+
+          if curl -f -H "Content-Type: application/json" \
+                  -H "User-Agent: GitHub-Actions" \
+                  -X POST \
+                  -d @discord_payload.json \
+                  "${{ secrets.DISCORD_WEBHOOK_URL }}"; then
+            echo "✅ Discord notification sent successfully"
+          else
+            echo "❌ Failed to send Discord notification"
+          fi
 
       - name: Create production environment file
         run: |
           echo "Creating .env for production environment..."
 
           cat > .env << 'EOF'
-          ${{ secrets.ENV_PRODUCTION }}
-          EOF
-
-          cat >> .env << EOF
-
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          POSTGRES_DATABASE_URL=${{ secrets.POSTGRES_DATABASE_URL }}
+          NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+          KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           NODE_ENV=production
           NEXT_PUBLIC_ENVIRONMENT=production
           NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -189,88 +210,120 @@ jobs:
       - name: Send production deployment success notification
         if: success()
         run: |
-          curl -H "Content-Type: application/json" \
-              -X POST \
-              -d '{
-                "content": "@everyone 프로덕션 배포 완료!",
-                "embeds": [{
-                  "title": "🎉 프로덕션 배포 성공!",
-                  "description": "**Production** 환경 배포가 성공적으로 완료되었습니다!",
-                  "color": 5763719,
-                  "fields": [
-                    {
-                      "name": "🌐 사이트 URL",
-                      "value": "[https://yoursite.com](https://yoursite.com)",
-                      "inline": false
-                    },
-                    {
-                      "name": "📋 배포 정보",
-                      "value": "**브랜치:** `${{ github.ref_name }}`\n**커밋:** `${{ github.sha }}`\n**배포자:** ${{ github.actor }}",
-                      "inline": true
-                    },
-                    {
-                      "name": "💬 커밋 메시지",
-                      "value": "${{ github.event.head_commit.message }}",
-                      "inline": false
-                    },
-                    {
-                      "name": "🕒 배포 시간",
-                      "value": "$(date +\"%Y-%m-%d %H:%M:%S KST\")",
-                      "inline": true
-                    },
-                    {
-                      "name": "⚡ 서버 상태",
-                      "value": "Production VM - 정상 구동",
-                      "inline": true
-                    }
-                  ],
-                  "thumbnail": {
-                    "url": "https://cdn.discordapp.com/emojis/✅.png"
-                  },
-                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-                }]
-              }' \
-              ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CURRENT_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          DEPLOY_TIME=$(date +"%Y-%m-%d %H:%M:%S KST")
+          COMMIT_SHA="${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+          
+          COMMIT_MSG="${{ github.event.head_commit.message || 'Manual deployment' }}"
+          COMMIT_MSG=$(echo "$COMMIT_MSG" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | head -c 100)
+
+          cat > success_payload.json << EOF
+          {
+            "content": "@everyone 프로덕션 배포 완료!",
+            "embeds": [{
+              "title": "🎉 프로덕션 배포 성공!",
+              "description": "**Production** 환경 배포가 성공적으로 완료되었습니다!",
+              "color": 5763719,
+              "fields": [
+                {
+                  "name": "🌐 사이트 URL",
+                  "value": "[https://yoursite.com](https://yoursite.com)",
+                  "inline": false
+                },
+                {
+                  "name": "📋 배포 정보",
+                  "value": "**브랜치:** \`${BRANCH_NAME}\`\n**커밋:** \`${COMMIT_SHA:0:8}\`\n**배포자:** ${ACTOR}",
+                  "inline": true
+                },
+                {
+                  "name": "💬 커밋 메시지",
+                  "value": "${COMMIT_MSG}",
+                  "inline": false
+                },
+                {
+                  "name": "🕒 배포 시간",
+                  "value": "${DEPLOY_TIME}",
+                  "inline": true
+                },
+                {
+                  "name": "⚡ 서버 상태",
+                  "value": "Production VM - 정상 구동",
+                  "inline": true
+                }
+              ],
+              "timestamp": "${CURRENT_TIME}"
+            }]
+          }
+          EOF
+
+          if curl -f -H "Content-Type: application/json" \
+                  -H "User-Agent: GitHub-Actions" \
+                  -X POST \
+                  -d @success_payload.json \
+                  "${{ secrets.DISCORD_WEBHOOK_URL }}"; then
+            echo "✅ Success notification sent"
+          else
+            echo "❌ Failed to send success notification"
+          fi
 
       - name: Send production deployment failure notification
         if: failure()
         run: |
-          curl -H "Content-Type: application/json" \
-              -X POST \
-              -d '{
-                "content": "@here 🚨 프로덕션 배포 실패!",
-                "embeds": [{
-                  "title": "💥 프로덕션 배포 실패",
-                  "description": "**Production** 환경 배포가 실패했습니다. 즉시 확인이 필요합니다!",
-                  "color": 15158332,
-                  "fields": [
-                    {
-                      "name": "브랜치",
-                      "value": "`${{ github.ref_name }}`",
-                      "inline": true
-                    },
-                    {
-                      "name": "커밋",
-                      "value": "`${{ github.sha }}`",
-                      "inline": true
-                    },
-                    {
-                      "name": "배포자",
-                      "value": "${{ github.actor }}",
-                      "inline": true
-                    },
-                    {
-                      "name": "실패 시간",
-                      "value": "$(date +\"%Y-%m-%d %H:%M:%S KST\")",
-                      "inline": true
-                    },
-                    {
-                      "name": "로그 확인",
-                      "value": "[GitHub Actions 로그 보기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
-                      "inline": false
-                    }
-                  ],
-                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-                }]
-              }' \
-              ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CURRENT_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          FAIL_TIME=$(date +"%Y-%m-%d %H:%M:%S KST")
+          COMMIT_SHA="${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+          RUN_ID="${{ github.run_id }}"
+          REPO="${{ github.repository }}"
+
+          cat > failure_payload.json << EOF
+          {
+            "content": "@here 🚨 프로덕션 배포 실패!",
+            "embeds": [{
+              "title": "💥 프로덕션 배포 실패",
+              "description": "**Production** 환경 배포가 실패했습니다. 즉시 확인이 필요합니다!",
+              "color": 15158332,
+              "fields": [
+                {
+                  "name": "브랜치",
+                  "value": "\`${BRANCH_NAME}\`",
+                  "inline": true
+                },
+                {
+                  "name": "커밋",
+                  "value": "\`${COMMIT_SHA:0:8}\`",
+                  "inline": true
+                },
+                {
+                  "name": "배포자",
+                  "value": "${ACTOR}",
+                  "inline": true
+                },
+                {
+                  "name": "실패 시간",
+                  "value": "${FAIL_TIME}",
+                  "inline": true
+                },
+                {
+                  "name": "로그 확인",
+                  "value": "[GitHub Actions 로그 보기](https://github.com/${REPO}/actions/runs/${RUN_ID})",
+                  "inline": false
+                }
+              ],
+              "timestamp": "${CURRENT_TIME}"
+            }]
+          }
+          EOF
+
+          if curl -f -H "Content-Type: application/json" \
+                  -H "User-Agent: GitHub-Actions" \
+                  -X POST \
+                  -d @failure_payload.json \
+                  "${{ secrets.DISCORD_WEBHOOK_URL }}"; then
+            echo "✅ Failure notification sent"
+          else
+            echo "❌ Failed to send failure notification"
+          fi
