@@ -3,6 +3,7 @@ name: Deploy to Production VM
 on:
   push:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   deploy-production:
@@ -19,6 +20,14 @@ jobs:
 
       - name: Send deployment start notification
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TRIGGER_TYPE="🔧 수동 배포"
+            TRIGGER_DESCRIPTION="**develop** 브랜치를 수동으로 배포합니다."
+          else
+            TRIGGER_TYPE="🚀 자동 배포"
+            TRIGGER_DESCRIPTION="**develop** 브랜치에 푸시되어 자동 배포합니다."
+          fi
+        
           curl -H "Content-Type: application/json" \
               -X POST \
               -d '{
@@ -57,15 +66,12 @@ jobs:
         run: |
           echo "Creating .env for production environment..."
 
-          # GitHub Secrets에서 환경변수 파일 생성
           cat > .env << 'EOF'
           ${{ secrets.ENV_PRODUCTION }}
           EOF
 
-          # 추가 환경변수 설정
           cat >> .env << EOF
 
-          # Build and deployment info
           NODE_ENV=production
           NEXT_PUBLIC_ENVIRONMENT=production
           NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -75,7 +81,6 @@ jobs:
 
           echo "✅ Production environment file created"
 
-          # 환경변수 확인 (민감한 정보 제외)
           echo "📋 Environment variables loaded:"
           grep -E "^(NODE_ENV|NEXT_PUBLIC_ENVIRONMENT|POSTGRES_DB|POSTGRES_PORT)=" .env || true
 
@@ -83,7 +88,6 @@ jobs:
         run: |
           echo "🔍 Validating required environment variables..."
 
-          # 필수 환경변수 체크
           required_vars=(
             "POSTGRES_USER"
             "POSTGRES_PASSWORD"
