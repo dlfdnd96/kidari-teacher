@@ -66,15 +66,12 @@ jobs:
         run: |
           echo "Creating .env for staging environment..."
 
-          # GitHub Secrets에서 환경변수 파일 생성
           cat > .env << 'EOF'
           ${{ secrets.ENV_STAGING }}
           EOF
 
-          # 추가 환경변수 설정
           cat >> .env << EOF
 
-          # Build and deployment info
           NODE_ENV=staging
           NEXT_PUBLIC_ENVIRONMENT=staging
           NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -84,7 +81,6 @@ jobs:
 
           echo "✅ Staging environment file created"
 
-          # 환경변수 확인 (민감한 정보 제외)
           echo "📋 Environment variables loaded:"
           grep -E "^(NODE_ENV|NEXT_PUBLIC_ENVIRONMENT|POSTGRES_DB|POSTGRES_PORT)=" .env || true
 
@@ -92,7 +88,6 @@ jobs:
         run: |
           echo "🔍 Validating required environment variables..."
 
-          # 필수 환경변수 체크
           required_vars=(
             "POSTGRES_USER"
             "POSTGRES_PASSWORD"
