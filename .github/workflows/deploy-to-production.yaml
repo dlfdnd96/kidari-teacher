@@ -24,7 +24,7 @@ jobs:
           COMMIT_SHA="${{ github.sha }}"
           BRANCH_NAME="${{ github.ref_name }}"
           ACTOR="${{ github.actor }}"
-          
+
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TRIGGER_TYPE="🔧 수동 배포"
             TRIGGER_DESCRIPTION="**master** 브랜치를 수동으로 배포합니다."
@@ -186,7 +186,7 @@ jobs:
 
       - name: Deploy to production
         run: |
-          pnpm install --prod --frozen-lockfile
+          HUSKY=0 pnpm install --prod --frozen-lockfile
 
       - name: Start production server
         run: |
@@ -224,7 +224,7 @@ jobs:
           COMMIT_SHA="${{ github.sha }}"
           BRANCH_NAME="${{ github.ref_name }}"
           ACTOR="${{ github.actor }}"
-          
+
           COMMIT_MSG="${{ github.event.head_commit.message || 'Manual deployment' }}"
           COMMIT_MSG=$(echo "$COMMIT_MSG" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | head -c 100)
 
