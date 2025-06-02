@@ -1,0 +1,274 @@
+name: Deploy to Production VM
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy-production:
+    runs-on: [self-hosted, production]
+    environment: production
+
+    env:
+      NODE_ENV: production
+      PORT: 3000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Send deployment start notification
+        run: |
+          curl -H "Content-Type: application/json" \
+              -X POST \
+              -d '{
+                "embeds": [{
+                  "title": "🔥 프로덕션 배포 시작",
+                  "description": "**master** 브랜치 프로덕션 배포를 시작합니다.",
+                  "color": 16776960,
+                  "fields": [
+                    {
+                      "name": "브랜치",
+                      "value": "`${{ github.ref_name }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "커밋",
+                      "value": "`${{ github.sha }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "환경",
+                      "value": "**🚨 PRODUCTION 🚨**",
+                      "inline": true
+                    },
+                    {
+                      "name": "배포자",
+                      "value": "${{ github.actor }}",
+                      "inline": true
+                    }
+                  ],
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }]
+              }' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Create production environment file
+        run: |
+          echo "Creating .env for production environment..."
+
+          # GitHub Secrets에서 환경변수 파일 생성
+          cat > .env << 'EOF'
+          ${{ secrets.ENV_PRODUCTION }}
+          EOF
+
+          # 추가 환경변수 설정
+          cat >> .env << EOF
+
+          # Build and deployment info
+          NODE_ENV=production
+          NEXT_PUBLIC_ENVIRONMENT=production
+          NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          NEXT_PUBLIC_COMMIT_SHA=${{ github.sha }}
+          NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
+          EOF
+
+          echo "✅ Production environment file created"
+
+          # 환경변수 확인 (민감한 정보 제외)
+          echo "📋 Environment variables loaded:"
+          grep -E "^(NODE_ENV|NEXT_PUBLIC_ENVIRONMENT|POSTGRES_DB|POSTGRES_PORT)=" .env || true
+
+      - name: Validate environment variables
+        run: |
+          echo "🔍 Validating required environment variables..."
+
+          # 필수 환경변수 체크
+          required_vars=(
+            "POSTGRES_USER"
+            "POSTGRES_PASSWORD"
+            "POSTGRES_DB"
+            "POSTGRES_HOST"
+            "POSTGRES_PORT"
+            "POSTGRES_DATABASE_URL"
+            "NAVER_CLIENT_ID"
+            "NAVER_CLIENT_SECRET"
+            "KAKAO_CLIENT_ID"
+            "KAKAO_CLIENT_SECRET"
+            "GOOGLE_CLIENT_ID"
+            "GOOGLE_CLIENT_SECRET"
+          )
+
+          missing_vars=()
+          for var in "${required_vars[@]}"; do
+            if grep -q "^${var}=" .env && [ -n "$(grep "^${var}=" .env | cut -d'=' -f2)" ]; then
+              echo "✅ $var is set"
+            else
+              echo "❌ $var is missing or empty!"
+              missing_vars+=("$var")
+            fi
+          done
+
+          if [ ${#missing_vars[@]} -ne 0 ]; then
+            echo "💥 Missing required environment variables: ${missing_vars[*]}"
+            exit 1
+          fi
+
+          echo "✅ All required environment variables are validated!"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Next.js app
+        run: |
+          echo "🏗️ Building with production configuration..."
+          pnpm build
+
+      - name: Create backup
+        run: |
+          BACKUP_DIR="$HOME/backups/nextjs-$(date +%Y%m%d_%H%M%S)"
+          mkdir -p $BACKUP_DIR
+          # 현재 실행 중인 앱 백업
+          if pm2 list | grep -q nextjs-app; then
+            cp -r .next $BACKUP_DIR/ 2>/dev/null || true
+            cp package.json $BACKUP_DIR/ 2>/dev/null || true
+          fi
+          echo "Backup created at $BACKUP_DIR"
+
+      - name: Stop existing production server
+        run: |
+          pm2 stop nextjs-app || true
+          pm2 delete nextjs-app || true
+
+      - name: Deploy to production
+        run: |
+          pnpm install --prod --frozen-lockfile
+
+      - name: Start production server
+        run: |
+          pm2 start ecosystem.config.js --env production
+          pm2 save
+
+      - name: Health check
+        run: |
+          sleep 15
+          curl -f http://localhost:3000 || exit 1
+
+      - name: Database connection test
+        run: |
+          # PostgreSQL 연결 테스트 (psql이 설치되어 있다면)
+          if command -v psql &> /dev/null; then
+            DB_URL=$(grep POSTGRES_DATABASE_URL .env | cut -d'=' -f2)
+          psql "$DB_URL" -c "SELECT 1;" && echo "✅ Database connection successful"
+        fi
+
+      - name: Cleanup old backups
+        run: |
+          ls -t $HOME/backups/nextjs-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
+
+      - name: Notify deployment success
+        run: |
+          echo "🚀 Production deployment completed on $(hostname)"
+          echo "Environment: production"
+          echo "Database: $(grep POSTGRES_DB .env | cut -d'=' -f2)"
+          echo "Build time: $(grep NEXT_PUBLIC_BUILD_TIME .env | cut -d'=' -f2)"
+
+      - name: Send production deployment success notification
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -X POST \
+              -d '{
+                "content": "@everyone 프로덕션 배포 완료!",
+                "embeds": [{
+                  "title": "🎉 프로덕션 배포 성공!",
+                  "description": "**Production** 환경 배포가 성공적으로 완료되었습니다!",
+                  "color": 5763719,
+                  "fields": [
+                    {
+                      "name": "🌐 사이트 URL",
+                      "value": "[https://yoursite.com](https://yoursite.com)",
+                      "inline": false
+                    },
+                    {
+                      "name": "📋 배포 정보",
+                      "value": "**브랜치:** `${{ github.ref_name }}`\n**커밋:** `${{ github.sha }}`\n**배포자:** ${{ github.actor }}",
+                      "inline": true
+                    },
+                    {
+                      "name": "💬 커밋 메시지",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "inline": false
+                    },
+                    {
+                      "name": "🕒 배포 시간",
+                      "value": "$(date +\"%Y-%m-%d %H:%M:%S KST\")",
+                      "inline": true
+                    },
+                    {
+                      "name": "⚡ 서버 상태",
+                      "value": "Production VM - 정상 구동",
+                      "inline": true
+                    }
+                  ],
+                  "thumbnail": {
+                    "url": "https://cdn.discordapp.com/emojis/✅.png"
+                  },
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }]
+              }' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Send production deployment failure notification
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -X POST \
+              -d '{
+                "content": "@here 🚨 프로덕션 배포 실패!",
+                "embeds": [{
+                  "title": "💥 프로덕션 배포 실패",
+                  "description": "**Production** 환경 배포가 실패했습니다. 즉시 확인이 필요합니다!",
+                  "color": 15158332,
+                  "fields": [
+                    {
+                      "name": "브랜치",
+                      "value": "`${{ github.ref_name }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "커밋",
+                      "value": "`${{ github.sha }}`",
+                      "inline": true
+                    },
+                    {
+                      "name": "배포자",
+                      "value": "${{ github.actor }}",
+                      "inline": true
+                    },
+                    {
+                      "name": "실패 시간",
+                      "value": "$(date +\"%Y-%m-%d %H:%M:%S KST\")",
+                      "inline": true
+                    },
+                    {
+                      "name": "로그 확인",
+                      "value": "[GitHub Actions 로그 보기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                      "inline": false
+                    }
+                  ],
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }]
+              }' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
