@@ -139,7 +139,6 @@ jobs:
         run: |
           BACKUP_DIR="$HOME/backups/nextjs-$(date +%Y%m%d_%H%M%S)"
           mkdir -p $BACKUP_DIR
-          # 현재 실행 중인 앱 백업
           if pm2 list | grep -q nextjs-app; then
             cp -r .next $BACKUP_DIR/ 2>/dev/null || true
             cp package.json $BACKUP_DIR/ 2>/dev/null || true
@@ -164,6 +163,13 @@ jobs:
         run: |
           sleep 10
           curl -f http://localhost:3000 || exit 1
+
+      - name: Database connection test
+        run: |
+          if command -v psql &> /dev/null; then
+            DB_URL=$(grep POSTGRES_DATABASE_URL .env | cut -d'=' -f2)
+          psql "$DB_URL" -c "SELECT 1;" && echo "✅ Database connection successful"
+          fi
 
       - name: Cleanup old backups
         run: |
