@@ -3,6 +3,7 @@ name: Deploy to Production VM
 on:
   push:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   deploy-production:
@@ -19,6 +20,14 @@ jobs:
 
       - name: Send deployment start notification
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TRIGGER_TYPE="🔧 수동 배포"
+            TRIGGER_DESCRIPTION="**develop** 브랜치를 수동으로 배포합니다."
+          else
+            TRIGGER_TYPE="🚀 자동 배포"
+            TRIGGER_DESCRIPTION="**develop** 브랜치에 푸시되어 자동 배포합니다."
+          fi
+        
           curl -H "Content-Type: application/json" \
               -X POST \
               -d '{
