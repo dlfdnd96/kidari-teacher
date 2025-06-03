@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: 'nextjs-app',
-			script: 'pnpm',
+			script: 'npm',
 			args: 'start',
 			cwd: process.cwd(),
 			instances: '1',
