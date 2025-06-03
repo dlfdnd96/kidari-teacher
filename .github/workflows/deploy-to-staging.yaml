@@ -164,6 +164,29 @@ jobs:
           NODE_OPTIONS="--max-old-space-size=512" pnpm install --frozen-lockfile
         timeout-minutes: 15
 
+      - name: Setup PM2
+        run: |
+          echo "🔧 Setting up PM2..."
+
+          if command -v pm2 &> /dev/null; then
+            echo "✅ PM2 is already installed: $(pm2 --version)"
+          else
+            echo "📦 Installing PM2 globally..."
+            pnpm install -g pm2
+
+            export PATH="$(pnpm config get global-bin-dir):$PATH"
+            echo "$(pnpm config get global-bin-dir)" >> $GITHUB_PATH
+
+            if command -v pm2 &> /dev/null; then
+              echo "✅ PM2 installed successfully: $(pm2 --version)"
+            else
+              echo "❌ PM2 installation failed"
+              exit 1
+            fi
+          fi
+
+          pm2 ping &> /dev/null || pm2 kill && pm2 resurrect
+
       - name: Build Next.js app
         run: |
           echo "🏗️ Building with staging configuration..."
@@ -176,38 +199,72 @@ jobs:
           if pm2 list | grep -q nextjs-app; then
             cp -r .next $BACKUP_DIR/ 2>/dev/null || true
             cp package.json $BACKUP_DIR/ 2>/dev/null || true
+            echo "📦 Backup created at $BACKUP_DIR"
+          else
+            echo "ℹ️ No existing nextjs-app process found to backup"
           fi
-          echo "Backup created at $BACKUP_DIR"
 
       - name: Stop existing staging server
         run: |
-          pm2 stop nextjs-app || true
-          pm2 delete nextjs-app || true
+          echo "🛑 Stopping existing staging server..."
+          pm2 stop nextjs-app || echo "ℹ️ nextjs-app was not running"
+          pm2 delete nextjs-app || echo "ℹ️ nextjs-app was not in PM2 list"
 
       - name: Deploy to staging
         run: |
+          echo "📦 Installing production dependencies..."
           pnpm install --prod --frozen-lockfile
 
       - name: Start staging server
         run: |
+          echo "🚀 Starting staging server with PM2..."
           pm2 start ecosystem-staging.config.js --env staging
           pm2 save
+          echo "✅ Staging server started successfully"
 
       - name: Health check
         run: |
-          sleep 10
-          curl -f http://localhost:3000 || exit 1
+          echo "🏥 Performing health check..."
+          sleep 15
+
+          for i in {1..10}; do
+            if curl -f -s http://localhost:3000 > /dev/null; then
+              echo "✅ Health check passed on attempt $i"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying in 5 seconds..."
+              sleep 5
+              if [ $i -eq 10 ]; then
+                echo "❌ Health check failed after 10 attempts"
+                pm2 logs nextjs-app --lines 20
+                exit 1
+              fi
+            fi
+          done
 
       - name: Database connection test
         run: |
+          echo "🗄️ Testing database connection..."
           if command -v psql &> /dev/null; then
             DB_URL=$(grep POSTGRES_DATABASE_URL .env | cut -d'=' -f2)
-          psql "$DB_URL" -c "SELECT 1;" && echo "✅ Database connection successful"
+            if [ -n "$DB_URL" ]; then
+              psql "$DB_URL" -c "SELECT 1;" && echo "✅ Database connection successful"
+            else
+              echo "⚠️ Database URL not found, skipping connection test"
+            fi
+          else
+            echo "ℹ️ psql not available, skipping database connection test"
           fi
 
       - name: Cleanup old backups
         run: |
-          ls -t $HOME/backups/nextjs-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
+          echo "🧹 Cleaning up old backups..."
+          if ls $HOME/backups/nextjs-* 1> /dev/null 2>&1; then
+            ls -t $HOME/backups/nextjs-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
+            echo "✅ Old backups cleaned up"
+          else
+            echo "ℹ️ No old backups to clean up"
+          fi
 
       - name: Send deployment success notification
         if: success()
@@ -321,3 +378,5 @@ jobs:
           echo "Environment: staging"
           echo "Database: $(grep POSTGRES_DB .env | cut -d'=' -f2)"
           echo "Build time: $(grep NEXT_PUBLIC_BUILD_TIME .env | cut -d'=' -f2)"
+          echo "PM2 processes:"
+          pm2 list
