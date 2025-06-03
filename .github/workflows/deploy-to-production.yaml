@@ -151,7 +151,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --production=false
+          npm ci
         timeout-minutes: 15
 
       - name: Setup PM2
@@ -200,7 +200,7 @@ jobs:
       - name: Deploy to production
         run: |
           echo "📦 Installing production dependencies..."
-          npm ci --production
+          npm ci
 
       - name: Prepare for PM2 startup
         run: |
@@ -253,16 +253,22 @@ jobs:
 
       - name: Database connection test
         run: |
-          echo "🗄️ Testing database connection..."
-          if command -v psql &> /dev/null; then
-            DB_URL=$(grep POSTGRES_DATABASE_URL .env | cut -d'=' -f2)
-            if [ -n "$DB_URL" ]; then
-              psql "$DB_URL" -c "SELECT 1;" && echo "✅ Database connection successful"
+          DB_HOST=$(grep POSTGRES_HOST .env | cut -d'=' -f2)
+          DB_PORT=$(grep POSTGRES_PORT .env | cut -d'=' -f2)
+          DB_USER=$(grep POSTGRES_USER .env | cut -d'=' -f2)
+          DB_NAME=$(grep POSTGRES_DB .env | cut -d'=' -f2)
+
+          if [ -n "$DB_HOST" ] && [ -n "$DB_PORT" ] && [ -n "$DB_USER" ] && [ -n "$DB_NAME" ]; then
+            export PGPASSWORD=$(grep POSTGRES_PASSWORD .env | cut -d'=' -f2)
+            if psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1;" 2>/dev/null; then
+              echo "✅ Database connection successful (alternative method)"
             else
-              echo "⚠️ Database URL not found, skipping connection test"
+              echo "❌ Database connection failed"
+              echo "⚠️ Please check database credentials and connectivity"
             fi
+            unset PGPASSWORD
           else
-            echo "ℹ️ psql not available, skipping database connection test"
+            echo "⚠️ Missing database connection parameters"
           fi
 
       - name: Production deployment verification
