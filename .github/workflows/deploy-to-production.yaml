@@ -199,8 +199,7 @@ jobs:
 
       - name: Deploy to production
         run: |
-          echo "📦 Installing production dependencies..."
-          npm ci
+          echo "🚀 Starting deployment process..."
 
       - name: Prepare for PM2 startup
         run: |
