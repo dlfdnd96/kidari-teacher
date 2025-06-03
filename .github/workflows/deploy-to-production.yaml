@@ -223,8 +223,11 @@ jobs:
       - name: Start production server
         run: |
           echo "🚀 Starting production server with PM2..."
+          
+          cd $HOME/app-production
+          echo "📋 Current directory: $(pwd)"
 
-          if pm2 start $HOME/app-production/ecosystem.config.js --env production; then
+          if pm2 start ecosystem.config.js --env production; then
             echo "✅ PM2 started successfully"
             pm2 save
             echo "✅ PM2 configuration saved"

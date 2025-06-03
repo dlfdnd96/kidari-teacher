@@ -223,8 +223,11 @@ jobs:
       - name: Start staging server
         run: |
           echo "🚀 Starting staging server with PM2..."
+          
+          cd $HOME/app-staging
+          echo "📋 Current directory: $(pwd)"
 
-          if pm2 start $HOME/app-staging/ecosystem-staging.config.js --env staging; then
+          if pm2 start ecosystem-staging.config.js --env staging; then
             echo "✅ PM2 started successfully"
             pm2 save
             echo "✅ PM2 configuration saved"
