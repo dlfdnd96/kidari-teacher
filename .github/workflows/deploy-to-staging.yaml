@@ -94,6 +94,7 @@ jobs:
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
           NODE_ENV=staging
           NEXT_PUBLIC_ENVIRONMENT=staging
           NEXT_PUBLIC_BUILD_TIME=$(TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)
@@ -124,6 +125,7 @@ jobs:
             "GOOGLE_CLIENT_ID"
             "GOOGLE_CLIENT_SECRET"
             "NEXTAUTH_SECRET"
+            "NEXTAUTH_URL"
           )
 
           missing_vars=()
