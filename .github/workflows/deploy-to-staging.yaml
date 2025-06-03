@@ -335,7 +335,7 @@ jobs:
                 {
                   "name": "배포 URL",
                   "value": "[https://staging.kidariteacher.com](https://staging.kidariteacher.com)",
-                  "inline": true
+                  "inline": false
                 },
                 {
                   "name": "서버",
