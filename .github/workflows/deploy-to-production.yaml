@@ -349,7 +349,7 @@ jobs:
               "fields": [
                 {
                   "name": "🌐 사이트 URL",
-                  "value": "[https://kidariteacher.com](https://kidariteacher.com)",
+                  "value": "[키다리 선생님](https://kidariteacher.com)",
                   "inline": false
                 },
                 {

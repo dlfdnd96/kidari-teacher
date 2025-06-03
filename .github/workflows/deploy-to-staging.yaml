@@ -336,7 +336,7 @@ jobs:
                 },
                 {
                   "name": "배포 URL",
-                  "value": "[https://staging.kidariteacher.com](https://staging.kidariteacher.com)",
+                  "value": "[키다리 선생님](https://staging.kidariteacher.com)",
                   "inline": false
                 },
                 {
