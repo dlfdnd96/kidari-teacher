@@ -14,7 +14,7 @@
 		"lint": "next lint",
 		"format": "prettier --write .",
 		"lint-staged": "lint-staged",
-		"prepare": "husky"
+		"prepare": "is-ci || husky"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.0.1",
@@ -48,6 +48,7 @@
 		"eslint": "^9",
 		"eslint-config-next": "15.1.8",
 		"husky": "^9.1.7",
+		"is-ci": "^4.1.0",
 		"lint-staged": "^16.1.0",
 		"postcss": "^8",
 		"prettier": "^3.5.3",
