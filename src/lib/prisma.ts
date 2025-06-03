@@ -11,3 +11,14 @@ export const prisma =
 if (process.env.NODE_ENV !== 'production') {
 	globalForPrisma.prisma = prisma
 }
+
+async function connectPrismaWithLog() {
+	try {
+		await prisma.$connect()
+		console.log('✅ [Prisma] 데이터베이스 연결 성공')
+	} catch (error) {
+		console.error('❌ [Prisma] 데이터베이스 연결 실패:', error)
+	}
+}
+
+connectPrismaWithLog()
