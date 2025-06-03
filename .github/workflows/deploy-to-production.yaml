@@ -96,7 +96,7 @@ jobs:
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           NODE_ENV=production
           NEXT_PUBLIC_ENVIRONMENT=production
-          NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          NEXT_PUBLIC_BUILD_TIME=$(date +"%Y-%m-%d %H:%M:%S KST")
           NEXT_PUBLIC_COMMIT_SHA=${{ github.sha }}
           NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
           EOF
@@ -201,8 +201,18 @@ jobs:
         run: |
           echo "🚀 Starting deployment process..."
 
+      - name: Copy build to production dir
+        run: |
+          rm -rf /home/ubuntu/app-production
+          mkdir -p /home/ubuntu/app-production
+          shopt -s dotglob
+          cp -r ./* /home/ubuntu/app-production
+          shopt -u dotglob
+
       - name: Prepare for PM2 startup
         run: |
+          cd /home/ubuntu/app-production
+
           echo "📁 Creating logs directory..."
           mkdir -p logs
 
@@ -303,7 +313,7 @@ jobs:
               "fields": [
                 {
                   "name": "🌐 사이트 URL",
-                  "value": "[https://yoursite.com](https://yoursite.com)",
+                  "value": "[https://kidariteacher.com](https://kidariteacher.com)",
                   "inline": false
                 },
                 {

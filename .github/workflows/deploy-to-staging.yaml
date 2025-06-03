@@ -96,7 +96,7 @@ jobs:
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           NODE_ENV=staging
           NEXT_PUBLIC_ENVIRONMENT=staging
-          NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          NEXT_PUBLIC_BUILD_TIME=$(date +"%Y-%m-%d %H:%M:%S KST")
           NEXT_PUBLIC_COMMIT_SHA=${{ github.sha }}
           NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
           EOF
@@ -201,8 +201,18 @@ jobs:
         run: |
           echo "🚀 Starting deployment process..."
 
+      - name: Copy build to staging dir
+        run: |
+          rm -rf /home/ubuntu/app-staging
+          mkdir -p /home/ubuntu/app-staging
+          shopt -s dotglob
+          cp -r ./* /home/ubuntu/app-staging
+          shopt -u dotglob
+
       - name: Prepare for PM2 startup
         run: |
+          cd /home/ubuntu/app-staging
+          
           echo "📁 Creating logs directory..."
           mkdir -p logs
 
@@ -290,12 +300,12 @@ jobs:
                 },
                 {
                   "name": "배포 URL",
-                  "value": "[https://staging.yoursite.com](https://staging.yoursite.com)",
+                  "value": "[https://staging.kidariteacher.com](https://staging.kidariteacher.com)",
                   "inline": true
                 },
                 {
                   "name": "서버",
-                  "value": "Development VM",
+                  "value": "Staging VM",
                   "inline": true
                 },
                 {
