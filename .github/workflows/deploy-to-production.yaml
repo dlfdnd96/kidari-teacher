@@ -13,6 +13,7 @@ jobs:
     env:
       NODE_ENV: production
       PORT: 3000
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -186,7 +187,7 @@ jobs:
 
       - name: Deploy to production
         run: |
-          HUSKY=0 pnpm install --prod --frozen-lockfile
+          pnpm install --prod --frozen-lockfile
 
       - name: Start production server
         run: |
