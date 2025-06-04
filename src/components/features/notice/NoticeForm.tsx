@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import ErrorModal from '@/components/common/ErrorModal'
 import { useRouter } from 'next/navigation'
 import { NoticeFormSchema } from '@/components/features/notice/schema'
+import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 
 interface NoticeFormProps {
 	onSuccess?: () => void
@@ -17,16 +17,13 @@ interface NoticeFormProps {
 const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 	const { register, handleSubmit, reset, formState } = useForm()
 	const [loading, setLoading] = React.useState(false)
-	const [errorModalOpen, setErrorModalOpen] = React.useState(false)
-	const [errorMessage, setErrorMessage] = React.useState('')
 	const router = useRouter()
+	const { showError } = useErrorModal()
 
 	const onSubmit = useCallback(
 		async (data: unknown) => {
 			setLoading(true)
-			setErrorModalOpen(false)
 			try {
-				throw new Error('test')
 				const res = await fetch('/api/notice', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -41,19 +38,13 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 				router.refresh()
 				onSuccess?.()
 			} catch (e: any) {
-				setErrorMessage(e.message)
-				setErrorModalOpen(true)
+				showError(e.message, '공지사항 등록 오류')
 			} finally {
 				setLoading(false)
 			}
 		},
-		[reset, router, onSuccess],
+		[reset, router, onSuccess, showError],
 	)
-
-	const handleErrorClose = useCallback(() => {
-		setErrorModalOpen(false)
-		setErrorMessage('')
-	}, [])
 
 	return (
 		<>
@@ -171,13 +162,6 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 					</div>
 				</form>
 			</div>
-
-			{/* 에러 모달 */}
-			<ErrorModal
-				open={errorModalOpen}
-				onClose={handleErrorClose}
-				message={errorMessage}
-			/>
 		</>
 	)
 })

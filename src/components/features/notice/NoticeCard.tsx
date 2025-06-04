@@ -2,12 +2,12 @@
 
 import React, { memo, useCallback, useState } from 'react'
 import NoticeEditForm from '@/components/features/notice/NoticeEditForm'
-import ErrorModal from '@/components/common/ErrorModal'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ZodType } from '@/shared/types'
 import { NoticeEntitySchema } from '@/app/api/notice/schema'
 import { Enum } from '@/enums'
+import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 
 export interface NoticeCardProps {
 	notice: ZodType<typeof NoticeEntitySchema>
@@ -20,9 +20,8 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	const [editing, setEditing] = useState(false)
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 	const [deleting, setDeleting] = useState(false)
-	const [errorModalOpen, setErrorModalOpen] = useState(false)
-	const [errorMessage, setErrorMessage] = useState('')
 	const router = useRouter()
+	const { showError } = useErrorModal()
 
 	const handleDelete = useCallback(async () => {
 		setDeleting(true)
@@ -35,26 +34,12 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 
 			router.refresh()
 		} catch (e: any) {
-			setErrorMessage(e.message)
-			setErrorModalOpen(true)
+			showError(e.message, '공지사항 삭제 오류')
 		} finally {
 			setDeleting(false)
 			setShowDeleteConfirm(false)
 		}
-	}, [notice.id, router])
-
-	const handleErrorClose = useCallback(() => {
-		setErrorModalOpen(false)
-		setErrorMessage('')
-	}, [])
-
-	const handleDeleteClick = useCallback(() => {
-		setShowDeleteConfirm(true)
-	}, [])
-
-	const handleDeleteCancel = useCallback(() => {
-		setShowDeleteConfirm(false)
-	}, [])
+	}, [notice.id, router, showError])
 
 	const handleViewDetail = useCallback(() => {
 		onViewDetail?.(notice)
@@ -136,7 +121,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 									className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-full hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/30 dark:hover:to-pink-800/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50"
 									onClick={(e) => {
 										e.stopPropagation()
-										handleDeleteClick()
+										setShowDeleteConfirm(true)
 									}}
 									type="button"
 									aria-label="공지사항 삭제"
@@ -149,7 +134,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 										className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-800/30 dark:hover:to-emerald-800/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50"
 										onClick={(e) => {
 											e.stopPropagation()
-											handleDeleteCancel()
+											setShowDeleteConfirm(false)
 										}}
 										disabled={deleting}
 										type="button"
@@ -236,13 +221,6 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 				{/* 액센트 라인 */}
 				<div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 			</div>
-
-			{/* 에러 모달 */}
-			<ErrorModal
-				open={errorModalOpen}
-				onClose={handleErrorClose}
-				message={errorMessage}
-			/>
 		</>
 	)
 })

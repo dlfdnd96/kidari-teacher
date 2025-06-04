@@ -1,13 +1,7 @@
 'use client'
 
-import React, { FC, useCallback } from 'react'
-
-interface ErrorModalProps {
-	open: boolean
-	onClose: () => void
-	title?: string
-	message: string
-}
+import React, { FC, useCallback, useEffect } from 'react'
+import type { ErrorModalProps } from '@/components/common/ErrorModal/ErrorModal.types'
 
 const ErrorModal: FC<ErrorModalProps> = ({
 	open,
@@ -15,6 +9,16 @@ const ErrorModal: FC<ErrorModalProps> = ({
 	title = '오류 발생',
 	message,
 }) => {
+	useEffect(() => {
+		if (open) {
+			const originalStyle = window.document.body.style.overflow
+			window.document.body.style.overflow = 'hidden'
+			return () => {
+				window.document.body.style.overflow = originalStyle
+			}
+		}
+	}, [open])
+
 	const handleBackdropClick = useCallback(
 		(e: React.MouseEvent) => {
 			if (e.target === e.currentTarget) {
@@ -30,15 +34,30 @@ const ErrorModal: FC<ErrorModalProps> = ({
 
 	return (
 		<div
-			className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4"
+			className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-md p-6"
+			style={{
+				position: 'fixed',
+				zIndex: 2147483647,
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				width: '100vw',
+				height: '100vh',
+				isolation: 'isolate',
+				pointerEvents: 'auto',
+			}}
 			aria-modal="true"
 			role="dialog"
 			tabIndex={-1}
 			onClick={handleBackdropClick}
 		>
-			<div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl ring-4 ring-orange-500/20 w-full max-w-lg relative border-4 border-orange-300 dark:border-orange-700 transform transition-all duration-300">
-				{/* 강조 효과 */}
-				<div className="absolute -inset-4 bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 rounded-3xl blur-xl opacity-50 animate-pulse"></div>
+			<div
+				className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl ring-4 ring-orange-500/20 w-full max-w-lg border-4 border-orange-300 dark:border-orange-700 transform transition-all duration-300 scale-100"
+				style={{ zIndex: 2147483648 }}
+			>
+				{/* 부드러운 강조 효과 */}
+				<div className="absolute -inset-1 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-yellow-500/10 rounded-3xl blur-lg"></div>
 				<div className="relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden">
 					{/* 닫기 버튼 */}
 					<button
@@ -62,7 +81,7 @@ const ErrorModal: FC<ErrorModalProps> = ({
 					</button>
 
 					{/* 헤더 */}
-					<div className="bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 rounded-t-3xl p-8">
+					<div className="bg-red-600 rounded-t-3xl p-8">
 						<div className="flex items-center">
 							<div className="w-16 h-16 bg-white/30 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-6 shadow-lg">
 								<span
@@ -87,12 +106,12 @@ const ErrorModal: FC<ErrorModalProps> = ({
 					{/* 내용 */}
 					<div className="p-8">
 						<div className="text-center mb-8">
-							<div className="w-20 h-20 bg-gradient-to-r from-red-100 to-orange-100 dark:from-red-900/30 dark:to-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+							<div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
 								<span className="text-4xl" role="img" aria-label="에러">
 									❌
 								</span>
 							</div>
-							<div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 p-6 rounded-xl border-l-4 border-red-400 mb-6">
+							<div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl border-l-4 border-red-400 mb-6">
 								<p className="text-red-700 dark:text-red-300 text-base font-medium break-words">
 									{message}
 								</p>
@@ -106,7 +125,7 @@ const ErrorModal: FC<ErrorModalProps> = ({
 						<div className="flex justify-center">
 							<button
 								onClick={onClose}
-								className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
+								className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
 							>
 								<span className="mr-2" role="img" aria-label="확인">
 									👍

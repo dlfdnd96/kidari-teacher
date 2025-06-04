@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import ErrorModal from '@/components/common/ErrorModal'
 import { useRouter } from 'next/navigation'
 import { NoticeEditFormSchema } from '@/components/features/notice/schema'
+import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 
 interface NoticeEditFormProps {
 	id: string
@@ -22,14 +22,12 @@ const NoticeEditForm = memo(
 			defaultValues: { title: initialTitle, content: initialContent },
 		})
 		const [loading, setLoading] = React.useState(false)
-		const [errorModalOpen, setErrorModalOpen] = React.useState(false)
-		const [errorMessage, setErrorMessage] = React.useState('')
 		const router = useRouter()
+		const { showError } = useErrorModal()
 
 		const onSubmit = useCallback(
 			async (data: unknown) => {
 				setLoading(true)
-				setErrorModalOpen(false)
 				try {
 					const res = await fetch(`/api/notice/${id}`, {
 						method: 'PATCH',
@@ -44,19 +42,13 @@ const NoticeEditForm = memo(
 					router.refresh()
 					onCancel()
 				} catch (e: any) {
-					setErrorMessage(e.message)
-					setErrorModalOpen(true)
+					showError(e.message, '공지사항 수정 오류')
 				} finally {
 					setLoading(false)
 				}
 			},
-			[id, router, onCancel],
+			[id, router, onCancel, showError],
 		)
-
-		const handleErrorClose = useCallback(() => {
-			setErrorModalOpen(false)
-			setErrorMessage('')
-		}, [])
 
 		return (
 			<>
@@ -164,13 +156,6 @@ const NoticeEditForm = memo(
 						</div>
 					</form>
 				</div>
-
-				{/* 에러 모달 */}
-				<ErrorModal
-					open={errorModalOpen}
-					onClose={handleErrorClose}
-					message={errorMessage}
-				/>
 			</>
 		)
 	},
