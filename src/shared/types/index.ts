@@ -1,3 +1,3 @@
-import { z } from 'zod/v4'
+import { z } from 'zod/v4-mini'
 
-export type ZodType<T extends z.ZodType> = z.infer<T>
+export type ZodType<T extends z.ZodMiniType> = z.infer<T>

@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react'
 import { KakaoTalkIcon, NaverCafeIcon } from '@/components/icons'
 import { formatPhoneNumber, openExternalLink } from '@/lib/utils'
 import { CONTACT_METHODS, PROCESS_STEPS, SITE_INFO } from '@/constants/homepage'
-import { z } from 'zod/v4'
+import { z } from 'zod/v4-mini'
 
 const ContactSection = memo(() => {
 	const handleExternalLink = useCallback((url: string) => {

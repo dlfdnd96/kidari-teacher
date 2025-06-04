@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { z } from 'zod/v4'
+import { z } from 'zod/v4-mini'
 
 export async function GET(req: NextRequest) {
 	const email = z
