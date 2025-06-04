@@ -4,6 +4,15 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { Enum } from '@/enums'
 
+export async function GET() {
+	const notices = await prisma.notice.findMany({
+		where: { deletedAt: null, isPublished: true },
+		orderBy: { createdAt: 'desc' },
+		include: { author: { select: { name: true } } },
+	})
+	return NextResponse.json(notices)
+}
+
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions)
 	const email = session?.user.email

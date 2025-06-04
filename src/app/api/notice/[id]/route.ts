@@ -5,7 +5,7 @@ import { authOptions } from '@/pages/api/auth/[...nextauth]'
 
 export async function PATCH(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const session = await getServerSession(authOptions)
 	const email = session?.user?.email
@@ -26,9 +26,10 @@ export async function PATCH(
 		)
 	}
 
+	const { id } = await params
 	try {
 		const notice = await prisma.notice.update({
-			where: { id: params.id },
+			where: { id },
 			data: {
 				title,
 				content,
@@ -43,7 +44,7 @@ export async function PATCH(
 
 export async function DELETE(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const session = await getServerSession(authOptions)
 	const email = session?.user?.email
@@ -57,8 +58,9 @@ export async function DELETE(
 	}
 
 	try {
-		const notice = await prisma.notice.update({
-			where: { id: params.id },
+		const { id } = await params
+		await prisma.notice.update({
+			where: { id },
 			data: { deletedAt: new Date() },
 		})
 		return NextResponse.json({ success: true })
