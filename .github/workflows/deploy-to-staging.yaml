@@ -153,7 +153,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --omit=dev
+          npm ci --include=dev
         timeout-minutes: 15
 
       - name: Setup PM2
