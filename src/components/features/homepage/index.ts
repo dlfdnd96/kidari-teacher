@@ -1,0 +1,8 @@
+export { default as HeroSection } from './HeroSection'
+export { default as ProfessionSection } from './ProfessionSection'
+export { default as FeedbackSection } from './FeedbackSection'
+export { default as ActivitySection } from './ActivitySection'
+export { default as ImpactSection } from './ImpactSection'
+export { default as ContactSection } from './ContactSection'
+export { default as GallerySection } from './GallerySection'
+export { default as CTASection } from './CTASection'
