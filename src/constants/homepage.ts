@@ -1,3 +1,4 @@
+import { formatPhoneNumber } from '@/lib/utils'
 import type {
 	StatCardProps,
 	ProfessionGroupProps,
@@ -164,7 +165,7 @@ export const CONTACT_METHODS: ContactMethodProps[] = [
 	{
 		icon: '📞',
 		label: '전화',
-		value: '010-2210-6387',
+		value: '01022106387',
 		type: 'phone',
 		href: 'tel:010-2210-6387',
 	},
@@ -200,6 +201,8 @@ export const PROCESS_STEPS: ProcessStepProps[] = [
 			attention: '참고',
 			title: '학교 요청 등에 따라 인원 제한이 있을 수 있습니다.',
 		},
+		additionalDescription:
+			'봉사 신청이 마무리되면 실제 봉사 예정자들을 위한 별도 단톡방이 개설되어 상세 내용을 공지합니다.',
 		gradient: 'from-purple-500 to-pink-600',
 	},
 	{
@@ -273,4 +276,7 @@ export const SITE_INFO = {
 	cafeUrl: 'https://cafe.naver.com/provolunteer',
 	copyright: '키다리 선생님 © 2025. All rights reserved.',
 	mission: '고등학생들의 밝은 미래를 위해 함께 합니다.',
+	phone: formatPhoneNumber('01022106387'),
+	email: 'academi9@naver.com',
+	kakaoId: 'jhp00707',
 } as const

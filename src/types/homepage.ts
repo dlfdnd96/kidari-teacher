@@ -55,6 +55,7 @@ export interface ProcessStepProps {
 	step: number
 	title: string
 	description: string
+	additionalDescription?: string
 	danger?: {
 		attention: string
 		title: string

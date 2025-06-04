@@ -1,8 +1,69 @@
-import { memo } from 'react'
+'use client'
+
+import { memo, useCallback } from 'react'
 import { KakaoTalkIcon, NaverCafeIcon } from '@/components/icons'
-import { CONTACT_METHODS, PROCESS_STEPS } from '@/constants/homepage'
+import { formatPhoneNumber, openExternalLink } from '@/lib/utils'
+import { CONTACT_METHODS, PROCESS_STEPS, SITE_INFO } from '@/constants/homepage'
+import { z } from 'zod/v4'
 
 const ContactSection = memo(() => {
+	const handleExternalLink = useCallback((url: string) => {
+		openExternalLink(url)
+	}, [])
+
+	const renderContactMethod = useCallback(
+		(contact: (typeof CONTACT_METHODS)[0], index: number) => {
+			const displayValue =
+				contact.type === 'phone'
+					? formatPhoneNumber(contact.value)
+					: contact.value
+
+			if (process.env.NODE_ENV === 'development' && contact.type === 'email') {
+				const email = z.email().safeParse(contact.value)
+				if (!email.success) {
+					console.warn(`Invalid email format: ${contact.value}`)
+				}
+			}
+
+			const ContactContent = () => (
+				<>
+					<span
+						className="mr-2 sm:mr-3 flex-shrink-0"
+						style={{
+							fontSize: '1.2rem',
+							color: contact.type === 'phone' ? '#d32f2f' : 'inherit',
+						}}
+					>
+						{contact.type === 'kakao' ? <KakaoTalkIcon /> : contact.icon}
+					</span>
+					<span className="font-bold text-gray-800 dark:text-gray-200 text-base sm:text-lg truncate">
+						{displayValue}
+					</span>
+				</>
+			)
+
+			return contact.href ? (
+				<a
+					key={index}
+					href={contact.href}
+					className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full hover:bg-white/30 transition-colors duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+					style={{ textDecoration: 'none' }}
+					aria-label={`${contact.label}: ${displayValue}`}
+				>
+					<ContactContent />
+				</a>
+			) : (
+				<div
+					key={index}
+					className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full"
+				>
+					<ContactContent />
+				</div>
+			)
+		},
+		[],
+	)
+
 	return (
 		<section className="max-w-5xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
 			<div className="text-center mb-6 sm:mb-8">
@@ -17,7 +78,13 @@ const ContactSection = memo(() => {
 				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
 					<div className="flex items-center mb-4 sm:mb-6">
 						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
-							<span className="text-lg sm:text-xl text-white">👤</span>
+							<span
+								className="text-lg sm:text-xl text-white"
+								role="img"
+								aria-label="사람"
+							>
+								👤
+							</span>
 						</div>
 						<h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200">
 							모임장 연락처
@@ -25,46 +92,7 @@ const ContactSection = memo(() => {
 					</div>
 
 					<div className="space-y-3 sm:space-y-4">
-						{CONTACT_METHODS.map((contact, index) => {
-							const ContactContent = () => (
-								<>
-									<span
-										className="mr-2 sm:mr-3 flex-shrink-0"
-										style={{
-											fontSize: '1.2rem',
-											color: contact.type === 'phone' ? '#d32f2f' : 'inherit',
-										}}
-									>
-										{contact.type === 'kakao' ? (
-											<KakaoTalkIcon />
-										) : (
-											contact.icon
-										)}
-									</span>
-									<span className="font-bold text-gray-800 dark:text-gray-200 text-base sm:text-lg truncate">
-										{contact.value}
-									</span>
-								</>
-							)
-
-							return contact.href ? (
-								<a
-									key={index}
-									href={contact.href}
-									className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full hover:bg-white/30 transition-colors duration-300 cursor-pointer"
-									style={{ textDecoration: 'none' }}
-								>
-									<ContactContent />
-								</a>
-							) : (
-								<div
-									key={index}
-									className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full"
-								>
-									<ContactContent />
-								</div>
-							)
-						})}
+						{CONTACT_METHODS.map(renderContactMethod)}
 					</div>
 				</div>
 
@@ -72,7 +100,13 @@ const ContactSection = memo(() => {
 				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
 					<div className="flex items-center mb-4 sm:mb-6">
 						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
-							<span className="text-lg sm:text-xl text-white">🤝</span>
+							<span
+								className="text-lg sm:text-xl text-white"
+								role="img"
+								aria-label="악수"
+							>
+								🤝
+							</span>
 						</div>
 						<h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200">
 							참여 방법
@@ -82,24 +116,22 @@ const ContactSection = memo(() => {
 					<div className="space-y-3 sm:space-y-4">
 						<div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
 							<div className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
-								카페:
+								네이버 카페:
 							</div>
-							<div className="text-blue-600 dark:text-blue-400">
-								<a
-									href="https://cafe.naver.com/provolunteer"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<NaverCafeIcon size={20} />
-								</a>
-							</div>
+							<button
+								onClick={() => handleExternalLink(SITE_INFO.cafeUrl)}
+								className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded"
+								aria-label="네이버 카페로 이동"
+							>
+								<NaverCafeIcon size={20} />
+							</button>
 						</div>
 						<div className="p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
 							<div className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
 								소모임:
 							</div>
 							<div className="text-purple-600 dark:text-purple-400 text-sm sm:text-base">
-								소모임 어플 키다리 모임 검색
+								{`소모임 어플에서 "키다리선생님" 검색`}
 							</div>
 						</div>
 					</div>
@@ -110,7 +142,13 @@ const ContactSection = memo(() => {
 			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50">
 				<div className="flex items-center mb-6 sm:mb-8">
 					<div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-4">
-						<span className="text-xl sm:text-2xl text-white">📋</span>
+						<span
+							className="text-xl sm:text-2xl text-white"
+							role="img"
+							aria-label="클립보드"
+						>
+							📋
+						</span>
 					</div>
 					<h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">
 						봉사 활동 진행 절차
@@ -118,8 +156,8 @@ const ContactSection = memo(() => {
 				</div>
 
 				<div className="space-y-6 sm:space-y-8">
-					{PROCESS_STEPS.map((step, index) => (
-						<div key={index} className="flex items-center">
+					{PROCESS_STEPS.map((step) => (
+						<div key={step.step} className="flex items-center">
 							<div
 								className={`flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r ${step.gradient} rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg`}
 							>
@@ -135,7 +173,7 @@ const ContactSection = memo(() => {
 									{step.danger && (
 										<div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 p-3 rounded-xl border-l-4 border-orange-400">
 											<p className="text-sm text-orange-700 dark:text-orange-300">
-												<strong>{step.danger.attention}:</strong>{' '}
+												<strong>{step.danger.attention}: </strong>
 												{step.danger.title}
 											</p>
 											{step.danger.items && (
@@ -151,7 +189,7 @@ const ContactSection = memo(() => {
 									{step.warning && (
 										<div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-3 rounded-xl border-l-4 border-yellow-400">
 											<p className="text-sm text-yellow-700 dark:text-yellow-300">
-												<strong>{step.warning.attention}:</strong>{' '}
+												<strong>{step.warning.attention}: </strong>
 												{step.warning.title}
 											</p>
 											{step.warning.items && (
@@ -162,6 +200,10 @@ const ContactSection = memo(() => {
 												</ul>
 											)}
 										</div>
+									)}
+
+									{step.additionalDescription && (
+										<p>{step.additionalDescription}</p>
 									)}
 
 									{step.note && (
@@ -175,13 +217,6 @@ const ContactSection = memo(() => {
 												))}
 											</ul>
 										</div>
-									)}
-
-									{index === 1 && (
-										<p>
-											봉사 신청이 마무리되면 실제 봉사 예정자들을 위한 별도
-											단톡방이 개설되어 상세 내용을 공지합니다.
-										</p>
 									)}
 								</div>
 							</div>
