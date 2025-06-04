@@ -37,13 +37,13 @@ export async function PATCH(
 			include: { author: { select: { name: true } } },
 		})
 		return NextResponse.json({ notice })
-	} catch (error) {
+	} catch (_error) {
 		return NextResponse.json({ error: '공지사항 수정 실패' }, { status: 500 })
 	}
 }
 
 export async function DELETE(
-	req: NextRequest,
+	_req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const session = await getServerSession(authOptions)
@@ -64,7 +64,7 @@ export async function DELETE(
 			data: { deletedAt: new Date() },
 		})
 		return NextResponse.json({ success: true })
-	} catch (error) {
+	} catch (_error) {
 		return NextResponse.json({ error: '공지사항 삭제 실패' }, { status: 500 })
 	}
 }

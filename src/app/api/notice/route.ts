@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 			include: { author: { select: { name: true } } },
 		})
 		return NextResponse.json({ notice })
-	} catch (error) {
+	} catch (_error) {
 		return NextResponse.json({ error: '공지사항 등록 실패' }, { status: 500 })
 	}
 }
