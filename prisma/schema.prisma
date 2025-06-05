@@ -14,11 +14,13 @@ model User {
   email         String?      @db.VarChar(255) @unique @map("email")
   emailVerified DateTime?    @db.Timestamptz() @map("email_verified")
   image         String?      @map("image")
+  role          Role         @default(USER) @map("role")
   createdAt     DateTime     @default(now()) @db.Timestamptz() @map("created_at")
   updatedAt     DateTime     @updatedAt @db.Timestamptz() @map("updated_at")
   deletedAt     DateTime?    @db.Timestamptz() @map("deleted_at")
   accounts      Account[]
   sessions      Session[]
+  notices       Notice[]
 
   @@map("users")
 }
@@ -69,4 +71,24 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model Notice {
+  id          String    @id @default(cuid()) @map("id")
+  title       String    @db.VarChar(255) @map("title")
+  content     String    @db.Text @map("content")
+  authorId    String    @map("author_id")
+  isPublished Boolean   @default(true) @map("is_published")
+  createdAt   DateTime  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt   DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt   DateTime? @db.Timestamptz() @map("deleted_at")
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt(sort: Desc), isPublished, deletedAt])
+  @@map("notices")
+}
+
+enum Role {
+  USER  @map("USER")
+  ADMIN @map("ADMIN")
 }

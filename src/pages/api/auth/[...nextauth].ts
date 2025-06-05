@@ -4,7 +4,7 @@ import NextAuth, { type NextAuthOptions } from 'next-auth'
 import NaverProvider from 'next-auth/providers/naver'
 import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
-import { z } from 'zod/v4'
+import { z } from 'zod/v4-mini'
 
 export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -28,6 +28,13 @@ export const authOptions: NextAuthOptions = {
 				return !!profile?.email_verified
 			}
 			return true
+		},
+		async session({ session, user }) {
+			if (session.user && user) {
+				session.user.id = user.id
+				session.user.role = user.role
+			}
+			return session
 		},
 	},
 }
