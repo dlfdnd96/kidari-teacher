@@ -1,16 +1,10 @@
 'use client'
 
 import { memo, useCallback } from 'react'
-import { openExternalLink, formatPhoneNumber } from '@/lib/utils'
+import { openExternalLink } from '@/lib/utils'
 import { SITE_INFO } from '@/constants/homepage'
 
 const CTASection = memo(() => {
-	// 전화 걸기 핸들러
-	const handlePhoneCall = useCallback(() => {
-		const phoneNumber = SITE_INFO.phone.replace(/-/g, '')
-		window.location.href = `tel:${phoneNumber}`
-	}, [])
-
 	// 카페 방문 핸들러
 	const handleVisitCafe = useCallback(() => {
 		openExternalLink(SITE_INFO.cafeUrl)
@@ -42,17 +36,6 @@ const CTASection = memo(() => {
 					</p>
 
 					<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-						<button
-							onClick={handlePhoneCall}
-							className="w-full sm:w-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"
-							aria-label={`전화로 연락하기: ${SITE_INFO.phone}`}
-						>
-							📞 바로 연락하기
-							<span className="block text-sm opacity-75 mt-1">
-								{formatPhoneNumber(SITE_INFO.phone)}
-							</span>
-						</button>
-
 						<button
 							onClick={handleVisitCafe}
 							className="w-full sm:w-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"

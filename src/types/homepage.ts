@@ -47,7 +47,7 @@ export interface ContactMethodProps {
 	icon: string
 	label: string
 	value: string
-	type: 'phone' | 'email' | 'kakao'
+	type: 'email' | 'kakao'
 	href?: string
 }
 

@@ -10,20 +10,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * 전화번호 포맷팅 (010-1234-5678)
- */
-export function formatPhoneNumber(phone: string): string {
-	const cleaned = phone.replace(/\D/g, '')
-	const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/)
-
-	if (match) {
-		return `${match[1]}-${match[2]}-${match[3]}`
-	}
-
-	return phone
-}
-
-/**
  * 날짜 포맷팅 (YYYY-MM-DD → YYYY년 MM월 DD일)
  */
 export function formatDate(dateString: string): string {
