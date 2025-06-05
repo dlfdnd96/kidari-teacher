@@ -1,4 +1,3 @@
-import { formatPhoneNumber } from '@/lib/utils'
 import type {
 	StatCardProps,
 	ProfessionGroupProps,
@@ -163,13 +162,6 @@ export const IMPACT_STATS: ImpactStatProps[] = [
 
 export const CONTACT_METHODS: ContactMethodProps[] = [
 	{
-		icon: '📞',
-		label: '전화',
-		value: '01022106387',
-		type: 'phone',
-		href: 'tel:010-2210-6387',
-	},
-	{
 		icon: '💌',
 		label: '이메일',
 		value: 'academi9@naver.com',
@@ -276,7 +268,6 @@ export const SITE_INFO = {
 	cafeUrl: 'https://cafe.naver.com/provolunteer',
 	copyright: '키다리 선생님 © 2025. All rights reserved.',
 	mission: '고등학생들의 밝은 미래를 위해 함께 합니다.',
-	phone: formatPhoneNumber('01022106387'),
 	email: 'academi9@naver.com',
 	kakaoId: 'jhp00707',
 } as const

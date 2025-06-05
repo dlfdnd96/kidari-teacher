@@ -2,7 +2,7 @@
 
 import { memo, useCallback } from 'react'
 import { KakaoTalkIcon, NaverCafeIcon } from '@/components/icons'
-import { formatPhoneNumber, openExternalLink } from '@/lib/utils'
+import { openExternalLink } from '@/lib/utils'
 import { CONTACT_METHODS, PROCESS_STEPS, SITE_INFO } from '@/constants/homepage'
 import { z } from 'zod/v4-mini'
 
@@ -13,10 +13,7 @@ const ContactSection = memo(() => {
 
 	const renderContactMethod = useCallback(
 		(contact: (typeof CONTACT_METHODS)[0], index: number) => {
-			const displayValue =
-				contact.type === 'phone'
-					? formatPhoneNumber(contact.value)
-					: contact.value
+			const displayValue = contact.value
 
 			if (process.env.NODE_ENV === 'development' && contact.type === 'email') {
 				const email = z.email().safeParse(contact.value)
@@ -31,7 +28,7 @@ const ContactSection = memo(() => {
 						className="mr-2 sm:mr-3 flex-shrink-0"
 						style={{
 							fontSize: '1.2rem',
-							color: contact.type === 'phone' ? '#d32f2f' : 'inherit',
+							color: 'inherit',
 						}}
 					>
 						{contact.type === 'kakao' ? <KakaoTalkIcon /> : contact.icon}
