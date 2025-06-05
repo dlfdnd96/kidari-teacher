@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
+import { requireAdminSession } from '@/lib/auth'
 
 export async function PATCH(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
-	const session = await getServerSession(authOptions)
-	const email = session?.user?.email
-	if (!email) {
-		return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 })
-	}
-
-	const user = await prisma.user.findUnique({ where: { email } })
-	if (!user || user.role !== 'ADMIN') {
-		return NextResponse.json({ error: '권한이 없습니다.' }, { status: 403 })
+	const { error } = await requireAdminSession()
+	if (error) {
+		return NextResponse.json({ error: error.error }, { status: error.status })
 	}
 
 	const { title, content } = await req.json()
@@ -46,19 +39,13 @@ export async function DELETE(
 	_req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
-	const session = await getServerSession(authOptions)
-	const email = session?.user?.email
-	if (!email) {
-		return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+	const { error } = await requireAdminSession()
+	if (error) {
+		return NextResponse.json({ error: error.error }, { status: error.status })
 	}
 
-	const user = await prisma.user.findUnique({ where: { email } })
-	if (!user || user.role !== 'ADMIN') {
-		return NextResponse.json({ error: '권한이 없습니다.' }, { status: 403 })
-	}
-
+	const { id } = await params
 	try {
-		const { id } = await params
 		await prisma.notice.update({
 			where: { id },
 			data: { deletedAt: new Date() },
