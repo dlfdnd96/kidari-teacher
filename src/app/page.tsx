@@ -448,17 +448,6 @@ export default function Home() {
 							</h3>
 						</div>
 						<div className="space-y-3 sm:space-y-4">
-							<div className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full">
-								<span
-									className="mr-2 sm:mr-3 flex-shrink-0"
-									style={{ fontSize: '1.2rem', color: '#d32f2f' }}
-								>
-									📞
-								</span>
-								<span className="font-bold text-gray-800 dark:text-gray-200 text-base sm:text-lg">
-									010-2210-6387
-								</span>
-							</div>
 							<a
 								href="mailto:academi9@naver.com"
 								className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full hover:bg-white/30 transition-colors duration-300 cursor-pointer"
@@ -774,22 +763,6 @@ export default function Home() {
 							<br className="hidden sm:block" />
 							봉사활동에 참여해보세요.
 						</p>
-						<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-							<a
-								href="tel:010-2210-6387"
-								className="w-full sm:w-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105"
-							>
-								📞 바로 연락하기
-							</a>
-							<a
-								href="https://cafe.naver.com/provolunteer"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="w-full sm:w-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105"
-							>
-								💻 카페 방문하기
-							</a>
-						</div>
 					</div>
 				</div>
 			</section>
