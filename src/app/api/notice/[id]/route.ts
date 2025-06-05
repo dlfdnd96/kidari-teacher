@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdminSession } from '@/lib/auth'
+import { TZDate } from '@date-fns/tz'
 
 export async function PATCH(
 	req: NextRequest,
@@ -48,7 +49,7 @@ export async function DELETE(
 	try {
 		await prisma.notice.update({
 			where: { id },
-			data: { deletedAt: new Date() },
+			data: { deletedAt: new TZDate(new Date(), 'UTC') },
 		})
 		return NextResponse.json({ success: true })
 	} catch (_error) {
