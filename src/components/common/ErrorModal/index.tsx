@@ -127,9 +127,6 @@ const ErrorModal: FC<ErrorModalProps> = ({
 								onClick={onClose}
 								className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
 							>
-								<span className="mr-2" role="img" aria-label="확인">
-									👍
-								</span>
 								확인
 							</button>
 						</div>

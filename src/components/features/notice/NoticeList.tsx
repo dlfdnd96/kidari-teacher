@@ -95,17 +95,6 @@ const NoticeList = memo(({ notices }: NoticeListProps) => {
 				))}
 			</div>
 
-			{/* 푸터 정보 */}
-			{notices.length > 0 && (
-				<div className="text-center pt-6 sm:pt-8">
-					<div className="inline-flex items-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200/50 dark:border-gray-700/50">
-						<span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-							최신순으로 정렬되어 있습니다
-						</span>
-					</div>
-				</div>
-			)}
-
 			{/* 공지사항 상세보기 모달 */}
 			<NoticeDetailModal
 				open={isDetailModalOpen}

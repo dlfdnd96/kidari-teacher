@@ -27,44 +27,8 @@ export default function NoticePageClient({
 
 	return (
 		<>
-			{/* 관리자 전용 작성 버튼 */}
-			{isAdmin && (
-				<div className="mb-8 sm:mb-12 text-center">
-					<div className="inline-flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg mb-6">
-						<span className="mr-2 text-lg" role="img" aria-label="관리자">
-							👨‍💼
-						</span>
-						<span className="font-semibold text-sm sm:text-base">
-							관리자 전용
-						</span>
-					</div>
-
-					<button
-						onClick={handleOpenModal}
-						className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transform"
-					>
-						<span className="mr-3 text-xl" role="img" aria-label="작성">
-							✍️
-						</span>
-						새 공지사항 작성하기
-					</button>
-				</div>
-			)}
-
 			{/* 공지사항 목록 */}
-			<div>
-				<div className="text-center mb-6 sm:mb-8">
-					<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-						📢 최신 공지사항
-					</h2>
-					<div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
-					<p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-4 max-w-2xl mx-auto">
-						중요한 소식과 업데이트를 놓치지 마세요
-					</p>
-				</div>
-
-				<NoticeList notices={notices} />
-			</div>
+			<NoticeList notices={notices} />
 
 			{/* 추가 정보 섹션 */}
 			{notices.length > 0 && (
@@ -81,6 +45,17 @@ export default function NoticePageClient({
 						</p>
 					</div>
 				</div>
+			)}
+
+			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
+			{isAdmin && (
+				<button
+					onClick={handleOpenModal}
+					aria-label="공지사항 작성"
+					className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+				>
+					<span className="text-3xl">+</span>
+				</button>
 			)}
 
 			{/* 공지사항 작성 모달 */}

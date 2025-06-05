@@ -61,15 +61,6 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 				{/* 헤더 */}
 				<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-t-3xl p-6 sm:p-8">
 					<div className="flex items-start">
-						<div className="w-14 sm:w-16 h-14 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-4 sm:mr-6 flex-shrink-0">
-							<span
-								className="text-2xl sm:text-3xl text-white"
-								role="img"
-								aria-label="공지사항"
-							>
-								📢
-							</span>
-						</div>
 						<div className="flex-1 min-w-0">
 							<h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">
 								{notice.title}
@@ -141,9 +132,6 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 							onClick={onClose}
 							className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
 						>
-							<span className="mr-2" role="img" aria-label="닫기">
-								👍
-							</span>
 							확인
 						</button>
 					</div>

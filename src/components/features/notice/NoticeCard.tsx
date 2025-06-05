@@ -85,15 +85,6 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 				{/* 헤더 */}
 				<div className="flex items-start justify-between mb-4">
 					<div className="flex items-center flex-1 min-w-0 mr-4">
-						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4 flex-shrink-0">
-							<span
-								className="text-lg sm:text-xl text-white"
-								role="img"
-								aria-label="공지사항"
-							>
-								📢
-							</span>
-						</div>
 						<h3
 							className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200"
 							title={notice.title}

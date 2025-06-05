@@ -65,20 +65,6 @@ export default async function NoticePage() {
 					<p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
 						키다리 선생님의 최신 소식과 중요한 안내사항을 확인하세요
 					</p>
-
-					{/* 통계 정보 */}
-					<div className="inline-flex items-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-						<span className="text-blue-500 mr-2" role="img" aria-label="문서">
-							📋
-						</span>
-						<span className="text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300">
-							총{' '}
-							<span className="font-bold text-blue-600 dark:text-blue-400">
-								{notices.length}
-							</span>
-							개의 공지사항
-						</span>
-					</div>
 				</div>
 			</section>
 
