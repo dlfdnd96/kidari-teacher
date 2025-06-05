@@ -1,6 +1,5 @@
-import React, { memo, useState, useCallback } from 'react'
-import NoticeCard, { NoticeCardProps } from './NoticeCard'
-import NoticeDetailModal from './NoticeDetailModal'
+import React, { memo } from 'react'
+import NoticeCard from './NoticeCard'
 import { ZodType } from '@/shared/types'
 import {
 	NoticeEntitySchema,
@@ -9,23 +8,10 @@ import {
 
 interface NoticeListProps {
 	notices: ZodType<typeof NoticeListEntitySchema>
+	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
 }
 
-const NoticeList = memo(({ notices }: NoticeListProps) => {
-	const [selectedNotice, setSelectedNotice] = useState<ZodType<
-		typeof NoticeEntitySchema
-	> | null>(null)
-	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
-
-	const handleViewDetail = useCallback((notice: NoticeCardProps['notice']) => {
-		setSelectedNotice(notice)
-		setIsDetailModalOpen(true)
-	}, [])
-
-	const handleCloseDetailModal = useCallback(() => {
-		setIsDetailModalOpen(false)
-		setSelectedNotice(null)
-	}, [])
+const NoticeList = memo(({ notices, onViewDetail }: NoticeListProps) => {
 	if (!notices || notices.length === 0) {
 		return (
 			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 sm:p-12 border border-gray-200/50 dark:border-gray-700/50 text-center">
@@ -90,17 +76,10 @@ const NoticeList = memo(({ notices }: NoticeListProps) => {
 							animationDelay: `${index * 100}ms`,
 						}}
 					>
-						<NoticeCard notice={notice} onViewDetail={handleViewDetail} />
+						<NoticeCard notice={notice} onViewDetail={onViewDetail} />
 					</div>
 				))}
 			</div>
-
-			{/* 공지사항 상세보기 모달 */}
-			<NoticeDetailModal
-				open={isDetailModalOpen}
-				onClose={handleCloseDetailModal}
-				notice={selectedNotice}
-			/>
 
 			{/* CSS 애니메이션 */}
 			<style jsx>{`

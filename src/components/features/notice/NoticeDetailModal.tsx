@@ -36,7 +36,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 			tabIndex={-1}
 			onClick={handleBackdropClick}
 		>
-			<div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-4xl relative border border-gray-100/50 dark:border-gray-700/50 transform transition-all duration-300 max-h-[90vh] overflow-hidden">
+			<div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-4xl relative border border-gray-100/50 dark:border-gray-700/50 transform transition-all duration-300 max-h-[90vh] flex flex-col overflow-hidden">
 				{/* 닫기 버튼 */}
 				<button
 					onClick={onClose}
@@ -93,7 +93,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 				</div>
 
 				{/* 내용 */}
-				<div className="p-6 sm:p-8 overflow-y-auto max-h-[60vh]">
+				<div className="p-6 sm:p-8 overflow-y-auto flex-1 min-h-0">
 					<div className="prose prose-gray dark:prose-invert max-w-none">
 						<div className="text-gray-800 dark:text-gray-200 text-base sm:text-lg leading-relaxed whitespace-pre-wrap">
 							{notice.content}
@@ -126,7 +126,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 				</div>
 
 				{/* 푸터 */}
-				<div className="border-t border-gray-200 dark:border-gray-700 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 rounded-b-3xl">
+				<div className="border-t border-gray-200 dark:border-gray-700 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 rounded-b-3xl shrink-0">
 					<div className="flex justify-center">
 						<button
 							onClick={onClose}

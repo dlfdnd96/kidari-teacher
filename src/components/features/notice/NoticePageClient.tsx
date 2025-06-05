@@ -3,6 +3,7 @@
 import React, { useCallback, useState } from 'react'
 import NoticeList from '@/components/features/notice/NoticeList'
 import NoticeModal from '@/components/features/notice/CreateNoticeModal'
+import NoticeDetailModal from '@/components/features/notice/NoticeDetailModal'
 import { ZodType } from '@/shared/types'
 import { NoticeListEntitySchema } from '@/app/api/notice/schema'
 
@@ -16,6 +17,10 @@ export default function NoticePageClient({
 	isAdmin,
 }: NoticePageClientProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [selectedNotice, setSelectedNotice] = useState<
+		ZodType<typeof NoticeListEntitySchema>[number] | null
+	>(null)
+	const [isDetailOpen, setIsDetailOpen] = useState(false)
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true)
@@ -25,10 +30,23 @@ export default function NoticePageClient({
 		setIsModalOpen(false)
 	}, [])
 
+	const handleViewDetail = useCallback(
+		(notice: ZodType<typeof NoticeListEntitySchema>[number]) => {
+			setSelectedNotice(notice)
+			setIsDetailOpen(true)
+		},
+		[],
+	)
+
+	const handleCloseDetail = useCallback(() => {
+		setIsDetailOpen(false)
+		setSelectedNotice(null)
+	}, [])
+
 	return (
 		<>
 			{/* 공지사항 목록 */}
-			<NoticeList notices={notices} />
+			<NoticeList notices={notices} onViewDetail={handleViewDetail} />
 
 			{/* 추가 정보 섹션 */}
 			{notices.length > 0 && (
@@ -47,8 +65,8 @@ export default function NoticePageClient({
 				</div>
 			)}
 
-			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
-			{isAdmin && (
+			{/* 오른쪽 하단 플로팅 +버튼 (관리자만, 디테일 모달이 열려있지 않을 때만) */}
+			{isAdmin && !isDetailOpen && (
 				<button
 					onClick={handleOpenModal}
 					aria-label="공지사항 작성"
@@ -60,6 +78,13 @@ export default function NoticePageClient({
 
 			{/* 공지사항 작성 모달 */}
 			<NoticeModal open={isModalOpen} onClose={handleCloseModal} />
+
+			{/* 공지사항 상세 모달 */}
+			<NoticeDetailModal
+				open={isDetailOpen}
+				onClose={handleCloseDetail}
+				notice={selectedNotice}
+			/>
 		</>
 	)
 }
