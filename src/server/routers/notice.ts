@@ -18,7 +18,7 @@ export const noticeRouter = createTRPCRouter({
 		.input(NoticeFilterInputSchema)
 		.output(NoticeListEntitySchema)
 		.query((opts) => {
-			const { ctx, input } = opts
+			const { ctx } = opts
 			return ctx.prisma.notice.findMany({
 				where: { deletedAt: null },
 				orderBy: { createdAt: 'desc' },
