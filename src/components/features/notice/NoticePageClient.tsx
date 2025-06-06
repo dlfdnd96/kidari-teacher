@@ -5,22 +5,28 @@ import NoticeList from '@/components/features/notice/NoticeList'
 import NoticeModal from '@/components/features/notice/CreateNoticeModal'
 import NoticeDetailModal from '@/components/features/notice/NoticeDetailModal'
 import { ZodType } from '@/shared/types'
-import { NoticeListEntitySchema } from '@/app/api/notice/schema'
+import { NoticeEntitySchema } from '@/shared/schemas/notice'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { Button } from '@/components/ui/button'
 
 interface NoticePageClientProps {
-	notices: ZodType<typeof NoticeListEntitySchema>
 	isAdmin: boolean
 }
 
-export default function NoticePageClient({
-	notices,
-	isAdmin,
-}: NoticePageClientProps) {
+export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [selectedNotice, setSelectedNotice] = useState<
-		ZodType<typeof NoticeListEntitySchema>[number] | null
-	>(null)
+	const [selectedNotice, setSelectedNotice] = useState<ZodType<
+		typeof NoticeEntitySchema
+	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
+
+	const {
+		data: notices = [],
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = trpc.notice.getNoticeList.useQuery()
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true)
@@ -31,7 +37,7 @@ export default function NoticePageClient({
 	}, [])
 
 	const handleViewDetail = useCallback(
-		(notice: ZodType<typeof NoticeListEntitySchema>[number]) => {
+		(notice: ZodType<typeof NoticeEntitySchema>) => {
 			setSelectedNotice(notice)
 			setIsDetailOpen(true)
 		},
@@ -42,6 +48,71 @@ export default function NoticePageClient({
 		setIsDetailOpen(false)
 		setSelectedNotice(null)
 	}, [])
+
+	if (isLoading) {
+		return (
+			<div className="space-y-6">
+				{/* 공지사항 목록 스켈레톤 */}
+				{[1, 2, 3].map((i) => (
+					<div
+						key={i}
+						className="bg-white/90 dark:bg-gray-800/90 rounded-3xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 animate-pulse"
+					>
+						<div className="flex items-start justify-between mb-4">
+							<div className="flex-1">
+								<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2" />
+							</div>
+							{isAdmin && (
+								<div className="flex gap-2">
+									<div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
+									<div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
+								</div>
+							)}
+						</div>
+						<div className="space-y-2 mb-4">
+							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6" />
+							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6" />
+						</div>
+						<div className="flex items-center justify-between pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+							<div className="flex items-center">
+								<div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full mr-2" />
+								<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20" />
+							</div>
+							<div className="flex items-center">
+								<div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full mr-2" />
+								<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24" />
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
+		)
+	}
+
+	if (isError) {
+		return (
+			<div className="text-center py-12">
+				<div className="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+					<span className="text-2xl text-white" role="img" aria-label="오류">
+						⚠️
+					</span>
+				</div>
+				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+					공지사항을 불러올 수 없습니다
+				</h3>
+				<p className="text-gray-500 dark:text-gray-400 mb-4">
+					{error?.message || '네트워크 오류가 발생했습니다.'}
+				</p>
+				<Button
+					onClick={() => refetch()}
+					className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+				>
+					다시 시도
+				</Button>
+			</div>
+		)
+	}
 
 	return (
 		<>
@@ -62,6 +133,29 @@ export default function NoticePageClient({
 							관리자에게 문의해주세요.
 						</p>
 					</div>
+				</div>
+			)}
+
+			{/* 빈 상태 표시 */}
+			{notices.length === 0 && (
+				<div className="text-center py-12">
+					<div className="w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-4">
+						<span
+							className="text-2xl text-white"
+							role="img"
+							aria-label="빈 상태"
+						>
+							📭
+						</span>
+					</div>
+					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+						아직 등록된 공지사항이 없습니다
+					</h3>
+					<p className="text-gray-500 dark:text-gray-400">
+						{isAdmin
+							? '첫 번째 공지사항을 작성해보세요!'
+							: '새로운 공지사항을 기다려주세요.'}
+					</p>
 				</div>
 			)}
 

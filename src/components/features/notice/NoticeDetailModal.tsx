@@ -2,7 +2,7 @@
 
 import React, { FC, useCallback } from 'react'
 import { ZodType } from '@/shared/types'
-import { NoticeEntitySchema } from '@/app/api/notice/schema'
+import { NoticeEntitySchema } from '@/shared/schemas/notice'
 
 interface NoticeDetailModalProps {
 	open: boolean
@@ -78,8 +78,11 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 									<span className="mr-2" role="img" aria-label="작성일">
 										📅
 									</span>
-									<time dateTime={notice.createdAt} className="text-sm">
-										{new Date(notice.createdAt).toLocaleDateString('ko-KR', {
+									<time
+										dateTime={notice.createdAt.toLocaleDateString('ko-KR')}
+										className="text-sm"
+									>
+										{notice.createdAt.toLocaleDateString('ko-KR', {
 											year: 'numeric',
 											month: 'long',
 											day: 'numeric',
@@ -111,8 +114,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 									ℹ️
 								</span>
 								<span>
-									게시일:{' '}
-									{new Date(notice.createdAt).toLocaleDateString('ko-KR')}
+									게시일: {notice.createdAt.toLocaleDateString('ko-KR')}
 								</span>
 							</div>
 							<div className="flex items-center">

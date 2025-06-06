@@ -4,9 +4,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { Enum } from '@/enums'
 import NoticePageClient from '@/components/features/notice/NoticePageClient'
-import { NoticeListEntitySchema } from '@/app/api/notice/schema'
-import { UserEntitySchema } from '@/app/api/user/schema'
-import { getEnvVar } from '@/lib/utils'
 
 export const metadata: Metadata = {
 	title: '공지사항 | 키다리 선생님',
@@ -17,22 +14,9 @@ export default async function NoticePage() {
 	const session = await getServerSession(authOptions)
 	let isAdmin = false
 
-	const baseUrl = getEnvVar('NEXTAUTH_URL')
-
 	if (session?.user.email) {
-		const res = await fetch(`${baseUrl}/api/user?email=${session.user.email}`, {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-		})
-		const user = UserEntitySchema.parse(await res.json())
-		isAdmin = user.role === Enum.Role.ADMIN
+		isAdmin = session.user.role === Enum.Role.ADMIN
 	}
-
-	const res = await fetch(`${baseUrl}/api/notice`, {
-		method: 'GET',
-		headers: { 'Content-Type': 'application/json' },
-	})
-	const notices = NoticeListEntitySchema.parse(await res.json())
 
 	return (
 		<main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -70,7 +54,7 @@ export default async function NoticePage() {
 
 			{/* 컨텐츠 섹션 */}
 			<section className="max-w-4xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">
-				<NoticePageClient notices={notices} isAdmin={isAdmin} />
+				<NoticePageClient isAdmin={isAdmin} />
 			</section>
 
 			{/* 장식적 배경 요소 */}

@@ -6,8 +6,12 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { NoticeFormSchema } from '@/components/features/notice/schema'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { useSession } from 'next-auth/react'
+import { ZodError } from 'zod/v4'
+
+import { NoticeFormSchema } from '@/shared/schemas/notice'
 
 interface NoticeFormProps {
 	onSuccess?: () => void
@@ -16,35 +20,49 @@ interface NoticeFormProps {
 
 const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 	const { register, handleSubmit, reset, formState } = useForm()
-	const [loading, setLoading] = React.useState(false)
+	const { data: session } = useSession()
 	const router = useRouter()
 	const { showError } = useErrorModal()
 
+	const utils = trpc.useUtils()
+	const createNoticeMutation = trpc.notice.createNotice.useMutation({
+		onSuccess: async () => {
+			await utils.notice.getNoticeList.invalidate()
+			router.refresh()
+			reset()
+			onSuccess?.()
+		},
+		onError: (error) => {
+			showError(error.message, '공지사항 등록 오류')
+		},
+	})
+
 	const onSubmit = useCallback(
 		async (data: unknown) => {
-			setLoading(true)
-			try {
-				const res = await fetch('/api/notice', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(NoticeFormSchema.parse(data)),
-				})
-				const result = await res.json()
-				if (!res.ok) {
-					throw new Error(result.error || '등록을 실패했습니다.')
-				}
+			if (!session?.user) {
+				showError('로그인이 필요합니다.', '인증 오류')
+				return
+			}
 
-				reset()
-				router.refresh()
-				onSuccess?.()
-			} catch (e: any) {
-				showError(e.message, '공지사항 등록 오류')
-			} finally {
-				setLoading(false)
+			try {
+				const validatedData = NoticeFormSchema.parse(data)
+				await createNoticeMutation.mutateAsync({
+					title: validatedData.title,
+					content: validatedData.content,
+					adminId: session.user.id,
+				})
+			} catch (error: unknown) {
+				if (error instanceof ZodError) {
+					showError(error.message, '입력 검증 오류')
+				} else {
+					console.error('Create error:', error)
+				}
 			}
 		},
-		[reset, router, onSuccess, showError],
+		[createNoticeMutation, session, showError],
 	)
+
+	const loading = createNoticeMutation.isPending
 
 	return (
 		<>
@@ -131,7 +149,8 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									type="button"
 									onClick={onSuccess}
 									variant="outline"
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
+									disabled={loading}
+									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								>
 									<span className="mr-2" role="img" aria-label="취소">
 										❌
@@ -141,13 +160,20 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 							)}
 							<Button
 								type="submit"
-								disabled={loading || formState.isSubmitting}
+								disabled={loading || formState.isSubmitting || !session?.user}
 								className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 							>
 								{loading ? (
 									<>
 										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
 										등록 중...
+									</>
+								) : !session?.user ? (
+									<>
+										<span className="mr-2" role="img" aria-label="로그인 필요">
+											🔒
+										</span>
+										로그인 필요
 									</>
 								) : (
 									<>
