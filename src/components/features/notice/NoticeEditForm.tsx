@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { NoticeEditFormSchema } from '@/components/features/notice/schema'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { ZodError } from 'zod/v4'
+
+import { NoticeEditFormSchema } from '@/shared/schemas/notice'
 
 interface NoticeEditFormProps {
 	id: string
@@ -21,34 +24,42 @@ const NoticeEditForm = memo(
 		const { register, handleSubmit, formState } = useForm({
 			defaultValues: { title: initialTitle, content: initialContent },
 		})
-		const [loading, setLoading] = React.useState(false)
 		const router = useRouter()
 		const { showError } = useErrorModal()
 
+		const utils = trpc.useUtils()
+		const updateNoticeMutation = trpc.notice.updateNotice.useMutation({
+			onSuccess: async () => {
+				await utils.notice.getNoticeList.invalidate()
+				router.refresh()
+				onCancel()
+			},
+			onError: (error) => {
+				showError(error.message, '공지사항 수정 오류')
+			},
+		})
+
 		const onSubmit = useCallback(
 			async (data: unknown) => {
-				setLoading(true)
 				try {
-					const res = await fetch(`/api/notice/${id}`, {
-						method: 'PATCH',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(NoticeEditFormSchema.parse(data)),
+					const validatedData = NoticeEditFormSchema.parse(data)
+					await updateNoticeMutation.mutateAsync({
+						id,
+						title: validatedData.title,
+						content: validatedData.content,
 					})
-					const result = await res.json()
-					if (!res.ok) {
-						throw new Error(result.error || '수정을 실패했습니다.')
+				} catch (error: unknown) {
+					if (error instanceof ZodError) {
+						showError(error.message, '입력 검증 오류')
+					} else {
+						console.error('Update error:', error)
 					}
-
-					router.refresh()
-					onCancel()
-				} catch (e: any) {
-					showError(e.message, '공지사항 수정 오류')
-				} finally {
-					setLoading(false)
 				}
 			},
-			[id, router, onCancel, showError],
+			[id, updateNoticeMutation, showError],
 		)
+
+		const loading = updateNoticeMutation.isPending
 
 		return (
 			<>

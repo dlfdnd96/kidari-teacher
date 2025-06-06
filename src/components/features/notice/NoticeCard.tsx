@@ -5,9 +5,10 @@ import NoticeEditForm from '@/components/features/notice/NoticeEditForm'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ZodType } from '@/shared/types'
-import { NoticeEntitySchema } from '@/app/api/notice/schema'
 import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { NoticeEntitySchema } from '@/shared/schemas/notice'
+import { trpc } from '@/components/providers/TrpcProvider'
 
 export interface NoticeCardProps {
 	notice: ZodType<typeof NoticeEntitySchema>
@@ -19,39 +20,37 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	const isAdmin = session?.user.role === Enum.Role.ADMIN
 	const [editing, setEditing] = useState(false)
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-	const [deleting, setDeleting] = useState(false)
 	const router = useRouter()
 	const { showError } = useErrorModal()
 
-	const handleDelete = useCallback(async () => {
-		setDeleting(true)
-		try {
-			const res = await fetch(`/api/notice/${notice.id}`, { method: 'DELETE' })
-			const result = await res.json()
-			if (!res.ok) {
-				throw new Error(result.error || '삭제를 실패했습니다.')
-			}
+	const utils = trpc.useUtils()
 
+	const updateNoticeMutation = trpc.notice.updateNotice.useMutation({
+		onSuccess: async () => {
+			await utils.notice.getNoticeList.invalidate()
+			setEditing(false)
 			router.refresh()
-		} catch (e: any) {
-			showError(e.message, '공지사항 삭제 오류')
-		} finally {
-			setDeleting(false)
+		},
+		onError: (error) => {
+			showError(error.message, '공지사항 수정 오류')
+		},
+	})
+	const deleteNoticeMutation = trpc.notice.deleteNotice.useMutation({
+		onSuccess: async () => {
+			await utils.notice.getNoticeList.invalidate()
+			router.refresh()
+		},
+		onError: (error) => {
+			showError(error.message, '공지사항 삭제 오류')
+		},
+		onSettled: () => {
 			setShowDeleteConfirm(false)
-		}
-	}, [notice.id, router, showError])
+		},
+	})
 
 	const handleViewDetail = useCallback(() => {
 		onViewDetail?.(notice)
 	}, [notice, onViewDetail])
-
-	const handleEdit = useCallback(() => {
-		setEditing(true)
-	}, [])
-
-	const handleCancelEdit = useCallback(() => {
-		setEditing(false)
-	}, [])
 
 	const handleCardClick = useCallback(
 		(e: React.MouseEvent) => {
@@ -64,6 +63,27 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 		},
 		[showDeleteConfirm, handleViewDetail],
 	)
+
+	const handleEdit = useCallback(() => {
+		setEditing(true)
+	}, [])
+
+	const handleCancelEdit = useCallback(() => {
+		setEditing(false)
+	}, [])
+
+	const handleDelete = useCallback(async () => {
+		try {
+			await deleteNoticeMutation.mutateAsync({
+				id: notice.id,
+			})
+		} catch (error) {
+			console.error('Delete error:', error)
+		}
+	}, [notice.id, deleteNoticeMutation])
+
+	const isUpdating = updateNoticeMutation.isPending
+	const isDeleting = deleteNoticeMutation.isPending
 
 	if (editing) {
 		return (
@@ -79,7 +99,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	return (
 		<>
 			<div
-				className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer"
+				className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer relative"
 				onClick={handleCardClick}
 			>
 				{/* 헤더 */}
@@ -96,38 +116,40 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 					{isAdmin && (
 						<div className="flex gap-2 flex-shrink-0">
 							<button
-								className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/30 dark:hover:to-purple-800/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+								className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/30 dark:hover:to-purple-800/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 								onClick={(e) => {
 									e.stopPropagation()
 									handleEdit()
 								}}
 								type="button"
 								aria-label="공지사항 수정"
+								disabled={isDeleting}
 							>
 								✏️ 수정
 							</button>
 
 							{!showDeleteConfirm ? (
 								<button
-									className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-full hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/30 dark:hover:to-pink-800/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+									className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-full hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/30 dark:hover:to-pink-800/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 									onClick={(e) => {
 										e.stopPropagation()
 										setShowDeleteConfirm(true)
 									}}
 									type="button"
 									aria-label="공지사항 삭제"
+									disabled={isDeleting || isUpdating}
 								>
 									🗑️ 삭제
 								</button>
 							) : (
 								<div className="flex gap-1">
 									<button
-										className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-800/30 dark:hover:to-emerald-800/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+										className="px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-800/30 dark:hover:to-emerald-800/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 										onClick={(e) => {
 											e.stopPropagation()
 											setShowDeleteConfirm(false)
 										}}
-										disabled={deleting}
+										disabled={isDeleting}
 										type="button"
 										aria-label="삭제 취소"
 									>
@@ -139,11 +161,11 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 											e.stopPropagation()
 											handleDelete()
 										}}
-										disabled={deleting}
+										disabled={isDeleting}
 										type="button"
 										aria-label="삭제 확인"
 									>
-										{deleting ? (
+										{isDeleting ? (
 											<>
 												<div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1 inline-block" />
 												삭제중...
@@ -199,8 +221,8 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 								📅
 							</span>
 						</div>
-						<time dateTime={notice.createdAt}>
-							{new Date(notice.createdAt).toLocaleDateString('ko-KR', {
+						<time dateTime={notice.createdAt.toLocaleDateString('ko-KR')}>
+							{notice.createdAt.toLocaleDateString('ko-KR', {
 								year: 'numeric',
 								month: 'long',
 								day: 'numeric',

@@ -2,13 +2,13 @@ import { z } from 'zod/v4-mini'
 import { ZodEnum } from '@/enums'
 
 export const UserEntitySchema = z.strictObject({
-	id: z.string(),
+	id: z.string().check(z.cuid()),
 	role: ZodEnum.Role,
-	createdAt: z.iso.datetime(),
-	updatedAt: z.iso.datetime(),
-	deletedAt: z.nullable(z.iso.datetime()),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	deletedAt: z.nullable(z.date()),
 	image: z.nullable(z.string()),
 	name: z.nullable(z.string()),
 	email: z.nullable(z.string()),
-	emailVerified: z.nullable(z.iso.datetime()),
+	emailVerified: z.nullable(z.date()),
 })

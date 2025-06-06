@@ -4,7 +4,7 @@ import { ZodType } from '@/shared/types'
 import {
 	NoticeEntitySchema,
 	NoticeListEntitySchema,
-} from '@/app/api/notice/schema'
+} from '@/shared/schemas/notice'
 
 interface NoticeListProps {
 	notices: ZodType<typeof NoticeListEntitySchema>
