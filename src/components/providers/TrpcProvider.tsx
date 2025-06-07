@@ -9,14 +9,40 @@ import superjson from 'superjson'
 
 export const trpc = createTRPCReact<AppRouter>()
 
+function getBaseUrl() {
+	if (typeof window !== 'undefined') {
+		return ''
+	}
+	if (process.env.VERCEL_URL) {
+		return `https://${process.env.VERCEL_URL}`
+	}
+	return `http://localhost:${process.env.PORT ?? 3000}`
+}
+
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
-	const [queryClient] = useState(() => new QueryClient())
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						staleTime: 60 * 1000,
+						refetchOnWindowFocus: false,
+					},
+				},
+			}),
+	)
+
 	const [trpcClient] = useState(() =>
 		trpc.createClient({
 			links: [
 				httpBatchLink({
-					url: '/api/trpc',
+					url: `${getBaseUrl()}/api/trpc`,
 					transformer: superjson,
+					headers() {
+						return {
+							'Content-Type': 'application/json',
+						}
+					},
 				}),
 			],
 		}),

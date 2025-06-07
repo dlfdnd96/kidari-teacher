@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { type PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { Enum } from '@/enums'
 import { middleware, procedure, router } from '@/server/trpc'
 import { ERROR_MESSAGES } from '@/constants/trpc'
@@ -23,10 +23,10 @@ export const transactionMiddleware = middleware(async ({ ctx, next }) => {
 })
 
 /**
- * 인증 미들웨어
+ * 인증 미들웨어 (App Router 전용)
  */
 const enforceUserIsAuthed = middleware(async ({ ctx, next }) => {
-	const session = await getServerSession(ctx.req, ctx.res, authOptions)
+	const session = await getServerSession(authOptions)
 
 	if (!session?.user?.email) {
 		throw new TRPCError({
