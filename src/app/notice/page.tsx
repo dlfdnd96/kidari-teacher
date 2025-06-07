@@ -47,7 +47,7 @@ export default async function NoticePage({ searchParams }: NoticePageProps) {
 		: false
 
 	return (
-		<main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+		<main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
 			{/* 히어로 섹션 */}
 			<section className="relative max-w-5xl mx-auto pt-8 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-8">
 				{/* 배경 장식 */}
