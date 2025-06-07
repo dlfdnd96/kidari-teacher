@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import './globals.css'
+import '@/app/globals.css'
 import React from 'react'
 import { Inter } from 'next/font/google'
 import ClientLayout from '@/components/ClientLayout'
