@@ -5,11 +5,26 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient }
 export const prisma =
 	globalForPrisma.prisma ||
 	new PrismaClient({
-		log: ['query', 'info', 'warn', 'error'],
+		log:
+			process.env.NODE_ENV === 'development'
+				? ['query', 'info', 'warn', 'error']
+				: ['warn', 'error'],
 	})
 
 if (process.env.NODE_ENV !== 'production') {
 	globalForPrisma.prisma = prisma
+}
+
+if (process.env.NODE_ENV === 'development') {
+	try {
+		;(prisma as any).$on('query', (e: any) => {
+			console.log('Query: ' + e.query)
+			console.log('Params: ' + e.params)
+			console.log('Duration: ' + e.duration + 'ms')
+		})
+	} catch (error) {
+		console.warn('Query logging 설정 실패:', error)
+	}
 }
 
 async function connectPrismaWithLog() {
