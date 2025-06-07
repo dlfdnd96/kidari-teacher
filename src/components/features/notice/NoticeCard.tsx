@@ -74,6 +74,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 
 	const handleDelete = useCallback(async () => {
 		try {
+			throw new Error('삭제 기능은 현재 사용할 수 없습니다.')
 			await deleteNoticeMutation.mutateAsync({
 				id: notice.id,
 			})
