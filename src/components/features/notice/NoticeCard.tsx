@@ -74,14 +74,21 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 
 	const handleDelete = useCallback(async () => {
 		try {
-			throw new Error('삭제 기능은 현재 사용할 수 없습니다.')
 			await deleteNoticeMutation.mutateAsync({
 				id: notice.id,
 			})
 		} catch (error) {
 			console.error('Delete error:', error)
+
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: '알 수 없는 오류가 발생했습니다.'
+
+			showError(errorMessage, '공지사항 삭제 오류')
+			setShowDeleteConfirm(false)
 		}
-	}, [notice.id, deleteNoticeMutation])
+	}, [notice.id, showError, deleteNoticeMutation])
 
 	const isUpdating = updateNoticeMutation.isPending
 	const isDeleting = deleteNoticeMutation.isPending

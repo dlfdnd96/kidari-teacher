@@ -56,6 +56,12 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 					showError(error.message, '입력 검증 오류')
 				} else {
 					console.error('Create error:', error)
+
+					const errorMessage =
+						error instanceof Error
+							? error.message
+							: '알 수 없는 오류가 발생했습니다.'
+					showError(errorMessage, '공지사항 등록 오류')
 				}
 			}
 		},
