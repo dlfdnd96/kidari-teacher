@@ -5,7 +5,6 @@ import { openExternalLink } from '@/lib/utils'
 import { SITE_INFO } from '@/constants/homepage'
 
 const CTASection = memo(() => {
-	// 카페 방문 핸들러
 	const handleVisitCafe = useCallback(() => {
 		openExternalLink(SITE_INFO.cafeUrl)
 	}, [])

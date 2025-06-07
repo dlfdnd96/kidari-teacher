@@ -89,17 +89,13 @@ export const safeLocalStorage = {
 		if (typeof window === 'undefined') return
 		try {
 			localStorage.setItem(key, value)
-		} catch {
-			// 저장 실패 시 무시
-		}
+		} catch {}
 	},
 	removeItem: (key: string): void => {
 		if (typeof window === 'undefined') return
 		try {
 			localStorage.removeItem(key)
-		} catch {
-			// 삭제 실패 시 무시
-		}
+		} catch {}
 	},
 }
 

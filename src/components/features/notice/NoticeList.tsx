@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import NoticeCard from './NoticeCard'
 import { ZodType } from '@/shared/types'
 import {
@@ -11,7 +11,7 @@ interface NoticeListProps {
 	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
 }
 
-const NoticeList = memo(({ notices, onViewDetail }: NoticeListProps) => {
+export default function NoticeList({ notices, onViewDetail }: NoticeListProps) {
 	if (!notices || notices.length === 0) {
 		return (
 			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 sm:p-12 border border-gray-200/50 dark:border-gray-700/50 text-center">
@@ -50,29 +50,13 @@ const NoticeList = memo(({ notices, onViewDetail }: NoticeListProps) => {
 
 	return (
 		<div className="space-y-6 sm:space-y-8">
-			{/* 목록 헤더 */}
-			<div className="text-center mb-6 sm:mb-8">
-				<div className="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg mb-4">
-					<span className="mr-2 text-lg" role="img" aria-label="공지사항 목록">
-						📋
-					</span>
-					<span className="font-semibold text-sm sm:text-base">
-						총 {notices.length}개의 공지사항
-					</span>
-				</div>
-			</div>
-
 			{/* 공지사항 카드들 */}
 			<div className="space-y-4 sm:space-y-6">
 				{notices.map((notice, index) => (
 					<div
 						key={notice.id}
-						className="transform transition-all duration-300"
+						className="transform transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
 						style={{
-							animationName: 'fadeInUp',
-							animationDuration: '0.6s',
-							animationTimingFunction: 'ease-out',
-							animationFillMode: 'forwards',
 							animationDelay: `${index * 100}ms`,
 						}}
 					>
@@ -80,24 +64,6 @@ const NoticeList = memo(({ notices, onViewDetail }: NoticeListProps) => {
 					</div>
 				))}
 			</div>
-
-			{/* CSS 애니메이션 */}
-			<style jsx>{`
-				@keyframes fadeInUp {
-					from {
-						opacity: 0;
-						transform: translateY(20px);
-					}
-					to {
-						opacity: 1;
-						transform: translateY(0);
-					}
-				}
-			`}</style>
 		</div>
 	)
-})
-
-NoticeList.displayName = 'NoticeList'
-
-export default NoticeList
+}

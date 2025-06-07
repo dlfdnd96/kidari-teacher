@@ -2,21 +2,49 @@ import React from 'react'
 import { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { notFound } from 'next/navigation'
 import { Enum } from '@/enums'
 import NoticePageClient from '@/components/features/notice/NoticePageClient'
+import { NoticePageProps } from '@/types/notice'
 
-export const metadata: Metadata = {
-	title: '공지사항 | 키다리 선생님',
-	description: '키다리 선생님의 최신 공지사항을 확인하세요.',
+export async function generateMetadata({
+	searchParams,
+}: {
+	searchParams: Promise<{ page?: string }>
+}): Promise<Metadata> {
+	const resolvedSearchParams = await searchParams
+	const page = parseInt(resolvedSearchParams.page || '1', 10)
+
+	return {
+		title:
+			page > 1
+				? `공지사항 (${page}페이지) | 키다리 선생님`
+				: '공지사항 | 키다리 선생님',
+		description: '키다리 선생님의 최신 공지사항을 확인하세요.',
+		alternates: {
+			canonical: page > 1 ? `/notice?page=${page}` : '/notice',
+		},
+		openGraph: {
+			title: '공지사항 | 키다리 선생님',
+			description: '키다리 선생님의 최신 공지사항을 확인하세요.',
+			type: 'website',
+		},
+	}
 }
 
-export default async function NoticePage() {
-	const session = await getServerSession(authOptions)
-	let isAdmin = false
+export default async function NoticePage({ searchParams }: NoticePageProps) {
+	const resolvedSearchParams = await searchParams
+	const pageParam = resolvedSearchParams.page
+	const page = pageParam ? parseInt(pageParam, 10) : 1
 
-	if (session?.user.email) {
-		isAdmin = session.user.role === Enum.Role.ADMIN
+	if (pageParam && (isNaN(page) || page < 1)) {
+		notFound()
 	}
+
+	const session = await getServerSession(authOptions)
+	const isAdmin = session?.user?.email
+		? session.user.role === Enum.Role.ADMIN
+		: false
 
 	return (
 		<main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -54,7 +82,7 @@ export default async function NoticePage() {
 
 			{/* 컨텐츠 섹션 */}
 			<section className="max-w-4xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">
-				<NoticePageClient isAdmin={isAdmin} />
+				<NoticePageClient isAdmin={isAdmin} initialPage={page} />
 			</section>
 
 			{/* 장식적 배경 요소 */}
