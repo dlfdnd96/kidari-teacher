@@ -1,22 +1,41 @@
 'use client'
 
-import React, { useCallback, useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import { notFound, useSearchParams } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import NoticeList from '@/components/features/notice/NoticeList'
-import NoticeModal from '@/components/features/notice/CreateNoticeModal'
-import NoticeDetailModal from '@/components/features/notice/NoticeDetailModal'
 import Pagination from '@/components/features/notice/Pagenation'
 import { ZodType } from '@/shared/types'
 import { NoticeEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
+import { keepPreviousData } from '@tanstack/react-query'
+
+const NoticeModal = dynamic(
+	() => import('@/components/features/notice/CreateNoticeModal'),
+	{
+		ssr: false,
+		loading: () => null,
+	},
+)
+
+const NoticeDetailModal = dynamic(
+	() => import('@/components/features/notice/NoticeDetailModal'),
+	{
+		ssr: false,
+		loading: () => null,
+	},
+)
 
 interface NoticePageClientProps {
 	isAdmin: boolean
+	initialPage?: number
 }
 
-export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
-	const router = useRouter()
+function NoticePageClientContent({
+	isAdmin,
+	initialPage = 1,
+}: NoticePageClientProps) {
 	const searchParams = useSearchParams()
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -25,13 +44,25 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-	const [currentPage, setCurrentPage] = useState(1)
+	const [currentPage, setCurrentPage] = useState(initialPage)
+	const [isPageChanging, setIsPageChanging] = useState(false)
 	const pageSize = 10
 
 	useEffect(() => {
 		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 10)
-		setCurrentPage(pageFromUrl)
-	}, [searchParams])
+		if (pageFromUrl !== currentPage) {
+			setIsPageChanging(true)
+			setCurrentPage(pageFromUrl)
+
+			setTimeout(() => {
+				window.scrollTo({
+					top: 0,
+					behavior: 'smooth',
+				})
+				setIsPageChanging(false)
+			}, 150)
+		}
+	}, [searchParams, currentPage])
 
 	const {
 		data: noticeData,
@@ -39,22 +70,37 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 		isError,
 		error,
 		refetch,
-	} = trpc.notice.getNoticeList.useQuery({
-		filter: {
-			isPublished: true,
-		},
-		pageable: {
-			offset: (currentPage - 1) * pageSize,
-			limit: pageSize,
-			sort: {
-				createdAt: 'desc',
+		isFetching,
+	} = trpc.notice.getNoticeList.useQuery(
+		{
+			filter: {
+				isPublished: true,
+			},
+			pageable: {
+				offset: (currentPage - 1) * pageSize,
+				limit: pageSize,
+				sort: {
+					createdAt: 'desc',
+				},
 			},
 		},
-	})
+		{
+			staleTime: 60 * 1000,
+			refetchOnWindowFocus: false,
+			refetchOnMount: false,
+			placeholderData: keepPreviousData,
+		},
+	)
 
 	const notices = noticeData?.noticeList || []
 	const totalCount = noticeData?.totalCount || notices.length
 	const totalPages = Math.ceil(totalCount / pageSize)
+
+	useEffect(() => {
+		if (!isLoading && totalPages > 0 && currentPage > totalPages) {
+			notFound()
+		}
+	}, [isLoading, totalPages, currentPage])
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true)
@@ -77,22 +123,9 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 		setSelectedNotice(null)
 	}, [])
 
-	const handlePageChange = useCallback(
-		(page: number) => {
-			setCurrentPage(page)
+	const showLoading = isLoading || isPageChanging || isFetching
 
-			const params = new URLSearchParams(searchParams?.toString())
-			params.set('page', page.toString())
-
-			const newUrl = params.toString() ? `?${params.toString()}` : ''
-			router.push(newUrl, { scroll: false })
-
-			window.scrollTo({ top: 0, behavior: 'smooth' })
-		},
-		[router, searchParams],
-	)
-
-	if (isLoading) {
+	if (showLoading) {
 		return (
 			<div className="space-y-6">
 				{/* 공지사항 목록 스켈레톤 */}
@@ -183,7 +216,7 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
-						onPageChange={handlePageChange}
+						basePath="/notice"
 					/>
 				</div>
 			)}
@@ -228,7 +261,7 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 				</div>
 			)}
 
-			{/* 오른쪽 하단 플로팅 +버튼 (관리자만, 디테일 모달이 열려있지 않을 때만) */}
+			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
 			{isAdmin && !isDetailOpen && (
 				<button
 					onClick={handleOpenModal}
@@ -239,15 +272,24 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 				</button>
 			)}
 
-			{/* 공지사항 작성 모달 */}
+			{/* 동적으로 로드되는 모달들 */}
 			<NoticeModal open={isModalOpen} onClose={handleCloseModal} />
-
-			{/* 공지사항 상세 모달 */}
 			<NoticeDetailModal
 				open={isDetailOpen}
 				onClose={handleCloseDetail}
 				notice={selectedNotice}
 			/>
 		</>
+	)
+}
+
+export default function NoticePageClient({
+	isAdmin,
+	initialPage,
+}: NoticePageClientProps) {
+	return (
+		<Suspense fallback={<div>로딩 중...</div>}>
+			<NoticePageClientContent isAdmin={isAdmin} initialPage={initialPage} />
+		</Suspense>
 	)
 }

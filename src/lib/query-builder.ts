@@ -75,7 +75,6 @@ export function buildOrderBy<T extends Record<string, unknown>>(
 		return {} as T
 	}
 
-	// sort 객체를 Prisma orderBy 배열로 변환
 	const orderByArray = Object.entries(sort).map(([field, direction]) => ({
 		[field]: direction,
 	})) as T[]

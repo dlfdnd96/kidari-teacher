@@ -1,19 +1,20 @@
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 
 interface PaginationProps {
 	currentPage: number
 	totalPages: number
-	onPageChange: (page: number) => void
 	className?: string
+	basePath?: string
 }
 
-const Pagination = ({
+export default function Pagination({
 	currentPage,
 	totalPages,
-	onPageChange,
 	className = '',
-}: PaginationProps) => {
+	basePath = '/notice',
+}: PaginationProps) {
 	if (totalPages <= 1) return null
 
 	const getVisiblePages = () => {
@@ -54,17 +55,39 @@ const Pagination = ({
 
 	const visiblePages = getVisiblePages()
 
+	const getPageUrl = (page: number) => {
+		return page === 1 ? basePath : `${basePath}?page=${page}`
+	}
+
+	const handlePageClick = () => {
+		setTimeout(() => {
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth',
+			})
+		}, 100)
+	}
+
 	return (
-		<div className={`flex items-center justify-center space-x-2 ${className}`}>
+		<nav
+			className={`flex items-center justify-center space-x-2 ${className}`}
+			aria-label="페이지네이션"
+		>
 			{/* 이전 페이지 버튼 */}
-			<button
-				onClick={() => onPageChange(currentPage - 1)}
-				disabled={currentPage <= 1}
-				className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 backdrop-blur-sm shadow-sm"
-				aria-label="이전 페이지"
-			>
-				<ChevronLeft size={16} />
-			</button>
+			{currentPage > 1 ? (
+				<Link
+					href={getPageUrl(currentPage - 1)}
+					className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 transition-all duration-200 backdrop-blur-sm shadow-sm"
+					aria-label="이전 페이지"
+					onClick={handlePageClick}
+				>
+					<ChevronLeft size={16} />
+				</Link>
+			) : (
+				<span className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-300 dark:text-gray-600 opacity-50 cursor-not-allowed backdrop-blur-sm shadow-sm">
+					<ChevronLeft size={16} />
+				</span>
+			)}
 
 			{/* 페이지 번호들 - 데스크톱에서만 표시 */}
 			<div className="hidden sm:flex items-center space-x-1">
@@ -83,20 +106,25 @@ const Pagination = ({
 					const pageNumber = page as number
 					const isActive = pageNumber === currentPage
 
-					return (
-						<button
+					return isActive ? (
+						<span
 							key={pageNumber}
-							onClick={() => onPageChange(pageNumber)}
-							className={`flex items-center justify-center w-10 h-10 rounded-full font-medium transition-all duration-200 backdrop-blur-sm ${
-								isActive
-									? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-110'
-									: 'bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 shadow-sm hover:scale-105'
-							}`}
-							aria-label={`페이지 ${pageNumber}`}
-							aria-current={isActive ? 'page' : undefined}
+							className="flex items-center justify-center w-10 h-10 rounded-full font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-110 transition-all duration-200 backdrop-blur-sm"
+							aria-label={`현재 페이지 ${pageNumber}`}
+							aria-current="page"
 						>
 							{pageNumber}
-						</button>
+						</span>
+					) : (
+						<Link
+							key={pageNumber}
+							href={getPageUrl(pageNumber)}
+							className="flex items-center justify-center w-10 h-10 rounded-full font-medium bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 shadow-sm hover:scale-105 transition-all duration-200 backdrop-blur-sm"
+							aria-label={`페이지 ${pageNumber}`}
+							onClick={handlePageClick}
+						>
+							{pageNumber}
+						</Link>
 					)
 				})}
 			</div>
@@ -107,16 +135,20 @@ const Pagination = ({
 			</div>
 
 			{/* 다음 페이지 버튼 */}
-			<button
-				onClick={() => onPageChange(currentPage + 1)}
-				disabled={currentPage >= totalPages}
-				className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 backdrop-blur-sm shadow-sm"
-				aria-label="다음 페이지"
-			>
-				<ChevronRight size={16} />
-			</button>
-		</div>
+			{currentPage < totalPages ? (
+				<Link
+					href={getPageUrl(currentPage + 1)}
+					className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 transition-all duration-200 backdrop-blur-sm shadow-sm"
+					aria-label="다음 페이지"
+					onClick={handlePageClick}
+				>
+					<ChevronRight size={16} />
+				</Link>
+			) : (
+				<span className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 text-gray-300 dark:text-gray-600 opacity-50 cursor-not-allowed backdrop-blur-sm shadow-sm">
+					<ChevronRight size={16} />
+				</span>
+			)}
+		</nav>
 	)
 }
-
-export default Pagination
