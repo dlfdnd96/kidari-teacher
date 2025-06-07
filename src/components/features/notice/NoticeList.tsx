@@ -1,5 +1,5 @@
 import React from 'react'
-import NoticeCard from './NoticeCard'
+import NoticeCard from '@/components/features/notice/NoticeCard'
 import { NoticeListProps } from '@/types/notice'
 
 export default function NoticeList({ notices, onViewDetail }: NoticeListProps) {

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { FC, useCallback } from 'react'
-import NoticeForm from './NoticeForm'
+import NoticeForm from '@/components/features/notice/NoticeForm'
 import { NoticeModalProps } from '@/types/notice'
 
 const NoticeModal: FC<NoticeModalProps> = ({ open, onClose }) => {
