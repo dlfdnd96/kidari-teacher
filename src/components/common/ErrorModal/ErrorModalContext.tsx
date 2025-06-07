@@ -1,16 +1,12 @@
 import React, {
 	createContext,
-	useContext,
-	useState,
 	ReactNode,
 	useCallback,
+	useContext,
+	useState,
 } from 'react'
 import ErrorModal from '@/components/common/ErrorModal'
-
-interface ErrorModalContextType {
-	showError: (message: string, title?: string) => void
-	hideError: () => void
-}
+import { ErrorModalContextType } from '@/types/error'
 
 const ErrorModalContext = createContext<ErrorModalContextType | undefined>(
 	undefined,

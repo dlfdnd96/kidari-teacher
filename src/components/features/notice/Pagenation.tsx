@@ -1,13 +1,7 @@
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-
-interface PaginationProps {
-	currentPage: number
-	totalPages: number
-	className?: string
-	basePath?: string
-}
+import { PaginationProps } from '@/types/notice'
 
 export default function Pagination({
 	currentPage,

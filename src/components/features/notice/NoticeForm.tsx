@@ -12,11 +12,7 @@ import { useSession } from 'next-auth/react'
 import { ZodError } from 'zod/v4'
 
 import { NoticeFormSchema } from '@/shared/schemas/notice'
-
-interface NoticeFormProps {
-	onSuccess?: () => void
-	isModal?: boolean
-}
+import { NoticeFormProps } from '@/types/notice'
 
 const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 	const { register, handleSubmit, reset, formState } = useForm()

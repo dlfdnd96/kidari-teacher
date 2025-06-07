@@ -1,8 +1,6 @@
-interface Props {
-	size?: number
-}
+import { NaverCafeIconProps } from '@/types/icon'
 
-export const NaverCafeIcon = ({ size = 24 }: Props) => {
+export const NaverCafeIcon = ({ size = 24 }: NaverCafeIconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

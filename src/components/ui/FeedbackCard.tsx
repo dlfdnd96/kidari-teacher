@@ -1,10 +1,6 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
-import type { FeedbackProps } from '@/types/homepage'
-
-interface ExtendedFeedbackProps extends FeedbackProps {
-	className?: string
-}
+import { ExtendedFeedbackProps } from '@/types/ui'
 
 const FeedbackCard = memo<ExtendedFeedbackProps>(
 	({ content, borderColor, quoteColor, bgGradient, className }) => {

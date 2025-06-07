@@ -1,10 +1,6 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
-import type { StatCardProps } from '@/types/homepage'
-
-interface ExtendedStatCardProps extends StatCardProps {
-	className?: string
-}
+import { ExtendedStatCardProps } from '@/types/ui'
 
 const StatCard = memo<ExtendedStatCardProps>(
 	({ icon, value, label, description, gradient, borderColor, className }) => {

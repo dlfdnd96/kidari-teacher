@@ -11,13 +11,7 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { ZodError } from 'zod/v4'
 
 import { NoticeEditFormSchema } from '@/shared/schemas/notice'
-
-interface NoticeEditFormProps {
-	id: string
-	initialTitle: string
-	initialContent: string
-	onCancel: () => void
-}
+import { NoticeEditFormProps } from '@/types/notice'
 
 const NoticeEditForm = memo(
 	({ id, initialTitle, initialContent, onCancel }: NoticeEditFormProps) => {

@@ -4,16 +4,10 @@ import React, { memo, useCallback, useState } from 'react'
 import NoticeEditForm from '@/components/features/notice/NoticeEditForm'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { ZodType } from '@/shared/types'
 import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { NoticeEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
-
-export interface NoticeCardProps {
-	notice: ZodType<typeof NoticeEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
-}
+import { NoticeCardProps } from '@/types/notice'
 
 const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	const { data: session } = useSession()
