@@ -7,23 +7,35 @@ import { TZDate } from '@date-fns/tz'
 import {
 	CreateNoticeInputSchema,
 	DeleteNoticeInputSchema,
-	NoticeFilterInputSchema,
-	NoticeListEntitySchema,
+	NoticeListFilterInputSchema,
+	NoticeListResponseSchema,
 	UpdateNoticeInputSchema,
 } from '@/shared/schemas/notice'
 import { TRPCError } from '@trpc/server'
+import { createDomainQueryBuilder } from '@/lib/query-builder'
 
 export const noticeRouter = createTRPCRouter({
 	getNoticeList: publicProcedure
-		.input(NoticeFilterInputSchema)
-		.output(NoticeListEntitySchema)
-		.query((opts) => {
-			const { ctx } = opts
-			return ctx.prisma.notice.findMany({
-				where: { deletedAt: null },
-				orderBy: { createdAt: 'desc' },
+		.input(NoticeListFilterInputSchema)
+		.output(NoticeListResponseSchema)
+		.query(async (opts) => {
+			const { ctx, input } = opts
+
+			const queryOptions = createDomainQueryBuilder(input)
+
+			const noticeList = await ctx.prisma.notice.findMany({
+				...queryOptions,
 				include: { author: { select: { name: true } } },
 			})
+			const totalCount = await ctx.prisma.notice.count({
+				where: {
+					...queryOptions.where,
+				},
+			})
+			return {
+				noticeList,
+				totalCount,
+			}
 		}),
 	createNotice: adminProcedure
 		.input(CreateNoticeInputSchema)

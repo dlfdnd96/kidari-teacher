@@ -17,14 +17,21 @@ export const NoticeEntitySchema = z.strictObject({
 
 export const NoticeListEntitySchema = z.array(NoticeEntitySchema)
 
-export const NoticeFilterInputSchema = z.object({
-	filter: z.optional(
-		z.object({
-			isPublished: z.boolean(),
-		}),
-	),
-	pageable: z.optional(PageableSchema),
+export const NoticeListResponseSchema = z.object({
+	noticeList: NoticeListEntitySchema,
+	totalCount: z.number().check(z.nonnegative()),
 })
+
+export const NoticeListFilterInputSchema = z.optional(
+	z.object({
+		filter: z.optional(
+			z.object({
+				isPublished: z.boolean(),
+			}),
+		),
+		pageable: z.optional(PageableSchema),
+	}),
+)
 
 export const CreateNoticeInputSchema = z.object({
 	title: z.string().check(z.minLength(1)),

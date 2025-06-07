@@ -1,9 +1,11 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import NoticeList from '@/components/features/notice/NoticeList'
 import NoticeModal from '@/components/features/notice/CreateNoticeModal'
 import NoticeDetailModal from '@/components/features/notice/NoticeDetailModal'
+import Pagination from '@/components/features/notice/Pagenation'
 import { ZodType } from '@/shared/types'
 import { NoticeEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
@@ -14,19 +16,45 @@ interface NoticePageClientProps {
 }
 
 export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
+	const router = useRouter()
+	const searchParams = useSearchParams()
+
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedNotice, setSelectedNotice] = useState<ZodType<
 		typeof NoticeEntitySchema
 	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 
+	const [currentPage, setCurrentPage] = useState(1)
+	const pageSize = 10
+
+	useEffect(() => {
+		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 10)
+		setCurrentPage(pageFromUrl)
+	}, [searchParams])
+
 	const {
-		data: notices = [],
+		data: noticeData,
 		isLoading,
 		isError,
 		error,
 		refetch,
-	} = trpc.notice.getNoticeList.useQuery()
+	} = trpc.notice.getNoticeList.useQuery({
+		filter: {
+			isPublished: true,
+		},
+		pageable: {
+			offset: (currentPage - 1) * pageSize,
+			limit: pageSize,
+			sort: {
+				createdAt: 'desc',
+			},
+		},
+	})
+
+	const notices = noticeData?.noticeList || []
+	const totalCount = noticeData?.totalCount || notices.length
+	const totalPages = Math.ceil(totalCount / pageSize)
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true)
@@ -48,6 +76,21 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 		setIsDetailOpen(false)
 		setSelectedNotice(null)
 	}, [])
+
+	const handlePageChange = useCallback(
+		(page: number) => {
+			setCurrentPage(page)
+
+			const params = new URLSearchParams(searchParams?.toString())
+			params.set('page', page.toString())
+
+			const newUrl = params.toString() ? `?${params.toString()}` : ''
+			router.push(newUrl, { scroll: false })
+
+			window.scrollTo({ top: 0, behavior: 'smooth' })
+		},
+		[router, searchParams],
+	)
 
 	if (isLoading) {
 		return (
@@ -86,6 +129,21 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 						</div>
 					</div>
 				))}
+
+				{/* 페이지네이션 스켈레톤 */}
+				<div className="flex items-center justify-center space-x-2 mt-8">
+					<div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+					<div className="hidden sm:flex space-x-1">
+						{[1, 2, 3, 4, 5].map((i) => (
+							<div
+								key={i}
+								className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"
+							/>
+						))}
+					</div>
+					<div className="sm:hidden w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+					<div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+				</div>
 			</div>
 		)
 	}
@@ -118,6 +176,17 @@ export default function NoticePageClient({ isAdmin }: NoticePageClientProps) {
 		<>
 			{/* 공지사항 목록 */}
 			<NoticeList notices={notices} onViewDetail={handleViewDetail} />
+
+			{/* 페이지네이션 */}
+			{notices.length > 0 && (
+				<div className="mt-8 sm:mt-12">
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						onPageChange={handlePageChange}
+					/>
+				</div>
+			)}
 
 			{/* 추가 정보 섹션 */}
 			{notices.length > 0 && (
