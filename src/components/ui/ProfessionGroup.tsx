@@ -1,10 +1,6 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
-import type { ProfessionGroupProps } from '@/types/homepage'
-
-interface ExtendedProfessionGroupProps extends ProfessionGroupProps {
-	className?: string
-}
+import { ExtendedProfessionGroupProps } from '@/types/ui'
 
 const ProfessionGroup = memo<ExtendedProfessionGroupProps>(
 	({ icon, title, description, gradient, className }) => {

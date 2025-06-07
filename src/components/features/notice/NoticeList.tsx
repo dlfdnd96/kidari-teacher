@@ -1,15 +1,6 @@
 import React from 'react'
 import NoticeCard from './NoticeCard'
-import { ZodType } from '@/shared/types'
-import {
-	NoticeEntitySchema,
-	NoticeListEntitySchema,
-} from '@/shared/schemas/notice'
-
-interface NoticeListProps {
-	notices: ZodType<typeof NoticeListEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
-}
+import { NoticeListProps } from '@/types/notice'
 
 export default function NoticeList({ notices, onViewDetail }: NoticeListProps) {
 	if (!notices || notices.length === 0) {

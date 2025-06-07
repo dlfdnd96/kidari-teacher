@@ -1,14 +1,7 @@
 'use client'
 
 import React, { FC, useCallback } from 'react'
-import { ZodType } from '@/shared/types'
-import { NoticeEntitySchema } from '@/shared/schemas/notice'
-
-interface NoticeDetailModalProps {
-	open: boolean
-	onClose: () => void
-	notice: ZodType<typeof NoticeEntitySchema> | null
-}
+import { NoticeDetailModalProps } from '@/types/notice'
 
 const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 	open,

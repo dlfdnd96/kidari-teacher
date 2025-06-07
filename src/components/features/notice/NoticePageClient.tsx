@@ -10,6 +10,7 @@ import { NoticeEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
+import { NoticePageClientProps } from '@/types/notice'
 
 const NoticeModal = dynamic(
 	() => import('@/components/features/notice/CreateNoticeModal'),
@@ -26,11 +27,6 @@ const NoticeDetailModal = dynamic(
 		loading: () => null,
 	},
 )
-
-interface NoticePageClientProps {
-	isAdmin: boolean
-	initialPage?: number
-}
 
 function NoticePageClientContent({
 	isAdmin,

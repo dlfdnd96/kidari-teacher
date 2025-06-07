@@ -1,8 +1,6 @@
-interface Props {
-	size?: number
-}
+import { KakaoTalkIconProps } from '@/types/icon'
 
-export const KakaoTalkIcon = ({ size = 24 }: Props) => {
+export const KakaoTalkIcon = ({ size = 24 }: KakaoTalkIconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

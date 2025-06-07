@@ -1,11 +1,6 @@
 import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
 import { prisma } from '@/lib/prisma'
-
-interface CreateAppContextOptions {
-	req: Request
-}
-
-type CreateContextOptions = CreateNextContextOptions | CreateAppContextOptions
+import { CreateContextOptions } from '@/shared/types'
 
 function isPagesRouterContext(
 	opts: CreateContextOptions,

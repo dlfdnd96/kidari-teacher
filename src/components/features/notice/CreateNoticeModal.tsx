@@ -2,11 +2,7 @@
 
 import React, { FC, useCallback } from 'react'
 import NoticeForm from './NoticeForm'
-
-interface NoticeModalProps {
-	open: boolean
-	onClose: () => void
-}
+import { NoticeModalProps } from '@/types/notice'
 
 const NoticeModal: FC<NoticeModalProps> = ({ open, onClose }) => {
 	const handleSuccess = useCallback(() => {

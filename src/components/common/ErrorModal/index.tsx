@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 
-import { ErrorModalProps } from '@/types/error-modal'
+import { ErrorModalProps } from '@/types/error'
 
 export default function ErrorModal({
 	open,

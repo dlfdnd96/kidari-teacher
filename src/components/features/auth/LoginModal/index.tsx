@@ -4,11 +4,7 @@ import { FC } from 'react'
 import NaverLoginButton from '@/components/features/auth/NaverLoginButton'
 import KakaoLoginButton from '@/components/features/auth/KakaoLoginButton'
 import GoogleLoginButton from '@/components/features/auth/GoogleLoginButton'
-
-interface LoginModalProps {
-	open: boolean
-	onClose: () => void
-}
+import { LoginModalProps } from '@/types/login'
 
 const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 	if (!open) return null

@@ -4,16 +4,10 @@ import React, { memo, useCallback, useState } from 'react'
 import NoticeEditForm from '@/components/features/notice/NoticeEditForm'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { ZodType } from '@/shared/types'
 import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { NoticeEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
-
-export interface NoticeCardProps {
-	notice: ZodType<typeof NoticeEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
-}
+import { NoticeCardProps } from '@/types/notice'
 
 const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	const { data: session } = useSession()
@@ -74,14 +68,21 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 
 	const handleDelete = useCallback(async () => {
 		try {
-			throw new Error('삭제 기능은 현재 사용할 수 없습니다.')
 			await deleteNoticeMutation.mutateAsync({
 				id: notice.id,
 			})
 		} catch (error) {
 			console.error('Delete error:', error)
+
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: '알 수 없는 오류가 발생했습니다.'
+
+			showError(errorMessage, '공지사항 삭제 오류')
+			setShowDeleteConfirm(false)
 		}
-	}, [notice.id, deleteNoticeMutation])
+	}, [notice.id, showError, deleteNoticeMutation])
 
 	const isUpdating = updateNoticeMutation.isPending
 	const isDeleting = deleteNoticeMutation.isPending
