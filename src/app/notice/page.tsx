@@ -5,13 +5,15 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { notFound } from 'next/navigation'
 import { Enum } from '@/enums'
 import NoticePageClient from '@/components/features/notice/NoticePageClient'
+import { NoticePageProps } from '@/types/notice'
 
 export async function generateMetadata({
 	searchParams,
 }: {
-	searchParams: { page?: string }
+	searchParams: Promise<{ page?: string }>
 }): Promise<Metadata> {
-	const page = parseInt(searchParams.page || '1', 10)
+	const resolvedSearchParams = await searchParams
+	const page = parseInt(resolvedSearchParams.page || '1', 10)
 
 	return {
 		title:
@@ -30,14 +32,9 @@ export async function generateMetadata({
 	}
 }
 
-interface NoticePageProps {
-	searchParams: {
-		page?: string
-	}
-}
-
 export default async function NoticePage({ searchParams }: NoticePageProps) {
-	const pageParam = searchParams.page
+	const resolvedSearchParams = await searchParams
+	const pageParam = resolvedSearchParams.page
 	const page = pageParam ? parseInt(pageParam, 10) : 1
 
 	if (pageParam && (isNaN(page) || page < 1)) {
