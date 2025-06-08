@@ -9,7 +9,7 @@ const GoogleLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 	<button
 		type="button"
 		aria-label="구글로 로그인"
-		className="w-full bg-white hover:bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-sm"
+		className="w-full bg-white hover:bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs"
 		onClick={() => signIn('google')}
 		{...props}
 	>

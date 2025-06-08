@@ -5,10 +5,10 @@ import { NoticeListProps } from '@/types/notice'
 export default function NoticeList({ notices, onViewDetail }: NoticeListProps) {
 	if (!notices || notices.length === 0) {
 		return (
-			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 sm:p-12 border border-gray-200/50 dark:border-gray-700/50 text-center">
+			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-8 sm:p-12 border border-gray-200/50 dark:border-gray-700/50 text-center">
 				{/* 빈 상태 일러스트레이션 */}
 				<div className="max-w-md mx-auto">
-					<div className="w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
+					<div className="w-24 sm:w-32 h-24 sm:h-32 bg-linear-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
 						<span
 							className="text-4xl sm:text-5xl text-gray-400 dark:text-gray-500"
 							role="img"

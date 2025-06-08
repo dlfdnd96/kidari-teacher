@@ -72,14 +72,14 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 				className={`${
 					isModal
 						? 'bg-transparent'
-						: 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-8 sm:mb-12'
+						: 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-8 sm:mb-12'
 				}`}
 			>
 				{/* 헤더 - 모달이 아닐 때만 표시 */}
 				{!isModal && (
-					<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 sm:p-8">
+					<div className="bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 sm:p-8">
 						<div className="flex items-center">
-							<div className="w-12 sm:w-16 h-12 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
+							<div className="w-12 sm:w-16 h-12 sm:h-16 bg-white/20 backdrop-blur-xs rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
 								<span
 									className="text-2xl sm:text-3xl text-white"
 									role="img"
@@ -117,7 +117,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									{...register('title', { required: true })}
 									placeholder="공지사항 제목을 입력하세요"
 									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
+									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 								/>
 							</div>
 						</div>
@@ -137,7 +137,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									placeholder="공지사항 내용을 자세히 작성해주세요"
 									rows={6}
 									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 resize-none"
+									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 resize-none"
 								/>
 							</div>
 						</div>
@@ -152,7 +152,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									onClick={onSuccess}
 									variant="outline"
 									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								>
 									<span className="mr-2" role="img" aria-label="취소">
 										❌
@@ -163,7 +163,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 							<Button
 								type="submit"
 								disabled={loading || formState.isSubmitting || !session?.user}
-								className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+								className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 							>
 								{loading ? (
 									<>

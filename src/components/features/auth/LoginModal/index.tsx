@@ -11,7 +11,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs"
 			aria-modal="true"
 			role="dialog"
 			tabIndex={-1}
@@ -38,7 +38,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 				</button>
 
 				<div className="text-center mb-8">
-					<div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+					<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
 						<svg
 							className="w-8 h-8 text-white"
 							fill="none"
@@ -53,7 +53,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 							/>
 						</svg>
 					</div>
-					<h2 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent mb-2">
+					<h2 className="text-2xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent mb-2">
 						로그인
 					</h2>
 					<p className="text-gray-600 text-sm">

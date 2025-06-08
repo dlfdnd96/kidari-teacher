@@ -180,7 +180,7 @@ function NoticePageClientContent({
 	if (isError) {
 		return (
 			<div className="text-center py-12">
-				<div className="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+				<div className="w-20 h-20 bg-linear-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
 					<span className="text-2xl text-white" role="img" aria-label="오류">
 						⚠️
 					</span>
@@ -193,7 +193,7 @@ function NoticePageClientContent({
 				</p>
 				<Button
 					onClick={() => refetch()}
-					className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+					className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
 				>
 					다시 시도
 				</Button>
@@ -220,7 +220,7 @@ function NoticePageClientContent({
 			{/* 추가 정보 섹션 */}
 			{notices.length > 0 && (
 				<div className="mt-12 sm:mt-16">
-					<div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-3xl p-6 sm:p-8 border border-blue-100 dark:border-gray-600 text-center">
+					<div className="bg-linear-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-3xl p-6 sm:p-8 border border-blue-100 dark:border-gray-600 text-center">
 						<div className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
 							💡 알림 설정
 						</div>
@@ -237,7 +237,7 @@ function NoticePageClientContent({
 			{/* 빈 상태 표시 */}
 			{notices.length === 0 && (
 				<div className="text-center py-12">
-					<div className="w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-4">
+					<div className="w-20 h-20 bg-linear-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-4">
 						<span
 							className="text-2xl text-white"
 							role="img"
@@ -262,7 +262,7 @@ function NoticePageClientContent({
 				<button
 					onClick={handleOpenModal}
 					aria-label="공지사항 작성"
-					className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+					className="fixed bottom-8 right-8 z-50 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-hidden focus:ring-4 focus:ring-blue-500/30"
 				>
 					<span className="text-3xl">+</span>
 				</button>

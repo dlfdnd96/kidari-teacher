@@ -7,7 +7,7 @@ const FeedbackCard = memo<ExtendedFeedbackProps>(
 		return (
 			<div
 				className={cn(
-					'relative bg-gradient-to-r p-4 sm:p-6 rounded-2xl border-l-4',
+					'relative bg-linear-to-r p-4 sm:p-6 rounded-2xl border-l-4',
 					bgGradient,
 					borderColor,
 					className,

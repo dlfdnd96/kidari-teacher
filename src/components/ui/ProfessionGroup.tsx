@@ -8,7 +8,7 @@ const ProfessionGroup = memo<ExtendedProfessionGroupProps>(
 			<div className={cn('text-center group', className)}>
 				<div
 					className={cn(
-						'w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300',
+						'w-12 sm:w-16 h-12 sm:h-16 bg-linear-to-r rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300',
 						gradient,
 					)}
 				>

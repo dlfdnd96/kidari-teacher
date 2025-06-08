@@ -10,17 +10,17 @@ const ActivitySection = memo(() => {
 	return (
 		<section className="max-w-5xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
 			<div className="text-center mb-6 sm:mb-8">
-				<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+				<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
 					2024년 최신 활동 현황
 				</h2>
-				<div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
+				<div className="w-20 h-1 bg-linear-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 				{/* 최근 활동 리스트 */}
-				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-shadow duration-300">
+				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-shadow duration-300">
 					<div className="flex items-center mb-4 sm:mb-6">
-						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
+						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
 							<span
 								className="text-lg sm:text-xl text-white"
 								role="img"
@@ -40,7 +40,7 @@ const ActivitySection = memo(() => {
 								key={`${activity.date}-${activity.school}`}
 								className="flex items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
 							>
-								<div className="w-2 h-2 bg-blue-500 rounded-full mr-2 sm:mr-3 flex-shrink-0" />
+								<div className="w-2 h-2 bg-blue-500 rounded-full mr-2 sm:mr-3 shrink-0" />
 								<div className="flex-1 min-w-0">
 									<div className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
 										<time dateTime={activity.date}>
@@ -58,9 +58,9 @@ const ActivitySection = memo(() => {
 				</div>
 
 				{/* 봉사 가능일 */}
-				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-shadow duration-300">
+				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-shadow duration-300">
 					<div className="flex items-center mb-4 sm:mb-6">
-						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
+						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-r from-blue-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
 							<span
 								className="text-lg sm:text-xl text-white"
 								role="img"
@@ -82,13 +82,13 @@ const ActivitySection = memo(() => {
 						{PREFERRED_TIME_SLOTS.map((slot, index) => (
 							<div
 								key={`preferred-${index}`}
-								className={`flex items-center p-3 sm:p-4 bg-gradient-to-r rounded-xl border-2 ${slot.borderColor} ${
+								className={`flex items-center p-3 sm:p-4 bg-linear-to-r rounded-xl border-2 ${slot.borderColor} ${
 									index === 0
 										? 'from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600'
 										: 'from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600'
 								}`}
 							>
-								<div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+								<div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4 shrink-0">
 									<span
 										className="text-white font-bold text-sm sm:text-base"
 										aria-label="체크"
@@ -119,7 +119,7 @@ const ActivitySection = memo(() => {
 									key={`other-${index}`}
 									className="flex items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg opacity-75 hover:opacity-100 transition-opacity"
 								>
-									<div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-400 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+									<div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-400 rounded-full flex items-center justify-center mr-2 sm:mr-3 shrink-0">
 										<span
 											className="text-white font-bold text-xs"
 											aria-label="원"
