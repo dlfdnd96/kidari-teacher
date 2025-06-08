@@ -63,11 +63,11 @@ const NoticeEditForm = memo(
 
 		return (
 			<>
-				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-4 sm:mb-6">
+				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-4 sm:mb-6">
 					{/* 헤더 */}
-					<div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
+					<div className="bg-linear-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
 						<div className="flex items-center">
-							<div className="w-12 sm:w-16 h-12 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
+							<div className="w-12 sm:w-16 h-12 sm:h-16 bg-white/20 backdrop-blur-xs rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
 								<span
 									className="text-2xl sm:text-3xl text-white"
 									role="img"
@@ -104,7 +104,7 @@ const NoticeEditForm = memo(
 										{...register('title', { required: true })}
 										placeholder="공지사항 제목을 입력하세요"
 										disabled={loading}
-										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
+										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
 									/>
 								</div>
 							</div>
@@ -124,7 +124,7 @@ const NoticeEditForm = memo(
 										placeholder="공지사항 내용을 자세히 작성해주세요"
 										rows={6}
 										disabled={loading}
-										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
+										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
 									/>
 								</div>
 							</div>
@@ -134,7 +134,7 @@ const NoticeEditForm = memo(
 								<Button
 									type="submit"
 									disabled={loading || formState.isSubmitting}
-									className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex-1 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								>
 									{loading ? (
 										<>
@@ -156,7 +156,7 @@ const NoticeEditForm = memo(
 									onClick={onCancel}
 									disabled={loading}
 									variant="outline"
-									className="flex-1 bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex-1 bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								>
 									<span className="mr-2" role="img" aria-label="취소">
 										❌

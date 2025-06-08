@@ -11,9 +11,9 @@ const CTASection = memo(() => {
 
 	return (
 		<section className="max-w-4xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8 text-center">
-			<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden">
+			<div className="bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden">
 				{/* 배경 패턴 */}
-				<div className="absolute inset-0 bg-white/10 bg-[size:30px_30px] opacity-10" />
+				<div className="absolute inset-0 bg-white/10 bg-size-[30px_30px] opacity-10" />
 
 				<div className="relative z-10">
 					<div
@@ -37,7 +37,7 @@ const CTASection = memo(() => {
 					<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
 						<button
 							onClick={handleVisitCafe}
-							className="w-full sm:w-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"
+							className="w-full sm:w-auto bg-white/20 hover:bg-white/30 backdrop-blur-xs px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-white/50"
 							aria-label="네이버 카페 방문하기"
 						>
 							💻 카페 방문하기

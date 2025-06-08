@@ -48,9 +48,9 @@ const Navbar = memo(() => {
 					<Link
 						key={link.href}
 						href={link.href}
-						className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+						className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 ${
 							link.isActive
-								? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+								? 'bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg'
 								: 'text-gray-600 hover:text-blue-600 hover:bg-blue-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-blue-900/20'
 						}`}
 						aria-label={link.label}
@@ -67,7 +67,7 @@ const Navbar = memo(() => {
 
 	return (
 		<>
-			<nav className="w-full h-16 flex items-center justify-between px-2 sm:px-6 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100/50 fixed top-0 left-0 z-40">
+			<nav className="w-full h-16 flex items-center justify-between px-2 sm:px-6 bg-white/80 backdrop-blur-md shadow-xs border-b border-gray-100/50 fixed top-0 left-0 z-40">
 				{/* 로고/제목 */}
 				<Link href="/" className="flex items-center">
 					{/* 모바일: 간단한 심볼, 데스크탑: 텍스트 */}
@@ -83,7 +83,7 @@ const Navbar = memo(() => {
 							className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
 						/>
 					</span>
-					<span className="hidden sm:block text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+					<span className="hidden sm:block text-xl sm:text-2xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
 						{SITE_INFO.title}
 					</span>
 				</Link>
@@ -95,9 +95,9 @@ const Navbar = memo(() => {
 				<div className="sm:hidden flex items-center gap-2 mr-2">
 					<Link
 						href="/notice"
-						className={`p-2 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+						className={`p-2 rounded-full transition-all duration-300 hover:scale-110 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 ${
 							pathname === '/notice'
-								? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+								? 'bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg'
 								: 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
 						}`}
 						aria-label="공지사항"
@@ -109,7 +109,7 @@ const Navbar = memo(() => {
 				</div>
 
 				{/* 인증 섹션 */}
-				<div className="flex-shrink-0 min-w-0">
+				<div className="shrink-0 min-w-0">
 					{status === 'loading' ? (
 						<div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
 					) : session ? (
@@ -160,7 +160,7 @@ const Navbar = memo(() => {
 							</button>
 							<button
 								onClick={handleOpenModal}
-								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+								className="hidden sm:inline-block px-6 py-2.5 bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500/50"
 								aria-label="로그인"
 								type="button"
 							>

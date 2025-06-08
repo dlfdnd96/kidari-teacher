@@ -239,7 +239,7 @@ export const GALLERY_PHOTOS: PhotoGalleryItemProps[] = [
 		alt: '키다리 선생님 메인 활동 현장',
 		title: '직업 탐방 강연 현장',
 		description: '고등학생들과 진로에 대해 진솔한 대화를 나누는 모습',
-		aspectRatio: 'aspect-[16/9] sm:aspect-[21/9]',
+		aspectRatio: 'aspect-video sm:aspect-21/9',
 		isMain: true,
 	},
 	{
@@ -247,14 +247,14 @@ export const GALLERY_PHOTOS: PhotoGalleryItemProps[] = [
 		alt: '학생들과의 질의응답 시간',
 		title: '질의응답 시간',
 		description: '학생들의 적극적인 참여와 질문',
-		aspectRatio: 'aspect-[4/3]',
+		aspectRatio: 'aspect-4/3',
 	},
 	{
 		src: '/images/main/lecture_003.png',
 		alt: '전문직 소개 및 경험 공유',
 		title: '전문직 소개',
 		description: '실무 경험과 노하우 전달',
-		aspectRatio: 'aspect-[4/3]',
+		aspectRatio: 'aspect-4/3',
 	},
 ]
 

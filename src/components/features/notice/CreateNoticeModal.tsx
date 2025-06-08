@@ -24,7 +24,7 @@ const NoticeModal: FC<NoticeModalProps> = ({ open, onClose }) => {
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4"
 			aria-modal="true"
 			role="dialog"
 			tabIndex={-1}
@@ -35,7 +35,7 @@ const NoticeModal: FC<NoticeModalProps> = ({ open, onClose }) => {
 				<button
 					onClick={onClose}
 					aria-label="모달 닫기"
-					className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+					className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50"
 				>
 					<svg
 						className="w-6 h-6"
@@ -53,9 +53,9 @@ const NoticeModal: FC<NoticeModalProps> = ({ open, onClose }) => {
 				</button>
 
 				{/* 모달 헤더 */}
-				<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-t-3xl p-6 sm:p-8">
+				<div className="bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-t-3xl p-6 sm:p-8">
 					<div className="flex items-center">
-						<div className="w-14 sm:w-16 h-14 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
+						<div className="w-14 sm:w-16 h-14 sm:h-16 bg-white/20 backdrop-blur-xs rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
 							<span
 								className="text-2xl sm:text-3xl text-white"
 								role="img"

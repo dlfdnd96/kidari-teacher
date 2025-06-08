@@ -5,10 +5,10 @@ const ImpactSection = memo(() => {
 	return (
 		<section className="max-w-5xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
 			<div className="text-center mb-6 sm:mb-8">
-				<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+				<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
 					활동의 임팩트
 				</h2>
-				<div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
+				<div className="w-20 h-1 bg-linear-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
 				<p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-4 max-w-2xl mx-auto">
 					실제 수치로 보는 키다리 선생님의 성과와 학생들의 반응
 				</p>
@@ -26,10 +26,10 @@ const ImpactSection = memo(() => {
 					return (
 						<div
 							key={index}
-							className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 text-center"
+							className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 text-center"
 						>
 							<div
-								className={`w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r ${gradientColors[index]} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+								className={`w-12 sm:w-16 h-12 sm:h-16 bg-linear-to-r ${gradientColors[index]} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
 							>
 								<span
 									className="text-xl sm:text-2xl text-white"
@@ -40,7 +40,7 @@ const ImpactSection = memo(() => {
 								</span>
 							</div>
 							<div
-								className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent mb-2`}
+								className={`text-2xl sm:text-3xl font-bold bg-linear-to-r ${stat.gradient} bg-clip-text text-transparent mb-2`}
 							>
 								{stat.value}
 							</div>
@@ -56,7 +56,7 @@ const ImpactSection = memo(() => {
 			</div>
 
 			{/* 추가 설명 */}
-			<div className="mt-8 sm:mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-3xl p-6 sm:p-8 border border-blue-100 dark:border-gray-600">
+			<div className="mt-8 sm:mt-12 bg-linear-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-3xl p-6 sm:p-8 border border-blue-100 dark:border-gray-600">
 				<div className="text-center">
 					<div className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
 						💪 지속적인 성장과 발전

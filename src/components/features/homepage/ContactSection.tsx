@@ -25,7 +25,7 @@ const ContactSection = memo(() => {
 			const ContactContent = () => (
 				<>
 					<span
-						className="mr-2 sm:mr-3 flex-shrink-0"
+						className="mr-2 sm:mr-3 shrink-0"
 						style={{
 							fontSize: '1.2rem',
 							color: 'inherit',
@@ -43,7 +43,7 @@ const ContactSection = memo(() => {
 				<a
 					key={index}
 					href={contact.href}
-					className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full hover:bg-white/30 transition-colors duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+					className="flex items-center p-2 sm:p-3 bg-white/20 dark:bg-gray-700 rounded-full hover:bg-white/30 transition-colors duration-300 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-blue-500/50"
 					style={{ textDecoration: 'none' }}
 					aria-label={`${contact.label}: ${displayValue}`}
 				>
@@ -64,17 +64,17 @@ const ContactSection = memo(() => {
 	return (
 		<section className="max-w-5xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
 			<div className="text-center mb-6 sm:mb-8">
-				<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+				<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
 					연락처 및 참여 방법
 				</h2>
-				<div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
+				<div className="w-20 h-1 bg-linear-to-r from-blue-500 to-purple-600 mx-auto rounded-full" />
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
 				{/* 모임장 연락처 */}
-				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
 					<div className="flex items-center mb-4 sm:mb-6">
-						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
+						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
 							<span
 								className="text-lg sm:text-xl text-white"
 								role="img"
@@ -94,9 +94,9 @@ const ContactSection = memo(() => {
 				</div>
 
 				{/* 참여 방법 */}
-				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
 					<div className="flex items-center mb-4 sm:mb-6">
-						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
+						<div className="w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4">
 							<span
 								className="text-lg sm:text-xl text-white"
 								role="img"
@@ -111,19 +111,19 @@ const ContactSection = memo(() => {
 					</div>
 
 					<div className="space-y-3 sm:space-y-4">
-						<div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+						<div className="p-3 sm:p-4 bg-linear-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
 							<div className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
 								네이버 카페:
 							</div>
 							<button
 								onClick={() => handleExternalLink(SITE_INFO.cafeUrl)}
-								className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded"
+								className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 rounded"
 								aria-label="네이버 카페로 이동"
 							>
 								<NaverCafeIcon size={20} />
 							</button>
 						</div>
-						<div className="p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+						<div className="p-3 sm:p-4 bg-linear-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
 							<div className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
 								소모임:
 							</div>
@@ -136,9 +136,9 @@ const ContactSection = memo(() => {
 			</div>
 
 			{/* 봉사 활동 절차 안내 */}
-			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50">
+			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50">
 				<div className="flex items-center mb-6 sm:mb-8">
-					<div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-4">
+					<div className="w-12 sm:w-14 h-12 sm:h-14 bg-linear-to-r from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg mr-4">
 						<span
 							className="text-xl sm:text-2xl text-white"
 							role="img"
@@ -156,11 +156,11 @@ const ContactSection = memo(() => {
 					{PROCESS_STEPS.map((step) => (
 						<div key={step.step} className="flex items-center">
 							<div
-								className={`flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-r ${step.gradient} rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg`}
+								className={`shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-r ${step.gradient} rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg mr-4 sm:mr-6 shadow-lg`}
 							>
 								{step.step}
 							</div>
-							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
+							<div className="flex-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-shadow duration-300">
 								<h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-base sm:text-lg">
 									{step.title}
 								</h4>
@@ -168,7 +168,7 @@ const ContactSection = memo(() => {
 									<p>{step.description}</p>
 
 									{step.danger && (
-										<div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 p-3 rounded-xl border-l-4 border-orange-400">
+										<div className="bg-linear-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 p-3 rounded-xl border-l-4 border-orange-400">
 											<p className="text-sm text-orange-700 dark:text-orange-300">
 												<strong>{step.danger.attention}: </strong>
 												{step.danger.title}
@@ -184,7 +184,7 @@ const ContactSection = memo(() => {
 									)}
 
 									{step.warning && (
-										<div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-3 rounded-xl border-l-4 border-yellow-400">
+										<div className="bg-linear-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-3 rounded-xl border-l-4 border-yellow-400">
 											<p className="text-sm text-yellow-700 dark:text-yellow-300">
 												<strong>{step.warning.attention}: </strong>
 												{step.warning.title}
@@ -204,7 +204,7 @@ const ContactSection = memo(() => {
 									)}
 
 									{step.note && (
-										<div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-3 rounded-xl border-l-4 border-blue-400">
+										<div className="bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-3 rounded-xl border-l-4 border-blue-400">
 											<h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">
 												{step.note.title}
 											</h5>

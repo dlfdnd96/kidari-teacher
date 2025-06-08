@@ -7,14 +7,14 @@ const StatCard = memo<ExtendedStatCardProps>(
 		return (
 			<div
 				className={cn(
-					'group bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl p-4 sm:p-6 w-full sm:w-40 transition-all duration-300 hover:-translate-y-2',
+					'group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-2xl shadow-lg hover:shadow-2xl p-4 sm:p-6 w-full sm:w-40 transition-all duration-300 hover:-translate-y-2',
 					borderColor,
 					className,
 				)}
 			>
 				<div
 					className={cn(
-						'text-2xl sm:text-3xl font-bold bg-gradient-to-r bg-clip-text text-transparent mb-2',
+						'text-2xl sm:text-3xl font-bold bg-linear-to-r bg-clip-text text-transparent mb-2',
 						gradient,
 					)}
 				>

@@ -34,7 +34,7 @@ export default function ErrorModal({
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="error-modal-title"
@@ -67,7 +67,7 @@ export default function ErrorModal({
 					</div>
 					<button
 						onClick={onClose}
-						className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+						className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-red-500/50"
 						aria-label="모달 닫기"
 					>
 						<svg
@@ -100,7 +100,7 @@ export default function ErrorModal({
 				<div className="flex justify-end">
 					<button
 						onClick={onClose}
-						className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+						className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-red-500/50"
 					>
 						확인
 					</button>

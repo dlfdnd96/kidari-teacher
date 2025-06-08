@@ -23,7 +23,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4"
 			aria-modal="true"
 			role="dialog"
 			tabIndex={-1}
@@ -34,7 +34,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 				<button
 					onClick={onClose}
 					aria-label="모달 닫기"
-					className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+					className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50"
 				>
 					<svg
 						className="w-6 h-6"
@@ -52,7 +52,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 				</button>
 
 				{/* 헤더 */}
-				<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-t-3xl p-6 sm:p-8">
+				<div className="bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-t-3xl p-6 sm:p-8">
 					<div className="flex items-start">
 						<div className="flex-1 min-w-0">
 							<h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">
@@ -100,7 +100,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 					<div className="my-8 border-t border-gray-200 dark:border-gray-700"></div>
 
 					{/* 추가 정보 */}
-					<div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-4 sm:p-6">
+					<div className="bg-linear-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-4 sm:p-6">
 						<div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
 							<div className="flex items-center">
 								<span className="mr-2" role="img" aria-label="정보">
@@ -125,7 +125,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 					<div className="flex justify-center">
 						<button
 							onClick={onClose}
-							className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
+							className="bg-linear-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-gray-500/50"
 						>
 							확인
 						</button>
