@@ -9,7 +9,7 @@ const NaverLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 	<button
 		type="button"
 		aria-label="네이버로 로그인"
-		className="w-full bg-[#03C75A] hover:bg-[#02B352] rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs"
+		className="w-full bg-[#03C75A] hover:bg-[#02B352] rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer"
 		onClick={() => signIn('naver')}
 		{...props}
 	>

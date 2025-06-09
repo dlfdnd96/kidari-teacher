@@ -1,24 +1,19 @@
 'use client'
 
-import { useState, memo, useCallback, useRef, useEffect } from 'react'
-import { useSession, signOut } from 'next-auth/react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import LoginModal from '@/components/features/auth/LoginModal'
-import LogoutButton from '@/components/common/LogoutButton'
 import { SITE_INFO } from '@/constants/homepage'
-import Image from 'next/image'
-import {
-	DEFAULT_PROFILE_IMG,
-	HOMEPAGE_LOGO_IMG,
-	LOGIN_LOGO_IMG,
-	LOGOUT_LOGO_IMG,
-} from '@/constants/navbar'
+import { CircleUserRound, Ellipsis, House, LogIn } from 'lucide-react'
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isMoreOpen, setIsMoreOpen] = useState(false)
+	const [isProfileOpen, setIsProfileOpen] = useState(false)
 	const moreRef = useRef<HTMLDivElement>(null)
+	const profileRef = useRef<HTMLDivElement>(null)
 	const { data: session, status } = useSession()
 	const pathname = usePathname()
 
@@ -50,6 +45,25 @@ const Navbar = memo(() => {
 			document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [isMoreOpen])
+
+	useEffect(() => {
+		if (!isProfileOpen) {
+			return
+		}
+
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				profileRef.current &&
+				!profileRef.current.contains(event.target as Node)
+			) {
+				setIsProfileOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [isProfileOpen])
 
 	const navLinks = [
 		{
@@ -100,17 +114,7 @@ const Navbar = memo(() => {
 				type="button"
 			>
 				{/* 점 3개 아이콘 */}
-				<svg
-					width="20"
-					height="20"
-					fill="none"
-					viewBox="0 0 24 24"
-					aria-hidden="true"
-				>
-					<circle cx="5" cy="12" r="2" fill="currentColor" />
-					<circle cx="12" cy="12" r="2" fill="currentColor" />
-					<circle cx="19" cy="12" r="2" fill="currentColor" />
-				</svg>
+				<Ellipsis />
 			</button>
 			{isMoreOpen && (
 				<div className="absolute right-2 top-14 z-50 min-w-[140px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
@@ -151,13 +155,7 @@ const Navbar = memo(() => {
 						className="block sm:hidden text-xl font-bold text-blue-600"
 						aria-label="홈"
 					>
-						<Image
-							width={256}
-							height={256}
-							src={HOMEPAGE_LOGO_IMG.src}
-							alt={HOMEPAGE_LOGO_IMG.alt}
-							className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
-						/>
+						<House />
 					</span>
 					<span className="hidden sm:block text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
 						{SITE_INFO.title}
@@ -175,54 +173,42 @@ const Navbar = memo(() => {
 					{status === 'loading' ? (
 						<div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
 					) : session ? (
-						<div className="flex items-center gap-2">
-							{/* 프로필 이미지 (없으면 기본) */}
-							<Image
-								width={256}
-								height={256}
-								src={session.user?.image || DEFAULT_PROFILE_IMG.src}
-								alt={DEFAULT_PROFILE_IMG.alt}
-								className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover ring-2 ring-gray-100"
+						<div className="flex items-center gap-2 relative" ref={profileRef}>
+							<CircleUserRound
+								onClick={() => setIsProfileOpen((prev) => !prev)}
+								className="cursor-pointer text-gray-600 hover:text-blue-600 transition-colors"
+								aria-label="프로필"
+								tabIndex={0}
+								role="button"
 							/>
-							{/* 로그아웃: 모바일은 간단한 텍스트, 데스크탑은 버튼 */}
-							<button
-								onClick={handleLogout}
-								className="ml-1 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors sm:hidden"
-								aria-label="로그아웃"
-								type="button"
-							>
-								<Image
-									width={256}
-									height={256}
-									src={LOGOUT_LOGO_IMG.src}
-									alt={LOGOUT_LOGO_IMG.alt}
-									className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
-								/>
-							</button>
-							<div className="hidden sm:block">
-								<LogoutButton />
-							</div>
+							{isProfileOpen && (
+								<div className="absolute right-0 top-12 z-50 min-w-[120px] bg-white border border-gray-200 rounded-xl shadow-lg py-2 animate-fade-in">
+									<button
+										onClick={() => {
+											handleLogout()
+											setIsProfileOpen(false)
+										}}
+										className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+									>
+										로그아웃
+									</button>
+								</div>
+							)}
 						</div>
 					) : (
 						<>
 							{/* 모바일: 간단한 텍스트, 데스크탑: 기존 버튼 */}
 							<button
 								onClick={handleOpenModal}
-								className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors sm:hidden"
+								className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors sm:hidden cursor-pointer"
 								aria-label="로그인"
 								type="button"
 							>
-								<Image
-									width={256}
-									height={256}
-									src={LOGIN_LOGO_IMG.src}
-									alt={LOGIN_LOGO_IMG.alt}
-									className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
-								/>
+								<LogIn />
 							</button>
 							<button
 								onClick={handleOpenModal}
-								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 cursor-pointer"
 								aria-label="로그인"
 								type="button"
 							>
