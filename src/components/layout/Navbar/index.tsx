@@ -5,14 +5,15 @@ import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import LoginModal from '@/components/features/auth/LoginModal'
-import LogoutButton from '@/components/common/LogoutButton'
 import { SITE_INFO } from '@/constants/homepage'
-import { CircleUserRound, Ellipsis, House, LogIn, LogOut } from 'lucide-react'
+import { CircleUserRound, Ellipsis, House, LogIn } from 'lucide-react'
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isMoreOpen, setIsMoreOpen] = useState(false)
+	const [isProfileOpen, setIsProfileOpen] = useState(false)
 	const moreRef = useRef<HTMLDivElement>(null)
+	const profileRef = useRef<HTMLDivElement>(null)
 	const { data: session, status } = useSession()
 	const pathname = usePathname()
 
@@ -44,6 +45,25 @@ const Navbar = memo(() => {
 			document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [isMoreOpen])
+
+	useEffect(() => {
+		if (!isProfileOpen) {
+			return
+		}
+
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				profileRef.current &&
+				!profileRef.current.contains(event.target as Node)
+			) {
+				setIsProfileOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [isProfileOpen])
 
 	const navLinks = [
 		{
@@ -153,21 +173,27 @@ const Navbar = memo(() => {
 					{status === 'loading' ? (
 						<div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
 					) : session ? (
-						<div className="flex items-center gap-2">
-							{/* 프로필 이미지 (없으면 기본) */}
-							<CircleUserRound />
-							{/* 로그아웃: 모바일은 간단한 텍스트, 데스크탑은 버튼 */}
-							<button
-								onClick={handleLogout}
-								className="ml-1 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors sm:hidden cursor-pointer"
-								aria-label="로그아웃"
-								type="button"
-							>
-								<LogOut />
-							</button>
-							<div className="hidden sm:block">
-								<LogoutButton />
-							</div>
+						<div className="flex items-center gap-2 relative" ref={profileRef}>
+							<CircleUserRound
+								onClick={() => setIsProfileOpen((prev) => !prev)}
+								className="cursor-pointer text-gray-600 hover:text-blue-600 transition-colors"
+								aria-label="프로필"
+								tabIndex={0}
+								role="button"
+							/>
+							{isProfileOpen && (
+								<div className="absolute right-0 top-12 z-50 min-w-[120px] bg-white border border-gray-200 rounded-xl shadow-lg py-2 animate-fade-in">
+									<button
+										onClick={() => {
+											handleLogout()
+											setIsProfileOpen(false)
+										}}
+										className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+									>
+										로그아웃
+									</button>
+								</div>
+							)}
 						</div>
 					) : (
 						<>
