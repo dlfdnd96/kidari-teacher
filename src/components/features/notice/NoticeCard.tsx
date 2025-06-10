@@ -103,6 +103,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 			<div
 				className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer relative"
 				onClick={handleCardClick}
+				data-testid="notice-card"
 			>
 				{/* 헤더 */}
 				<div className="flex items-start justify-between mb-4">
@@ -126,6 +127,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 								type="button"
 								aria-label="공지사항 수정"
 								disabled={isDeleting}
+								data-testid="edit-notice-button"
 							>
 								✏️ 수정
 							</button>
@@ -140,6 +142,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 									type="button"
 									aria-label="공지사항 삭제"
 									disabled={isDeleting || isUpdating}
+									data-testid="delete-notice-button"
 								>
 									🗑️ 삭제
 								</button>
@@ -166,6 +169,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 										disabled={isDeleting}
 										type="button"
 										aria-label="삭제 확인"
+										data-testid="confirm-delete-button"
 									>
 										{isDeleting ? (
 											<>

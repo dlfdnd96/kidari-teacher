@@ -101,7 +101,11 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 				)}
 
 				{/* 폼 */}
-				<form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8">
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="p-6 sm:p-8"
+					data-testid="notice-form-modal"
+				>
 					<div className="space-y-6">
 						{/* 제목 입력 */}
 						<div>
@@ -118,6 +122,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									placeholder="공지사항 제목을 입력하세요"
 									disabled={loading}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
+									data-testid="notice-title-input"
 								/>
 							</div>
 						</div>
@@ -138,6 +143,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									rows={6}
 									disabled={loading}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 resize-none"
+									data-testid="notice-content-input"
 								/>
 							</div>
 						</div>
@@ -164,6 +170,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 								type="submit"
 								disabled={loading || formState.isSubmitting || !session?.user}
 								className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+								data-testid="submit-notice-button"
 							>
 								{loading ? (
 									<>
