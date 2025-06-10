@@ -13,7 +13,10 @@
 		"lint": "next lint",
 		"format": "prettier --write .",
 		"lint-staged": "lint-staged",
-		"prepare": "node -e \"process.env.CI && process.exit(0)\" || husky"
+		"prepare": "node -e \"process.env.CI && process.exit(0)\" || husky",
+		"cypress:open": "cypress open",
+		"cypress:run": "cypress run",
+		"test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.0",
@@ -48,9 +51,11 @@
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
 		"@tailwindcss/postcss": "^4.1.8",
+		"@testing-library/cypress": "^10.0.3",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"cypress": "^14.4.1",
 		"eslint": "^9",
 		"eslint-config-next": "^15.3.3",
 		"husky": "^9.1.7",
@@ -58,6 +63,7 @@
 		"postcss": "^8",
 		"prettier": "^3.5.3",
 		"prisma": "^6.9.0",
+		"start-server-and-test": "^2.0.12",
 		"tailwindcss": "^4.1.8",
 		"typescript": "^5"
 	},
