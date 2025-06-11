@@ -50,3 +50,7 @@ prisma/migrations
 
 # webstorm
 .idea/
+
+# test
+cypress.env.json
+cypress/screenshots

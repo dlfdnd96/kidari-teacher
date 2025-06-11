@@ -40,7 +40,7 @@ export default function NoticeList({ notices, onViewDetail }: NoticeListProps) {
 	}
 
 	return (
-		<div className="space-y-6 sm:space-y-8">
+		<div className="space-y-6 sm:space-y-8" data-testid="notice-list">
 			{/* 공지사항 카드들 */}
 			<div className="space-y-4 sm:space-y-6">
 				{notices.map((notice, index) => (

@@ -263,6 +263,7 @@ function NoticePageClientContent({
 					onClick={handleOpenModal}
 					aria-label="공지사항 작성"
 					className="fixed bottom-8 right-8 z-50 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-hidden focus:ring-4 focus:ring-blue-500/30"
+					data-testid="create-notice-button"
 				>
 					<span className="text-3xl">+</span>
 				</button>

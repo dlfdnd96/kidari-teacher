@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import { notFound } from 'next/navigation'
 import { Enum } from '@/enums'
 import NoticePageClient from '@/components/features/notice/NoticePageClient'
@@ -9,9 +9,7 @@ import { NoticePageProps } from '@/types/notice'
 
 export async function generateMetadata({
 	searchParams,
-}: {
-	searchParams: Promise<{ page?: string }>
-}): Promise<Metadata> {
+}: NoticePageProps): Promise<Metadata> {
 	const resolvedSearchParams = await searchParams
 	const page = parseInt(resolvedSearchParams.page || '1', 10)
 

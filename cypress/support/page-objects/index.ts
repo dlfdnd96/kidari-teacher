@@ -1,0 +1,6 @@
+export { NoticeListPage } from './notice/NoticeListPage'
+export { NoticeDetailPage } from './notice/NoticeDetailPage'
+export { NoticeCreatePage } from './notice/NoticeCreatePage'
+export { NoticeEditPage } from './notice/NoticeEditPage'
+export { NoticeDeletePage } from './notice/NoticeDeletePage'
+export { NoticePage } from './notice/NoticePage'

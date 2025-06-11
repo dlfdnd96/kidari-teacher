@@ -103,6 +103,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 			<div
 				className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer relative"
 				onClick={handleCardClick}
+				data-testid="notice-card"
 			>
 				{/* 헤더 */}
 				<div className="flex items-start justify-between mb-4">
@@ -126,6 +127,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 								type="button"
 								aria-label="공지사항 수정"
 								disabled={isDeleting}
+								data-testid="edit-notice-button"
 							>
 								✏️ 수정
 							</button>
@@ -140,6 +142,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 									type="button"
 									aria-label="공지사항 삭제"
 									disabled={isDeleting || isUpdating}
+									data-testid="delete-notice-button"
 								>
 									🗑️ 삭제
 								</button>
@@ -147,6 +150,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 								<div className="flex gap-1">
 									<button
 										className="px-3 py-1.5 text-xs sm:text-sm bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-800/30 dark:hover:to-emerald-800/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 transition-all duration-200 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+										data-testid="delete-notice-cancel-button"
 										onClick={(e) => {
 											e.stopPropagation()
 											setShowDeleteConfirm(false)
@@ -166,6 +170,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 										disabled={isDeleting}
 										type="button"
 										aria-label="삭제 확인"
+										data-testid="delete-notice-confirm-button"
 									>
 										{isDeleting ? (
 											<>
