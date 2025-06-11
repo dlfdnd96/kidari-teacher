@@ -53,3 +53,4 @@ prisma/migrations
 
 # test
 cypress.env.json
+cypress/screenshots
