@@ -54,25 +54,27 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 								{notice.title}
 							</h2>
 							<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-blue-100">
-								<div className="flex items-center">
+								<div
+									className="flex items-center"
+									data-testid="notice-detail-author"
+								>
 									<span className="mr-2" role="img" aria-label="작성자">
 										👤
 									</span>
-									<span
-										className="text-sm font-medium"
-										data-testid="notice-detail-author"
-									>
+									<span className="text-sm font-medium">
 										{notice.author?.name ?? '관리자'}
 									</span>
 								</div>
-								<div className="flex items-center">
+								<div
+									className="flex items-center"
+									data-testid="notice-detail-date"
+								>
 									<span className="mr-2" role="img" aria-label="작성일">
 										📅
 									</span>
 									<time
 										dateTime={notice.createdAt.toLocaleDateString('ko-KR')}
 										className="text-sm"
-										data-testid="notice-detail-date"
 									>
 										{notice.createdAt.toLocaleDateString('ko-KR', {
 											year: 'numeric',

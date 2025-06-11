@@ -25,7 +25,7 @@ const NoticeModal: FC<NoticeModalProps> = ({ open, onClose }) => {
 	return (
 		<div
 			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4"
-			data-testid="create-notice-form-modal"
+			data-testid="create-create-notice-form-modal"
 			aria-modal="true"
 			role="dialog"
 			tabIndex={-1}

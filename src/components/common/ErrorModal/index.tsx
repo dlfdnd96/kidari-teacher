@@ -35,6 +35,7 @@ export default function ErrorModal({
 	return (
 		<div
 			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+			data-testid="error-modal"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="error-modal-title"
@@ -61,6 +62,7 @@ export default function ErrorModal({
 						<h2
 							id="error-modal-title"
 							className="text-lg font-semibold text-gray-900 dark:text-gray-100"
+							data-testid="error-modal-title"
 						>
 							{title}
 						</h2>
@@ -91,6 +93,7 @@ export default function ErrorModal({
 					<p
 						id="error-modal-description"
 						className="text-gray-600 dark:text-gray-300 leading-relaxed"
+						data-testid="error-modal-message"
 					>
 						{message}
 					</p>

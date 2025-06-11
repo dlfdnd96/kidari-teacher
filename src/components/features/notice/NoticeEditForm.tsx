@@ -108,7 +108,7 @@ const NoticeEditForm = memo(
 										placeholder="공지사항 제목을 입력하세요"
 										disabled={loading}
 										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
-										data-testid="notice-title-edit-input"
+										data-testid="edit-notice-title-input"
 									/>
 								</div>
 							</div>
@@ -129,7 +129,7 @@ const NoticeEditForm = memo(
 										rows={6}
 										disabled={loading}
 										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
-										data-testid="notice-content-edit-input"
+										data-testid="edit-notice-content-input"
 									/>
 								</div>
 							</div>
@@ -140,7 +140,7 @@ const NoticeEditForm = memo(
 									type="submit"
 									disabled={loading || formState.isSubmitting}
 									className="flex-1 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-									data-testid="submit-notice-edit-button"
+									data-testid="edit-notice-submit-button"
 								>
 									{loading ? (
 										<>

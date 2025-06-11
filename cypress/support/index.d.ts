@@ -6,5 +6,25 @@ declare namespace Cypress {
 		 * @example cy.login('ADMIN')
 		 */
 		login(role: string): Chainable<void>
+		cleanupTestData(dataType: string): Chainable<void>
+		interceptAPI(
+			method: string,
+			url: string,
+			alias: string,
+			response?: any,
+		): Chainable<void>
+		waitForLoading(selector?: string): Chainable<void>
+		checkToast(
+			message: string,
+			type?: 'success' | 'error' | 'warning' | 'info',
+		): Chainable<void>
+		checkAccessibility(): Chainable<void>
+		setViewport(device: 'mobile' | 'tablet' | 'desktop'): Chainable<void>
+		clearBrowserData(): Chainable<void>
+		uploadFile(
+			selector: string,
+			fileName: string,
+			fileType?: string,
+		): Chainable<void>
 	}
 }
