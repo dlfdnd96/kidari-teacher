@@ -31,7 +31,7 @@ describe('공지사항 CRUD 테스트', () => {
 		cy.get('[data-testid="notice-card"]').should('have.length.at.least', 0)
 	})
 
-	it.skip('공지사항 생성', () => {
+	it('공지사항 생성', () => {
 		cy.get('[data-testid="create-notice-button"]').click()
 		cy.get('[data-testid="create-notice-form-modal"]').should('be.visible')
 
@@ -56,7 +56,7 @@ describe('공지사항 CRUD 테스트', () => {
 			.and('contain', testNotice.content)
 	})
 
-	it.skip('공지사항 수정', () => {
+	it('공지사항 수정', () => {
 		cy.get('[data-testid="notice-card"]')
 			.first()
 			.find('[data-testid="edit-notice-button"]')
