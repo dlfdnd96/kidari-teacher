@@ -6,10 +6,14 @@ import { ZodEnum } from '@/enums'
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json()
+		if (body.NODE_ENV !== 'test' || body.CYPRESS !== 'true') {
+			return NextResponse.json({ message: 'Not found' }, { status: 404 })
+		}
+
 		const { role } = body
 		const [user, email, parsedRole] = z
 			.tuple([z.string(), z.string(), ZodEnum.Role])
-			.parse(['Test user', 'test@test.com', role])
+			.parse([body.TEST_USER, body.TEST_EMAIL, role])
 
 		const testUser = await prisma.user.upsert({
 			where: { email },
