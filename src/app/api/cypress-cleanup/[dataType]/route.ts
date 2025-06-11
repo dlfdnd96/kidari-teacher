@@ -3,17 +3,14 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod/v4'
 import { ZodEnum } from '@/enums'
 
-export async function DELETE(
-	request: NextRequest,
-	{ params }: { params: { dataType: string } },
-) {
+export async function DELETE(request: NextRequest) {
 	try {
 		const body = await request.json()
 		if (body.NODE_ENV !== 'test' || body.CYPRESS !== 'true') {
 			return NextResponse.json({ message: 'Not found' }, { status: 404 })
 		}
 
-		const dataType = ZodEnum.TestDataType.parse(params.dataType)
+		const dataType = ZodEnum.TestDataType.parse(body.params.dataType)
 		const testRunId = body.testRun || 'default'
 
 		let deletedCount = 0

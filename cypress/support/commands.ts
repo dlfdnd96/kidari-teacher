@@ -31,7 +31,11 @@ Cypress.Commands.add('cleanupTestData', (dataType: string) => {
 	cy.request({
 		method: 'DELETE',
 		url: `/api/cypress-cleanup/${dataType}`,
-		body: { testRun: Cypress.env('testRunId') || 'default', ...Cypress.env() },
+		body: {
+			testRun: Cypress.env('testRunId') || 'default',
+			params: { dataType },
+			...Cypress.env(),
+		},
 		failOnStatusCode: false,
 	}).then((response) => {
 		if (response.status === 200) {
