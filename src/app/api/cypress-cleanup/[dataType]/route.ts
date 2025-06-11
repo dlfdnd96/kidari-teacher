@@ -106,7 +106,7 @@ async function cleanupNotices(testRunId: string): Promise<number> {
 }
 
 // 테스트 사용자 정리
-async function cleanupTestUsers(testRunId: string): Promise<number> {
+async function cleanupTestUsers(_testRunId: string): Promise<number> {
 	await prisma.session.deleteMany({
 		where: {
 			user: {
@@ -134,7 +134,7 @@ async function cleanupTestUsers(testRunId: string): Promise<number> {
 }
 
 // 테스트 세션 정리
-async function cleanupTestSessions(testRunId: string): Promise<number> {
+async function cleanupTestSessions(_testRunId: string): Promise<number> {
 	const result = await prisma.session.deleteMany({
 		where: {
 			OR: [
