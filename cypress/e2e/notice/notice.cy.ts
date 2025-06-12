@@ -36,11 +36,18 @@ describe('공지사항 CRUD 테스트', () => {
 	})
 
 	describe('공지사항 조회', () => {
+		beforeEach(() => {
+			const noticeCreatePage = new NoticeCreatePage()
+			noticeCreatePage
+				.clickCreateButton()
+				.waitForCreateModal()
+				.fillCreateForm(testNotice.title, testNotice.content)
+				.submitCreateForm()
+		})
+
 		it('공지사항 목록을 조회할 수 있다', () => {
 			const noticeListPage = new NoticeListPage()
-			noticeListPage.getNoticeCards().should('have.length.at.least', 0)
-
-			cy.get(noticeSelectors.noticeList).should('be.visible')
+			noticeListPage.getNoticeCards().should('have.length.at.least', 1)
 		})
 
 		it('공지사항 상세 내용을 조회할 수 있다', () => {
