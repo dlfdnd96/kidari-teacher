@@ -80,25 +80,14 @@ const Navbar = memo(() => {
 					<Link
 						key={link.href}
 						href={link.href}
-						className={`group flex items-center gap-2.5 px-5 py-2.5 rounded-full font-medium transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transform ${
+						className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
 							link.isActive
-								? 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 ring-2 ring-blue-400/20'
-								: 'text-gray-600 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 hover:shadow-md'
+								? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
+								: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800'
 						}`}
 						aria-label={link.label}
 					>
-						<span
-							className={`text-sm font-medium ${
-								link.isActive
-									? 'text-white font-semibold drop-shadow-sm'
-									: 'group-hover:font-semibold'
-							}`}
-						>
-							{link.label}
-						</span>
-						{link.isActive && (
-							<div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full shadow-sm"></div>
-						)}
+						<span className="text-sm">{link.label}</span>
 					</Link>
 				)
 			})}
