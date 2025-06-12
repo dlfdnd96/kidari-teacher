@@ -8,6 +8,7 @@ import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { NoticeCardProps } from '@/types/notice'
+import { Calendar, PenLine, Trash, X } from 'lucide-react'
 
 const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	const { data: session } = useSession()
@@ -119,7 +120,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 					{isAdmin && (
 						<div className="flex gap-2 shrink-0">
 							<button
-								className="px-3 py-1.5 text-xs sm:text-sm bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/30 dark:hover:to-purple-800/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 transition-all duration-200 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+								className="flex items-center px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/30 dark:hover:to-purple-800/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 								onClick={(e) => {
 									e.stopPropagation()
 									handleEdit()
@@ -129,12 +130,13 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 								disabled={isDeleting}
 								data-testid="edit-notice-button"
 							>
-								✏️ 수정
+								<PenLine className="w-4 h-4 mr-1.5" />
+								<span>수정</span>
 							</button>
 
 							{!showDeleteConfirm ? (
 								<button
-									className="px-3 py-1.5 text-xs sm:text-sm bg-linear-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-full hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/30 dark:hover:to-pink-800/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700 transition-all duration-200 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+									className="flex items-center px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-full hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/30 dark:hover:to-pink-800/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 									onClick={(e) => {
 										e.stopPropagation()
 										setShowDeleteConfirm(true)
@@ -144,12 +146,13 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 									disabled={isDeleting || isUpdating}
 									data-testid="delete-notice-button"
 								>
-									🗑️ 삭제
+									<Trash className="w-4 h-4 mr-1.5" />
+									<span>삭제</span>
 								</button>
 							) : (
 								<div className="flex gap-1">
 									<button
-										className="px-3 py-1.5 text-xs sm:text-sm bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-800/30 dark:hover:to-emerald-800/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 transition-all duration-200 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+										className="flex items-center px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-800/30 dark:hover:to-emerald-800/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 										data-testid="delete-notice-cancel-button"
 										onClick={(e) => {
 											e.stopPropagation()
@@ -159,10 +162,11 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 										type="button"
 										aria-label="삭제 취소"
 									>
-										❌ 취소
+										<X className="w-4 h-4 mr-1.5" />
+										<span>취소</span>
 									</button>
 									<button
-										className="px-3 py-1.5 text-xs sm:text-sm bg-linear-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-full transition-all duration-200 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+										className="flex items-center px-3 py-1.5 text-xs sm:text-sm bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-full transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 										onClick={(e) => {
 											e.stopPropagation()
 											handleDelete()
@@ -174,11 +178,14 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 									>
 										{isDeleting ? (
 											<>
-												<div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1 inline-block" />
-												삭제중...
+												<div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
+												<span>삭제중...</span>
 											</>
 										) : (
-											<>🗑️ 확인</>
+											<>
+												<Trash className="w-4 h-4 mr-1.5" />
+												<span>확인</span>
+											</>
 										)}
 									</button>
 								</div>
@@ -204,30 +211,14 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 				{/* 푸터 */}
 				<div className="flex items-center justify-between pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
 					<div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-						<div className="w-6 h-6 bg-linear-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mr-2">
-							<span
-								className="text-white text-xs"
-								role="img"
-								aria-label="작성자"
-							>
-								👤
-							</span>
-						</div>
+						<PenLine className="w-4 h-4 mr-1.5" />
 						<span className="font-medium">
 							{notice.author?.name ?? '관리자'}
 						</span>
 					</div>
 
 					<div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-						<div className="w-6 h-6 bg-linear-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center mr-2">
-							<span
-								className="text-white text-xs"
-								role="img"
-								aria-label="작성일"
-							>
-								📅
-							</span>
-						</div>
+						<Calendar className="w-4 h-4 mr-1.5" />
 						<time dateTime={notice.createdAt.toLocaleDateString('ko-KR')}>
 							{notice.createdAt.toLocaleDateString('ko-KR', {
 								year: 'numeric',
@@ -239,7 +230,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 				</div>
 
 				{/* 액센트 라인 */}
-				<div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-blue-500 to-purple-600 rounded-b-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+				<div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 			</div>
 		</>
 	)
