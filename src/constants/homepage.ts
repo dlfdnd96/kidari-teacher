@@ -12,21 +12,21 @@ import type {
 
 export const HERO_STATS: StatCardProps[] = [
 	{
-		icon: '🏫',
+		icon: 'School',
 		value: '30+',
 		label: '참여 학교 수',
 		gradient: 'from-blue-500 to-purple-600',
 		borderColor: 'border-blue-100 dark:border-gray-700',
 	},
 	{
-		icon: '👥',
+		icon: 'Users',
 		value: '100+',
 		label: '전문직 봉사자 수',
 		gradient: 'from-purple-500 to-indigo-600',
 		borderColor: 'border-purple-100 dark:border-gray-700',
 	},
 	{
-		icon: '📊',
+		icon: 'BarChart3',
 		value: '80+',
 		label: '누적 활동 횟수',
 		gradient: 'from-indigo-500 to-blue-600',
@@ -36,25 +36,25 @@ export const HERO_STATS: StatCardProps[] = [
 
 export const PROFESSION_GROUPS: ProfessionGroupProps[] = [
 	{
-		icon: '⚖️',
+		icon: 'Scale',
 		title: '법률/의료',
 		description: '변호사, 의사, 치과의사, 한의사, 약사',
 		gradient: 'from-red-400 to-pink-500',
 	},
 	{
-		icon: '💰',
+		icon: 'DollarSign',
 		title: '금융/회계',
 		description: '회계사, 세무사, 보험계리사, CFA',
 		gradient: 'from-green-400 to-emerald-500',
 	},
 	{
-		icon: '⚙️',
+		icon: 'Settings',
 		title: '기술/공학',
 		description: 'IT전문가, 기계공학 박사, 생명공학 박사',
 		gradient: 'from-blue-400 to-cyan-500',
 	},
 	{
-		icon: '📋',
+		icon: 'Briefcase',
 		title: '기타 전문직',
 		description: '변리사, 감정평가사, 행시 출신 사무관, 노무사',
 		gradient: 'from-purple-400 to-indigo-500',
@@ -131,28 +131,28 @@ export const OTHER_TIME_SLOTS: TimeSlotProps[] = [
 
 export const IMPACT_STATS: ImpactStatProps[] = [
 	{
-		icon: '😊',
+		icon: 'Smile',
 		value: '95%',
 		label: '학생 만족도',
 		description: '참여 학생 설문조사 결과',
 		gradient: 'from-green-500 to-emerald-600',
 	},
 	{
-		icon: '👥',
+		icon: 'Users',
 		value: '1,000+',
 		label: '참여 학생 수',
 		description: '누적 강연 참석 학생',
 		gradient: 'from-blue-500 to-purple-600',
 	},
 	{
-		icon: '🎯',
+		icon: 'Target',
 		value: '85%',
 		label: '진로 도움도',
 		description: '진로 선택에 도움됨',
 		gradient: 'from-purple-500 to-pink-600',
 	},
 	{
-		icon: '⭐',
+		icon: 'Star',
 		value: '4.8/5',
 		label: '학교 평가',
 		description: '참여 학교 만족도',
@@ -162,7 +162,7 @@ export const IMPACT_STATS: ImpactStatProps[] = [
 
 export const CONTACT_METHODS: ContactMethodProps[] = [
 	{
-		icon: '💌',
+		icon: 'Mail',
 		label: '이메일',
 		value: 'academi9@naver.com',
 		type: 'email',
