@@ -90,7 +90,7 @@ const NoticeDetailModal: FC<NoticeDetailModalProps> = ({
 				</div>
 
 				{/* 내용 */}
-				<div className="p-6 sm:p-8 overflow-y-auto">
+				<div className="p-6 sm:p-8 overflow-y-auto max-h-[60vh]">
 					<div className="prose prose-gray dark:prose-invert max-w-none">
 						<div
 							className="text-gray-800 dark:text-gray-200 text-base sm:text-lg leading-relaxed whitespace-pre-wrap"
