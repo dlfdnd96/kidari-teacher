@@ -23,11 +23,9 @@ export class NoticeDetailPage extends NoticePage {
 	}
 
 	closeDetailModal() {
-		cy.get(noticeSelectors.detailModal).within(() => {
-			cy.get('.overflow-y-auto').scrollTo('bottom', { ensureScrollable: false })
-		})
+		cy.get(noticeSelectors.detailModal).should('be.visible')
 
-		cy.get(noticeSelectors.detailConfirm).should('exist').click({ force: true })
+		cy.get(noticeSelectors.detailConfirm).should('exist').click()
 
 		cy.get(noticeSelectors.detailModal).should('not.exist')
 		return this

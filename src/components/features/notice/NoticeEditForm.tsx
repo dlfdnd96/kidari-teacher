@@ -12,6 +12,7 @@ import { ZodError } from 'zod/v4'
 
 import { NoticeEditFormSchema } from '@/shared/schemas/notice'
 import { NoticeEditFormProps } from '@/types/notice'
+import { FileText, PenLine, Save, X } from 'lucide-react'
 
 const NoticeEditForm = memo(
 	({ id, initialTitle, initialContent, onCancel }: NoticeEditFormProps) => {
@@ -68,24 +69,13 @@ const NoticeEditForm = memo(
 					data-testid="notice-edit-form"
 				>
 					{/* 헤더 */}
-					<div className="bg-linear-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
+					<div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
 						<div className="flex items-center">
-							<div className="w-12 sm:w-16 h-12 sm:h-16 bg-white/20 backdrop-blur-xs rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
-								<span
-									className="text-2xl sm:text-3xl text-white"
-									role="img"
-									aria-label="수정"
-								>
-									✏️
-								</span>
-							</div>
+							<PenLine className="w-7 h-7 text-white mr-3" />
 							<div>
 								<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
 									공지사항 수정
 								</h2>
-								<p className="text-emerald-100 text-sm sm:text-base">
-									내용을 업데이트해보세요
-								</p>
 							</div>
 						</div>
 					</div>
@@ -97,9 +87,10 @@ const NoticeEditForm = memo(
 							<div>
 								<label
 									htmlFor="edit-title"
-									className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
 								>
-									📝 제목
+									<PenLine className="w-4 h-4 mr-2" />
+									<span>제목</span>
 								</label>
 								<div className="relative">
 									<Input
@@ -117,9 +108,10 @@ const NoticeEditForm = memo(
 							<div>
 								<label
 									htmlFor="edit-content"
-									className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
 								>
-									📄 내용
+									<FileText className="w-4 h-4 mr-2" />
+									<span>내용</span>
 								</label>
 								<div className="relative">
 									<Textarea
@@ -139,20 +131,18 @@ const NoticeEditForm = memo(
 								<Button
 									type="submit"
 									disabled={loading || formState.isSubmitting}
-									className="flex-1 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex-1 flex items-center justify-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 									data-testid="edit-notice-submit-button"
 								>
 									{loading ? (
 										<>
-											<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-											수정 중...
+											<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
+											<span>수정 중...</span>
 										</>
 									) : (
 										<>
-											<span className="mr-2" role="img" aria-label="저장">
-												💾
-											</span>
-											수정 완료
+											<Save className="w-4 h-4 mr-1.5" />
+											<span>수정</span>
 										</>
 									)}
 								</Button>
@@ -162,12 +152,10 @@ const NoticeEditForm = memo(
 									onClick={onCancel}
 									disabled={loading}
 									variant="outline"
-									className="flex-1 bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								>
-									<span className="mr-2" role="img" aria-label="취소">
-										❌
-									</span>
-									취소
+									<X className="w-4 h-4 mr-1.5" />
+									<span>취소</span>
 								</Button>
 							</div>
 						</div>

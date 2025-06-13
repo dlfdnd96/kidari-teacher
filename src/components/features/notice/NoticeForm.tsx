@@ -13,6 +13,7 @@ import { ZodError } from 'zod/v4'
 
 import { NoticeFormSchema } from '@/shared/schemas/notice'
 import { NoticeFormProps } from '@/types/notice'
+import { FileText, Lock, PenLine, Rocket, SquarePen, X } from 'lucide-react'
 
 const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 	const { register, handleSubmit, reset, formState } = useForm()
@@ -77,24 +78,13 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 			>
 				{/* 헤더 - 모달이 아닐 때만 표시 */}
 				{!isModal && (
-					<div className="bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 sm:p-8">
+					<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 sm:p-8">
 						<div className="flex items-center">
-							<div className="w-12 sm:w-16 h-12 sm:h-16 bg-white/20 backdrop-blur-xs rounded-2xl flex items-center justify-center mr-4 sm:mr-6">
-								<span
-									className="text-2xl sm:text-3xl text-white"
-									role="img"
-									aria-label="새 공지사항"
-								>
-									✍️
-								</span>
-							</div>
+							<SquarePen className="w-7 h-7 text-white mr-3" />
 							<div>
 								<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
 									새 공지사항 작성
 								</h2>
-								<p className="text-blue-100 text-sm sm:text-base">
-									중요한 정보를 공유해보세요
-								</p>
 							</div>
 						</div>
 					</div>
@@ -111,9 +101,10 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 						<div>
 							<label
 								htmlFor="notice-title"
-								className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
 							>
-								📝 제목
+								<PenLine className="w-4 h-4 mr-2" />
+								<span>제목</span>
 							</label>
 							<div className="relative">
 								<Input
@@ -131,9 +122,10 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 						<div>
 							<label
 								htmlFor="notice-content"
-								className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
 							>
-								📄 내용
+								<FileText className="w-4 h-4 mr-2" />
+								<span>내용</span>
 							</label>
 							<div className="relative">
 								<Textarea
@@ -158,38 +150,32 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 									onClick={onSuccess}
 									variant="outline"
 									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex items-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								>
-									<span className="mr-2" role="img" aria-label="취소">
-										❌
-									</span>
-									취소
+									<X className="w-4 h-4 mr-1.5" />
+									<span>취소</span>
 								</Button>
 							)}
 							<Button
 								type="submit"
 								disabled={loading || formState.isSubmitting || !session?.user}
-								className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+								className="flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 								data-testid="create-submit-notice-button"
 							>
 								{loading ? (
 									<>
-										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-										등록 중...
+										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
+										<span>등록 중...</span>
 									</>
 								) : !session?.user ? (
 									<>
-										<span className="mr-2" role="img" aria-label="로그인 필요">
-											🔒
-										</span>
-										로그인 필요
+										<Lock className="w-4 h-4 mr-1.5" />
+										<span>로그인 필요</span>
 									</>
 								) : (
 									<>
-										<span className="mr-2" role="img" aria-label="발행">
-											🚀
-										</span>
-										공지사항 등록
+										<Rocket className="w-4 h-4 mr-1.5" />
+										<span>등록</span>
 									</>
 								)}
 							</Button>

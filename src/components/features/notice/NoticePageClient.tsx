@@ -11,6 +11,7 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import { NoticePageClientProps } from '@/types/notice'
+import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
 
 const NoticeModal = dynamic(
 	() => import('@/components/features/notice/CreateNoticeModal'),
@@ -180,10 +181,8 @@ function NoticePageClientContent({
 	if (isError) {
 		return (
 			<div className="text-center py-12">
-				<div className="w-20 h-20 bg-linear-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-					<span className="text-2xl text-white" role="img" aria-label="오류">
-						⚠️
-					</span>
+				<div className="flex justify-center mb-6">
+					<OctagonX className="w-16 h-16 text-red-400 dark:text-red-500" />
 				</div>
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
 					공지사항을 불러올 수 없습니다
@@ -191,12 +190,15 @@ function NoticePageClientContent({
 				<p className="text-gray-500 dark:text-gray-400 mb-4">
 					{error?.message || '네트워크 오류가 발생했습니다.'}
 				</p>
-				<Button
-					onClick={() => refetch()}
-					className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-				>
-					다시 시도
-				</Button>
+				<div className="flex justify-center">
+					<Button
+						onClick={() => refetch()}
+						className="flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+					>
+						<RefreshCw className="w-4 h-4 mr-1.5" />
+						<span>다시 시도</span>
+					</Button>
+				</div>
 			</div>
 		)
 	}
@@ -217,34 +219,11 @@ function NoticePageClientContent({
 				</div>
 			)}
 
-			{/* 추가 정보 섹션 */}
-			{notices.length > 0 && (
-				<div className="mt-12 sm:mt-16">
-					<div className="bg-linear-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-3xl p-6 sm:p-8 border border-blue-100 dark:border-gray-600 text-center">
-						<div className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
-							💡 알림 설정
-						</div>
-						<p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl mx-auto">
-							새로운 공지사항이 등록되면 이메일이나 카카오톡으로 알림을 받고
-							싶으시다면,
-							<br className="hidden sm:block" />
-							관리자에게 문의해주세요.
-						</p>
-					</div>
-				</div>
-			)}
-
 			{/* 빈 상태 표시 */}
 			{notices.length === 0 && (
 				<div className="text-center py-12">
-					<div className="w-20 h-20 bg-linear-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-4">
-						<span
-							className="text-2xl text-white"
-							role="img"
-							aria-label="빈 상태"
-						>
-							📭
-						</span>
+					<div className="flex justify-center mb-6">
+						<CircleAlert className="w-16 h-16 text-gray-400 dark:text-gray-500" />
 					</div>
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
 						아직 등록된 공지사항이 없습니다
@@ -262,10 +241,10 @@ function NoticePageClientContent({
 				<button
 					onClick={handleOpenModal}
 					aria-label="공지사항 작성"
-					className="fixed bottom-8 right-8 z-50 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-hidden focus:ring-4 focus:ring-blue-500/30"
+					className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-500/30 cursor-pointer"
 					data-testid="create-notice-button"
 				>
-					<span className="text-3xl">+</span>
+					<Plus className="w-8 h-8" />
 				</button>
 			)}
 

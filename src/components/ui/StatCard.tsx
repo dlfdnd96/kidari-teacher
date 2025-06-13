@@ -1,6 +1,16 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
-import { ExtendedStatCardProps } from '@/types/ui'
+import { DynamicIcon } from '@/components/utils/IconMapper'
+
+interface ExtendedStatCardProps {
+	icon: string
+	value: string
+	label: string
+	description?: string
+	gradient: string
+	borderColor: string
+	className?: string
+}
 
 const StatCard = memo<ExtendedStatCardProps>(
 	({ icon, value, label, description, gradient, borderColor, className }) => {
@@ -14,7 +24,7 @@ const StatCard = memo<ExtendedStatCardProps>(
 			>
 				<div
 					className={cn(
-						'text-2xl sm:text-3xl font-bold bg-linear-to-r bg-clip-text text-transparent mb-2',
+						'text-2xl sm:text-3xl font-bold bg-gradient-to-r bg-clip-text text-transparent mb-2',
 						gradient,
 					)}
 				>
@@ -28,8 +38,15 @@ const StatCard = memo<ExtendedStatCardProps>(
 						{description}
 					</div>
 				)}
-				<div className="text-xl sm:text-2xl mt-2" role="img" aria-label={label}>
-					{icon}
+				<div className="flex justify-center mt-2" role="img" aria-label={label}>
+					<div
+						className={cn(
+							'w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-r shadow-lg',
+							gradient,
+						)}
+					>
+						<DynamicIcon name={icon} className="text-white" size={20} />
+					</div>
 				</div>
 			</div>
 		)
