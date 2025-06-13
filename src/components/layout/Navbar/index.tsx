@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import LoginModal from '@/components/features/auth/LoginModal'
 import { SITE_INFO } from '@/constants/homepage'
-import { CircleUserRound, Menu, LogIn, ChevronDown } from 'lucide-react'
+import { CircleUserRound, Menu, LogIn } from 'lucide-react'
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
