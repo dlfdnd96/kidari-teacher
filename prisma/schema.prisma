@@ -8,6 +8,10 @@ datasource db {
   url      = env("POSTGRES_DATABASE_URL")
 }
 
+// ============================================================================
+// 사용자 관리
+// ============================================================================
+
 model User {
   id            String       @id @default(cuid()) @map("id")
   name          String?      @db.VarChar(255) @map("name")
@@ -18,12 +22,37 @@ model User {
   createdAt     DateTime     @default(now()) @db.Timestamptz() @map("created_at")
   updatedAt     DateTime     @updatedAt @db.Timestamptz() @map("updated_at")
   deletedAt     DateTime?    @db.Timestamptz() @map("deleted_at")
-  accounts      Account[]
-  sessions      Session[]
-  notices       Notice[]
+
+  accounts              Account[]
+  sessions              Session[]
+  profile               UserProfile?
+  notices               Notice[]
+  volunteerActivities   VolunteerActivity[]
+  applications          Application[]
+  selections            Selection[]
 
   @@map("users")
 }
+
+model UserProfile {
+  id          String    @id @default(cuid()) @map("id")
+  userId      String    @unique @map("user_id")
+  phone       String?   @db.VarChar(20) @map("phone")
+  birthDate   DateTime? @db.Date @map("birth_date")
+  organization String?  @db.VarChar(255) @map("organization")
+  address     String?   @db.Text @map("address")
+  createdAt   DateTime  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt   DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt   DateTime? @db.Timestamptz() @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// ============================================================================
+// 인증 관련 (NextAuth)
+// ============================================================================
 
 model Account {
   id                         String    @id @default(cuid()) @map("id")
@@ -73,6 +102,72 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+// ============================================================================
+// 봉사활동 관리
+// ============================================================================
+
+model VolunteerActivity {
+  id                  String                    @id @default(cuid()) @map("id")
+  title               String                    @db.VarChar(255) @map("title")
+  description         String                    @db.Text @map("description")
+  startAt             DateTime                  @db.Timestamptz() @map("start_at")
+  endAt               DateTime                  @db.Timestamptz() @map("end_at")
+  location            String                    @db.VarChar(500) @map("location")
+  status              VolunteerActivityStatus   @default(PLANNING) @map("status")
+  applicationDeadline DateTime                  @db.Date() @map("application_deadline")
+  managerId           String                    @map("manager_id")
+  createdAt           DateTime                  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt           DateTime                  @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt           DateTime?                 @db.Timestamptz() @map("deleted_at")
+  maxParticipants     Int?                      @map("max_participants")
+  qualifications      String?                   @db.Text @map("qualifications")
+  materials           String?                   @db.Text @map("materials")
+
+  manager      User           @relation(fields: [managerId], references: [id])
+  applications Application[]
+
+  @@map("volunteer_activities")
+}
+
+model Application {
+  id                   String            @id @default(cuid()) @map("id")
+  userId               String            @map("user_id")
+  volunteerActivityId  String            @map("volunteer_activity_id")
+  emergencyContact     String            @db.VarChar(100) @map("emergency_contact")
+  status               ApplicationStatus @default(WAITING) @map("status")
+  createdAt            DateTime          @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt            DateTime          @updatedAt @db.Timestamptz() @map("updated_at")
+  deletedAt            DateTime?         @db.Timestamptz() @map("deleted_at")
+
+  user              User              @relation(fields: [userId], references: [id])
+  volunteerActivity VolunteerActivity @relation(fields: [volunteerActivityId], references: [id])
+  selection         Selection?
+
+  @@unique([userId, volunteerActivityId])
+  @@map("applications")
+}
+
+model Selection {
+  id              String    @id @default(cuid()) @map("id")
+  applicationId   String    @unique @map("application_id")
+  isSelected      Boolean   @map("is_selected")
+  selectedById    String    @map("selected_by_id")
+  createdAt       DateTime  @default(now()) @db.Timestamptz() @map("created_at")
+  updatedAt       DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
+  selectionOrder  Int?      @map("selection_order")
+  waitingOrder    Int?      @map("waiting_order")
+  notes           String?   @db.Text @map("notes")
+
+  application  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  selectedBy   User        @relation(fields: [selectedById], references: [id])
+
+  @@map("selections")
+}
+
+// ============================================================================
+// 커뮤니케이션
+// ============================================================================
+
 model Notice {
   id          String    @id @default(cuid()) @map("id")
   title       String    @db.VarChar(255) @map("title")
@@ -82,13 +177,33 @@ model Notice {
   createdAt   DateTime  @default(now()) @db.Timestamptz() @map("created_at")
   updatedAt   DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
   deletedAt   DateTime? @db.Timestamptz() @map("deleted_at")
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  author User @relation(fields: [authorId], references: [id])
 
   @@index([createdAt(sort: Desc), isPublished, deletedAt])
   @@map("notices")
 }
 
+// ============================================================================
+// Enum 정의
+// ============================================================================
+
 enum Role {
   USER  @map("USER")
   ADMIN @map("ADMIN")
+}
+
+enum VolunteerActivityStatus {
+  PLANNING              @map("PLANNING")              // 일정 계획 중
+  RECRUITING            @map("RECRUITING")            // 신청 접수 중
+  SELECTED              @map("SELECTED")              // 선발 완료
+  IN_PROGRESS           @map("IN_PROGRESS")           // 교육 진행 중
+  COMPLETED             @map("COMPLETED")             // 완료
+  CANCELLED             @map("CANCELLED")             // 취소됨
+}
+
+enum ApplicationStatus {
+  WAITING   @map("WAITING")   // 대기자
+  SELECTED  @map("SELECTED")  // 선발됨
+  REJECTED  @map("REJECTED")  // 탈락
 }

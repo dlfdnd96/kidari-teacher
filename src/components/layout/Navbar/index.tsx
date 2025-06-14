@@ -69,14 +69,21 @@ const Navbar = memo(() => {
 		{
 			href: '/notice',
 			label: '공지사항',
-			isActive: pathname === '/notice',
+			isActive: pathname === '/notice' || pathname.startsWith('/notice/'),
+		},
+		{
+			href: '/volunteer-activities',
+			label: '봉사활동',
+			isActive:
+				pathname === '/volunteer-activities' ||
+				pathname.startsWith('/volunteer-activities/'),
 		},
 	]
 
 	return (
 		<>
 			<nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100/50 fixed top-0 left-0 z-40">
-				{/* 왼쪽 - 햄버거 메뉴 + 공지사항 */}
+				{/* 왼쪽 - 햄버거 메뉴 + 네비게이션 링크들 */}
 				<div className="flex items-center gap-3 flex-1" ref={menuRef}>
 					<button
 						onClick={handleMenuToggle}
@@ -87,12 +94,12 @@ const Navbar = memo(() => {
 						<Menu size={20} className="text-gray-600" />
 					</button>
 
-					{/* 데스크탑 공지사항 링크 */}
-					<div className="hidden sm:flex items-center">
+					{/* 데스크탑 네비게이션 링크들 */}
+					<div className="hidden sm:flex items-center gap-2">
 						<Link
 							href="/notice"
 							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-								pathname === '/notice'
+								pathname === '/notice' || pathname.startsWith('/notice/')
 									? 'text-blue-600 bg-blue-50 font-semibold'
 									: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
 							}`}
@@ -100,20 +107,36 @@ const Navbar = memo(() => {
 						>
 							공지사항
 						</Link>
+						<Link
+							href="/volunteer-activities"
+							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+								pathname === '/volunteer-activities' ||
+								pathname.startsWith('/volunteer-activities/')
+									? 'text-emerald-600 bg-emerald-50 font-semibold'
+									: 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
+							}`}
+							aria-label="봉사활동"
+						>
+							봉사활동
+						</Link>
 					</div>
 
 					{/* 드롭다운 메뉴 */}
 					{isMenuOpen && (
-						<div className="absolute left-4 top-14 z-50 min-w-[140px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
+						<div className="absolute left-4 top-14 z-50 min-w-[160px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
 							{navLinks.map((link) => {
+								const isNotice = link.href === '/notice'
+								const activeColor = isNotice ? 'blue' : 'emerald'
+								const hoverColor = isNotice ? 'blue' : 'emerald'
+
 								return (
 									<Link
 										key={link.href}
 										href={link.href}
-										className={`group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-sm ${
+										className={`group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all duration-200 ${
 											link.isActive
-												? 'text-blue-600 bg-gradient-to-r from-blue-50 to-purple-50 font-semibold shadow-sm'
-												: 'text-gray-700 hover:text-blue-600'
+												? `text-${activeColor}-600 bg-gradient-to-r from-${activeColor}-50 to-${activeColor}-50 font-semibold shadow-sm`
+												: `text-gray-700 hover:text-${hoverColor}-600 hover:bg-gradient-to-r hover:from-${hoverColor}-50 hover:to-${hoverColor}-50 hover:shadow-sm`
 										}`}
 										aria-label={link.label}
 										onClick={() => setIsMenuOpen(false)}
@@ -122,7 +145,9 @@ const Navbar = memo(() => {
 											{link.label}
 										</span>
 										{link.isActive && (
-											<div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+											<div
+												className={`ml-auto w-2 h-2 bg-${activeColor}-600 rounded-full`}
+											></div>
 										)}
 									</Link>
 								)
