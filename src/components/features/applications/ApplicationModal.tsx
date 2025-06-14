@@ -1,13 +1,13 @@
 'use client'
 
 import React, { FC, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
 import ApplicationForm from './ApplicationForm'
 import type { ApplicationModalProps } from '@/types/application'
-import { FileText } from 'lucide-react'
+import { FileText, X } from 'lucide-react'
 import { ZodType } from '@/shared/types'
 import { ApplicationFormSchema } from '@/shared/schemas/application'
 
@@ -26,8 +26,11 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 	const createApplicationMutation =
 		trpc.application.createApplication.useMutation({
 			onSuccess: async () => {
-				await utils.application.getMyApplicationList.invalidate()
-				await utils.volunteerActivity.getVolunteerActivityList.invalidate()
+				// 봉사활동 목록과 내 신청 내역 새로고침
+				await Promise.all([
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getMyApplicationList.invalidate(),
+				])
 				router.refresh()
 				onClose()
 			},
@@ -57,7 +60,7 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 				showError(errorMessage, '봉사활동 신청 오류')
 			}
 		},
-		[createApplicationMutation, volunteerActivityId, session, showError],
+		[createApplicationMutation, session, showError, volunteerActivityId],
 	)
 
 	const handleBackdropClick = useCallback(
@@ -77,7 +80,7 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
 			data-testid="application-modal"
 			aria-modal="true"
 			role="dialog"
@@ -91,19 +94,7 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 					aria-label="모달 닫기"
 					className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
 				>
-					<svg
-						className="w-6 h-6"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
+					<X className="w-6 h-6" />
 				</button>
 
 				{/* 모달 헤더 */}
@@ -114,15 +105,30 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 							<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
 								봉사활동 신청
 							</h2>
-							<p className="text-blue-100 text-sm">
-								신청 정보를 입력하고 봉사활동에 참여하세요
-							</p>
+							<p className="text-blue-100 text-sm">{volunteerActivityTitle}</p>
+						</div>
+					</div>
+				</div>
+
+				{/* 안내 메시지 */}
+				<div className="p-6 sm:p-8 pb-4">
+					<div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
+						<div className="flex items-start gap-3">
+							<FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+							<div className="text-blue-800 dark:text-blue-200">
+								<div className="font-medium mb-1">신청 전 확인사항</div>
+								<ul className="text-sm space-y-1">
+									<li>• 신청 후 취소는 활동 시작 전까지만 가능합니다</li>
+									<li>• 선발 결과는 신청 마감 후 안내드립니다</li>
+									<li>• 긴급연락처는 정확히 입력해주세요</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
 
 				{/* 폼 컨테이너 */}
-				<div className="p-6 sm:p-8">
+				<div className="px-6 sm:px-8 pb-6 sm:pb-8">
 					<ApplicationForm
 						volunteerActivityId={volunteerActivityId}
 						volunteerActivityTitle={volunteerActivityTitle}

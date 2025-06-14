@@ -205,7 +205,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 											<>
 												<button
 													onClick={() =>
-														onUpdateStatus?.(application, 'SELECTED')
+														onUpdateStatus?.(application.id, 'SELECTED')
 													}
 													className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
 												>
@@ -213,7 +213,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 												</button>
 												<button
 													onClick={() =>
-														onUpdateStatus?.(application, 'REJECTED')
+														onUpdateStatus?.(application.id, 'REJECTED')
 													}
 													className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
 												>
@@ -223,7 +223,9 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 										)}
 										{application.status === 'SELECTED' && (
 											<button
-												onClick={() => onUpdateStatus?.(application, 'WAITING')}
+												onClick={() =>
+													onUpdateStatus?.(application.id, 'WAITING')
+												}
 												className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
 											>
 												대기 상태로 변경
@@ -231,7 +233,9 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 										)}
 										{application.status === 'REJECTED' && (
 											<button
-												onClick={() => onUpdateStatus?.(application, 'WAITING')}
+												onClick={() =>
+													onUpdateStatus?.(application.id, 'WAITING')
+												}
 												className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
 											>
 												대기 상태로 변경

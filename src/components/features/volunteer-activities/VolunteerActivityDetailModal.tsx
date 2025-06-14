@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import {
 	Calendar,
 	MapPin,
@@ -11,6 +11,10 @@ import {
 	Package,
 	AlertCircle,
 	X,
+	ChevronDown,
+	Eye,
+	Phone,
+	Mail,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -19,6 +23,12 @@ import {
 	VOLUNTEER_ACTIVITY_STATUS_LABELS,
 	VOLUNTEER_ACTIVITY_STATUS_COLORS,
 } from '@/types/volunteer-activity'
+import {
+	APPLICATION_STATUS_LABELS,
+	APPLICATION_STATUS_COLORS,
+} from '@/types/application'
+import { ZodEnum } from '@/enums'
+import { ZodType } from '@/shared/types'
 
 const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	open,
@@ -26,6 +36,8 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	activity,
 	onApply,
 	onEdit,
+	onUpdateApplicationStatus,
+	onViewApplicationDetail,
 	currentUserId,
 	userRole,
 }) => {
@@ -54,6 +66,23 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 		VOLUNTEER_ACTIVITY_STATUS_LABELS[activity.status] || activity.status
 
 	const isDeadlinePassed = new Date() > new Date(activity.applicationDeadline)
+
+	// 신청자 상태 변경 핸들러
+	const handleStatusChange = useCallback(
+		(applicationId: string, newStatus: string) => {
+			const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
+			onUpdateApplicationStatus?.(applicationId, parsedNewStatus)
+		},
+		[onUpdateApplicationStatus],
+	)
+
+	// 신청자 상세 보기 핸들러
+	const handleViewApplication = useCallback(
+		(applicationId: string) => {
+			onViewApplicationDetail?.(applicationId)
+		},
+		[onViewApplicationDetail],
+	)
 
 	return (
 		<div
@@ -294,10 +323,154 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 								</div>
 							</>
 						)}
+
+						{/* 관리자용 신청자 관리 섹션 */}
+						{isManager &&
+							activity.applications &&
+							activity.applications.length > 0 && (
+								<>
+									<div className="border-t border-gray-200 dark:border-gray-700"></div>
+									<div className="space-y-4">
+										<div className="flex items-center gap-2">
+											<Users className="h-5 w-5 text-blue-600" />
+											<h3 className="font-semibold text-gray-900 dark:text-gray-100">
+												신청자 관리 ({activity.applications.length}명)
+											</h3>
+										</div>
+
+										<div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+											<div className="space-y-3">
+												{activity.applications.map((application) => {
+													const statusColor =
+														APPLICATION_STATUS_COLORS[application.status] ||
+														'bg-gray-100 text-gray-800'
+													const statusLabel =
+														APPLICATION_STATUS_LABELS[application.status] ||
+														application.status
+
+													return (
+														<div
+															key={application.id}
+															className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+														>
+															<div className="flex items-center justify-between">
+																<div className="flex-1 min-w-0">
+																	<div className="flex items-center gap-3 mb-2">
+																		<div className="flex items-center gap-2">
+																			<User className="w-4 h-4 text-gray-500" />
+																			<span className="font-medium text-gray-900 dark:text-gray-100">
+																				{application.user?.name || '사용자'}
+																			</span>
+																		</div>
+																		<div
+																			className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
+																		>
+																			{statusLabel}
+																		</div>
+																	</div>
+
+																	<div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+																		<div className="flex items-center gap-1">
+																			<Mail className="w-3 h-3" />
+																			<span>
+																				{application.user?.email ||
+																					'이메일 없음'}
+																			</span>
+																		</div>
+																		<div className="flex items-center gap-1">
+																			<Phone className="w-3 h-3" />
+																			<span>
+																				{application.emergencyContact}
+																			</span>
+																		</div>
+																		<div className="flex items-center gap-1">
+																			<Clock className="w-3 h-3" />
+																			<span>
+																				{format(
+																					new Date(application.createdAt),
+																					'M월 d일',
+																					{ locale: ko },
+																				)}
+																			</span>
+																		</div>
+																	</div>
+																</div>
+
+																<div className="flex items-center gap-2 ml-4">
+																	{/* 신청 상세 보기 버튼 */}
+																	<button
+																		onClick={() =>
+																			handleViewApplication(application.id)
+																		}
+																		className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+																		title="상세 보기"
+																	>
+																		<Eye className="w-4 h-4" />
+																	</button>
+
+																	{/* 상태 변경 드롭다운 */}
+																	<div className="relative">
+																		<select
+																			value={application.status}
+																			onChange={(e) =>
+																				handleStatusChange(
+																					application.id,
+																					e.target.value,
+																				)
+																			}
+																			className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+																		>
+																			<option value="WAITING">대기 중</option>
+																			<option value="SELECTED">선발됨</option>
+																			<option value="REJECTED">불합격</option>
+																			<option value="CANCELLED">취소됨</option>
+																		</select>
+																		<ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+																	</div>
+																</div>
+															</div>
+														</div>
+													)
+												})}
+											</div>
+
+											{/* 일괄 작업 버튼들 (선택사항) */}
+											<div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+												<div className="flex flex-wrap gap-2">
+													<button
+														onClick={() => {
+															activity.applications?.forEach((app) => {
+																if (app.status === 'WAITING') {
+																	handleStatusChange(app.id, 'SELECTED')
+																}
+															})
+														}}
+														className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
+													>
+														대기자 전체 선발
+													</button>
+													<button
+														onClick={() => {
+															activity.applications?.forEach((app) => {
+																if (app.status === 'WAITING') {
+																	handleStatusChange(app.id, 'REJECTED')
+																}
+															})
+														}}
+														className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
+													>
+														대기자 전체 불합격
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</>
+							)}
 					</div>
 				</div>
 
-				{/* 푸터 */}
+				{/* 푸터 - 업데이트된 부분 */}
 				<div className="border-t border-gray-200 dark:border-gray-700 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 rounded-b-3xl shrink-0">
 					<div className="flex flex-col sm:flex-row gap-3 justify-center">
 						<button
@@ -307,18 +480,46 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 							닫기
 						</button>
 
-						{/* 신청 버튼 */}
-						{currentUserId && !isManager && canApply && !isFullyBooked && (
-							<button
-								onClick={() => onApply?.(activity)}
-								disabled={hasApplied}
-								className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-							>
-								{hasApplied ? '신청 완료' : '신청하기'}
-							</button>
+						{/* 신청 버튼 - 조건 분리 */}
+						{currentUserId && (
+							<>
+								{/* 신청 가능한 경우 */}
+								{canApply && !isFullyBooked && !hasApplied && (
+									<button
+										onClick={() => onApply?.(activity)}
+										className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
+									>
+										신청하기
+									</button>
+								)}
+
+								{/* 이미 신청한 경우 */}
+								{hasApplied && (
+									<button
+										disabled
+										className="bg-gray-400 text-white font-semibold px-6 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+									>
+										신청 완료
+									</button>
+								)}
+
+								{/* 신청 불가능한 경우 (마감, 정원 초과 등) */}
+								{!canApply && !hasApplied && (
+									<button
+										disabled
+										className="bg-gray-400 text-white font-semibold px-6 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+									>
+										{isDeadlinePassed
+											? '마감됨'
+											: isFullyBooked
+												? '정원 마감'
+												: '신청 불가'}
+									</button>
+								)}
+							</>
 						)}
 
-						{/* 수정 버튼 */}
+						{/* 수정 버튼 (관리자/매니저만) */}
 						{isManager && (
 							<button
 								onClick={() => onEdit?.(activity)}

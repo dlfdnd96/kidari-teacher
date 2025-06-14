@@ -3,6 +3,7 @@ import {
 	ApplicationEntitySchema,
 	ApplicationFormSchema,
 } from '@/shared/schemas/application'
+import { ZodEnum } from '@/enums'
 
 export interface ApplicationFormProps {
 	volunteerActivityId: string
@@ -67,8 +68,8 @@ export interface ApplicationDetailModalProps {
 	open: boolean
 	onClose: () => void
 	onUpdateStatus?: (
-		application: ZodType<typeof ApplicationEntitySchema>,
-		status: string,
+		applicationId: string,
+		status: ZodType<typeof ZodEnum.ApplicationStatus>,
 	) => void
 	onDelete?: (application: ZodType<typeof ApplicationEntitySchema>) => void
 	currentUserId?: string

@@ -36,9 +36,8 @@ const VolunteerActivityDetailModal = dynamic(
 	},
 )
 
-// 신청 모달 동적 임포트 추가
 const ApplicationModal = dynamic(
-	() => import('@/components/features/applications/ApplicationModal'),
+	() => import('../applications/ApplicationModal'),
 	{
 		ssr: false,
 		loading: () => null,
@@ -49,16 +48,14 @@ function VolunteerActivityPageClientContent({
 	isAdmin,
 	initialPage = 1,
 }: VolunteerActivityPageClientProps) {
-	const { data: session } = useSession()
 	const searchParams = useSearchParams()
+	const { data: session } = useSession()
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedActivity, setSelectedActivity] = useState<ZodType<
 		typeof VolunteerActivityEntitySchema
 	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
-
-	// 신청 모달 상태 추가
 	const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false)
 	const [applicationActivity, setApplicationActivity] = useState<ZodType<
 		typeof VolunteerActivityEntitySchema
@@ -143,17 +140,19 @@ function VolunteerActivityPageClientContent({
 		setSelectedActivity(null)
 	}, [])
 
-	// 신청 기능 추가
+	// 신청 모달 관련 핸들러들
 	const handleApply = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
 			if (!session?.user) {
-				// 로그인이 필요한 경우 로그인 페이지로 리다이렉트
-				window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent(window.location.pathname)}`
+				// 로그인하지 않은 경우 로그인 유도
+				alert('로그인이 필요합니다.')
 				return
 			}
 
 			setApplicationActivity(activity)
 			setIsApplicationModalOpen(true)
+			// 상세 모달이 열려있다면 닫기
+			setIsDetailOpen(false)
 		},
 		[session],
 	)
@@ -162,6 +161,14 @@ function VolunteerActivityPageClientContent({
 		setIsApplicationModalOpen(false)
 		setApplicationActivity(null)
 	}, [])
+
+	// 상세 모달에서 신청하기 버튼 클릭 시
+	const handleApplyFromDetail = useCallback(
+		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
+			handleApply(activity)
+		},
+		[handleApply],
+	)
 
 	const showLoading = isLoading || isPageChanging || isFetching
 
@@ -267,9 +274,9 @@ function VolunteerActivityPageClientContent({
 				activities={activities}
 				onViewDetail={handleViewDetail}
 				onApply={handleApply}
-				currentUserId={session?.user?.id}
-				userRole={session?.user?.role as 'USER' | 'ADMIN'}
 				totalCount={totalCount}
+				currentUserId={session?.user?.id}
+				userRole={session?.user?.role}
 			/>
 
 			{/* 페이지네이션 */}
@@ -301,7 +308,7 @@ function VolunteerActivityPageClientContent({
 			)}
 
 			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
-			{isAdmin && !isDetailOpen && (
+			{isAdmin && !isDetailOpen && !isApplicationModalOpen && (
 				<button
 					onClick={handleOpenModal}
 					aria-label="봉사활동 생성"
@@ -316,16 +323,17 @@ function VolunteerActivityPageClientContent({
 				open={isModalOpen}
 				onClose={handleCloseModal}
 			/>
+
 			<VolunteerActivityDetailModal
 				open={isDetailOpen}
 				onClose={handleCloseDetail}
 				activity={selectedActivity}
-				onApply={handleApply}
+				onApply={handleApplyFromDetail}
 				currentUserId={session?.user?.id}
-				userRole={session?.user?.role as 'USER' | 'ADMIN'}
+				userRole={session?.user?.role}
 			/>
 
-			{/* 신청 모달 추가 */}
+			{/* 신청 모달 */}
 			{applicationActivity && (
 				<ApplicationModal
 					open={isApplicationModalOpen}

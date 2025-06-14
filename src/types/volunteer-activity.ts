@@ -1,3 +1,4 @@
+import { ZodEnum } from '@/enums'
 import {
 	CreateVolunteerActivityInputSchema,
 	VolunteerActivityEntitySchema,
@@ -44,6 +45,11 @@ export interface VolunteerActivityDetailModalProps {
 	onClose: () => void
 	onApply?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
 	onEdit?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
+	onUpdateApplicationStatus?: (
+		applicationId: string,
+		newStatus: ZodType<typeof ZodEnum.ApplicationStatus>,
+	) => void
+	onViewApplicationDetail?: (applicationId: string) => void
 	currentUserId?: string
 	userRole?: 'USER' | 'ADMIN'
 }

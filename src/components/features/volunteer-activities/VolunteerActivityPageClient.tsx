@@ -2,6 +2,7 @@
 
 import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import VolunteerActivityList from './VolunteerActivityList'
 import Pagination from '@/components/features/pagination/Pagination'
@@ -12,9 +13,13 @@ import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import type { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
 import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
+import { ZodEnum } from '@/enums'
 
 const CreateVolunteerActivityModal = dynamic(
-	() => import('./CreateVolunteerActivityModal'),
+	() =>
+		import(
+			'@/components/features/volunteer-activities/CreateVolunteerActivityModal'
+		),
 	{
 		ssr: false,
 		loading: () => null,
@@ -22,7 +27,26 @@ const CreateVolunteerActivityModal = dynamic(
 )
 
 const VolunteerActivityDetailModal = dynamic(
-	() => import('./VolunteerActivityDetailModal'),
+	() =>
+		import(
+			'@/components/features/volunteer-activities/VolunteerActivityDetailModal'
+		),
+	{
+		ssr: false,
+		loading: () => null,
+	},
+)
+
+const ApplicationDetailModal = dynamic(
+	() => import('@/components/features/applications/ApplicationDetailModal'),
+	{
+		ssr: false,
+		loading: () => null,
+	},
+)
+
+const ApplicationModal = dynamic(
+	() => import('@/components/features/applications/ApplicationModal'),
 	{
 		ssr: false,
 		loading: () => null,
@@ -34,12 +58,38 @@ function VolunteerActivityPageClientContent({
 	initialPage = 1,
 }: VolunteerActivityPageClientProps) {
 	const searchParams = useSearchParams()
+	const utils = trpc.useUtils()
+
+	// 신청 상태 업데이트 뮤테이션
+	const updateApplicationStatusMutation =
+		trpc.application.updateApplicationStatus.useMutation({
+			onSuccess: async () => {
+				// 봉사활동 목록과 내 신청 내역 새로고침
+				await Promise.all([
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getMyApplicationList.invalidate(),
+				])
+			},
+			onError: (error) => {
+				console.error('Status update error:', error)
+				alert('상태 변경 중 오류가 발생했습니다.')
+			},
+		})
+
+	const { data: session } = useSession()
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedActivity, setSelectedActivity] = useState<ZodType<
 		typeof VolunteerActivityEntitySchema
 	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
+	const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false)
+	const [applicationActivity, setApplicationActivity] = useState<ZodType<
+		typeof VolunteerActivityEntitySchema
+	> | null>(null)
+	const [selectedApplicationId, setSelectedApplicationId] = useState<
+		string | null
+	>(null)
 
 	const [currentPage, setCurrentPage] = useState(initialPage)
 	const [isPageChanging, setIsPageChanging] = useState(false)
@@ -120,13 +170,63 @@ function VolunteerActivityPageClientContent({
 		setSelectedActivity(null)
 	}, [])
 
+	// 신청 모달 관련 핸들러들
 	const handleApply = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
-			// 신청 기능은 별도로 구현 예정
-			console.log('Apply to activity:', activity.id)
+			if (!session?.user) {
+				// 로그인하지 않은 경우 로그인 유도
+				alert('로그인이 필요합니다.')
+				return
+			}
+
+			setApplicationActivity(activity)
+			setIsApplicationModalOpen(true)
+			// 상세 모달이 열려있다면 닫기
+			setIsDetailOpen(false)
 		},
-		[],
+		[session],
 	)
+
+	const handleCloseApplicationModal = useCallback(() => {
+		setIsApplicationModalOpen(false)
+		setApplicationActivity(null)
+	}, [])
+
+	// 상세 모달에서 신청하기 버튼 클릭 시
+	const handleApplyFromDetail = useCallback(
+		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
+			handleApply(activity)
+		},
+		[handleApply],
+	)
+
+	// 신청 상태 변경 핸들러
+	const handleUpdateApplicationStatus = useCallback(
+		async (
+			applicationId: string,
+			newStatus: ZodType<typeof ZodEnum.ApplicationStatus>,
+		) => {
+			try {
+				await updateApplicationStatusMutation.mutateAsync({
+					id: applicationId,
+					status: newStatus,
+				})
+			} catch (error) {
+				console.error('Status update error:', error)
+			}
+		},
+		[updateApplicationStatusMutation],
+	)
+
+	// 신청 상세 보기 핸들러
+	const handleViewApplicationDetail = useCallback((applicationId: string) => {
+		setSelectedApplicationId(applicationId)
+	}, [])
+
+	// 신청 상세 모달 닫기
+	const handleCloseApplicationDetail = useCallback(() => {
+		setSelectedApplicationId(null)
+	}, [])
 
 	const showLoading = isLoading || isPageChanging || isFetching
 
@@ -233,6 +333,8 @@ function VolunteerActivityPageClientContent({
 				onViewDetail={handleViewDetail}
 				onApply={handleApply}
 				totalCount={totalCount}
+				currentUserId={session?.user?.id}
+				userRole={session?.user?.role}
 			/>
 
 			{/* 페이지네이션 */}
@@ -264,7 +366,7 @@ function VolunteerActivityPageClientContent({
 			)}
 
 			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
-			{isAdmin && !isDetailOpen && (
+			{isAdmin && !isDetailOpen && !isApplicationModalOpen && (
 				<button
 					onClick={handleOpenModal}
 					aria-label="봉사활동 생성"
@@ -279,11 +381,39 @@ function VolunteerActivityPageClientContent({
 				open={isModalOpen}
 				onClose={handleCloseModal}
 			/>
+
 			<VolunteerActivityDetailModal
 				open={isDetailOpen}
 				onClose={handleCloseDetail}
 				activity={selectedActivity}
+				onApply={handleApplyFromDetail}
+				onUpdateApplicationStatus={handleUpdateApplicationStatus}
+				onViewApplicationDetail={handleViewApplicationDetail}
+				currentUserId={session?.user?.id}
+				userRole={session?.user?.role}
 			/>
+
+			{/* 신청 모달 */}
+			{applicationActivity && (
+				<ApplicationModal
+					open={isApplicationModalOpen}
+					onClose={handleCloseApplicationModal}
+					volunteerActivityId={applicationActivity.id}
+					volunteerActivityTitle={applicationActivity.title}
+				/>
+			)}
+
+			{/* 신청 상세 모달 */}
+			{selectedApplicationId && (
+				<ApplicationDetailModal
+					application={}
+					open={!!selectedApplicationId}
+					onClose={handleCloseApplicationDetail}
+					onUpdateStatus={handleUpdateApplicationStatus}
+					currentUserId={session?.user?.id}
+					userRole={session?.user?.role}
+				/>
+			)}
 		</>
 	)
 }
