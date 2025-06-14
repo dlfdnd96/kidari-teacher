@@ -1,12 +1,30 @@
 'use client'
 
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import LoginModal from '@/components/features/auth/LoginModal'
 import { SITE_INFO } from '@/constants/homepage'
-import { CircleUserRound, Menu, LogIn } from 'lucide-react'
+import {
+	CircleUserRound,
+	Menu,
+	LogIn,
+	Bell,
+	Heart,
+	FileText,
+	User,
+	LogOut,
+} from 'lucide-react'
+
+interface NavLink {
+	href: string
+	label: string
+	isActive: boolean
+	color: 'blue' | 'emerald'
+	icon: React.ComponentType<any>
+	requireAuth?: boolean
+}
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -32,6 +50,63 @@ const Navbar = memo(() => {
 	const handleMenuToggle = useCallback(() => {
 		setIsMenuOpen((prev) => !prev)
 	}, [])
+
+	// 메인 네비게이션 링크들 (고정)
+	const navLinks = useMemo(
+		(): NavLink[] => [
+			{
+				href: '/notice',
+				label: '공지사항',
+				isActive: pathname === '/notice' || pathname.startsWith('/notice/'),
+				color: 'blue',
+				icon: Bell,
+				requireAuth: false,
+			},
+			{
+				href: '/volunteer-activities',
+				label: '봉사활동',
+				isActive:
+					pathname === '/volunteer-activities' ||
+					pathname.startsWith('/volunteer-activities/'),
+				color: 'emerald',
+				icon: Heart,
+				requireAuth: false,
+			},
+		],
+		[pathname],
+	)
+
+	// 색상 클래스를 반환하는 함수 (간소화)
+	const getColorClasses = useCallback(
+		(color: 'blue' | 'emerald', isActive: boolean) => {
+			if (color === 'blue') {
+				return isActive
+					? 'text-blue-600 bg-blue-50 font-semibold'
+					: 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+			} else {
+				return isActive
+					? 'text-emerald-600 bg-emerald-50 font-semibold'
+					: 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'
+			}
+		},
+		[],
+	)
+
+	// 드롭다운 메뉴용 색상 클래스 (간소화)
+	const getDropdownColorClasses = useCallback(
+		(color: 'blue' | 'emerald', isActive: boolean) => {
+			if (color === 'blue') {
+				return isActive
+					? 'text-blue-600 bg-gradient-to-r from-blue-50 to-blue-50 font-semibold shadow-sm'
+					: 'text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-50 hover:shadow-sm'
+			} else {
+				return isActive
+					? 'text-emerald-600 bg-gradient-to-r from-emerald-50 to-emerald-50 font-semibold shadow-sm'
+					: 'text-gray-700 hover:text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-emerald-50 hover:shadow-sm'
+			}
+		},
+		[],
+	)
 
 	useEffect(() => {
 		if (!isMenuOpen) return
@@ -65,21 +140,6 @@ const Navbar = memo(() => {
 		}
 	}, [isProfileOpen])
 
-	const navLinks = [
-		{
-			href: '/notice',
-			label: '공지사항',
-			isActive: pathname === '/notice' || pathname.startsWith('/notice/'),
-		},
-		{
-			href: '/volunteer-activities',
-			label: '봉사활동',
-			isActive:
-				pathname === '/volunteer-activities' ||
-				pathname.startsWith('/volunteer-activities/'),
-		},
-	]
-
 	return (
 		<>
 			<nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100/50 fixed top-0 left-0 z-40">
@@ -95,58 +155,40 @@ const Navbar = memo(() => {
 					</button>
 
 					{/* 데스크탑 네비게이션 링크들 */}
-					<div className="hidden sm:flex items-center gap-2">
-						<Link
-							href="/notice"
-							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-								pathname === '/notice' || pathname.startsWith('/notice/')
-									? 'text-blue-600 bg-blue-50 font-semibold'
-									: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-							}`}
-							aria-label="공지사항"
-						>
-							공지사항
-						</Link>
-						<Link
-							href="/volunteer-activities"
-							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-								pathname === '/volunteer-activities' ||
-								pathname.startsWith('/volunteer-activities/')
-									? 'text-emerald-600 bg-emerald-50 font-semibold'
-									: 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
-							}`}
-							aria-label="봉사활동"
-						>
-							봉사활동
-						</Link>
+					<div className="hidden lg:flex items-center gap-2">
+						{navLinks.map((link) => (
+							<Link
+								key={link.href}
+								href={link.href}
+								className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${getColorClasses(link.color, link.isActive)}`}
+								aria-label={link.label}
+							>
+								{link.label}
+							</Link>
+						))}
 					</div>
 
 					{/* 드롭다운 메뉴 */}
 					{isMenuOpen && (
-						<div className="absolute left-4 top-14 z-50 min-w-[160px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
+						<div className="absolute left-4 top-14 z-50 min-w-[180px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
 							{navLinks.map((link) => {
-								const isNotice = link.href === '/notice'
-								const activeColor = isNotice ? 'blue' : 'emerald'
-								const hoverColor = isNotice ? 'blue' : 'emerald'
+								const IconComponent = link.icon
 
 								return (
 									<Link
 										key={link.href}
 										href={link.href}
-										className={`group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all duration-200 ${
-											link.isActive
-												? `text-${activeColor}-600 bg-gradient-to-r from-${activeColor}-50 to-${activeColor}-50 font-semibold shadow-sm`
-												: `text-gray-700 hover:text-${hoverColor}-600 hover:bg-gradient-to-r hover:from-${hoverColor}-50 hover:to-${hoverColor}-50 hover:shadow-sm`
-										}`}
+										className={`group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all duration-200 ${getDropdownColorClasses(link.color, link.isActive)}`}
 										aria-label={link.label}
 										onClick={() => setIsMenuOpen(false)}
 									>
+										<IconComponent size={16} />
 										<span className="group-hover:font-semibold transition-all duration-200">
 											{link.label}
 										</span>
 										{link.isActive && (
 											<div
-												className={`ml-auto w-2 h-2 bg-${activeColor}-600 rounded-full`}
+												className={`ml-auto w-2 h-2 rounded-full ${link.color === 'blue' ? 'bg-blue-600' : 'bg-emerald-600'}`}
 											></div>
 										)}
 									</Link>
@@ -180,16 +222,47 @@ const Navbar = memo(() => {
 								<CircleUserRound size={20} className="text-gray-600" />
 							</button>
 							{isProfileOpen && (
-								<div className="absolute right-0 top-12 z-50 min-w-[120px] bg-white border border-gray-200 rounded-xl shadow-lg py-2 animate-fade-in">
-									<button
-										onClick={() => {
-											handleLogout()
-											setIsProfileOpen(false)
-										}}
-										className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+								<div className="absolute right-0 top-12 z-50 min-w-[160px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
+									{/* 사용자 정보 */}
+									<div className="px-4 py-2 border-b border-gray-100">
+										<div className="text-sm font-medium text-gray-900 truncate">
+											{session.user?.name}
+										</div>
+										<div className="text-xs text-gray-500 truncate">
+											{session.user?.email}
+										</div>
+									</div>
+
+									{/* 프로필 메뉴들 */}
+									<Link
+										href="/my-applications"
+										className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+										onClick={() => setIsProfileOpen(false)}
 									>
-										로그아웃
-									</button>
+										<FileText size={16} />내 신청 내역
+									</Link>
+
+									<Link
+										href="/profile"
+										className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+										onClick={() => setIsProfileOpen(false)}
+									>
+										<User size={16} />
+										프로필
+									</Link>
+
+									<div className="border-t border-gray-100 mt-2 pt-2">
+										<button
+											onClick={() => {
+												handleLogout()
+												setIsProfileOpen(false)
+											}}
+											className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+										>
+											<LogOut size={16} />
+											로그아웃
+										</button>
+									</div>
 								</div>
 							)}
 						</div>
