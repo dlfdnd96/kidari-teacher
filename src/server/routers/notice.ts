@@ -18,20 +18,21 @@ export const noticeRouter = createTRPCRouter({
 	getNoticeList: publicProcedure
 		.input(NoticeListFilterInputSchema)
 		.output(NoticeListResponseSchema)
-		.query(async (opts) => {
-			const { ctx, input } = opts
-
+		.query(async ({ ctx, input }) => {
 			const queryOptions = createDomainQueryBuilder(input)
 
-			const noticeList = await ctx.prisma.notice.findMany({
-				...queryOptions,
-				include: { author: { select: { name: true } } },
-			})
-			const totalCount = await ctx.prisma.notice.count({
-				where: {
-					...queryOptions.where,
-				},
-			})
+			const [noticeList, totalCount] = await Promise.all([
+				ctx.prisma.notice.findMany({
+					...queryOptions,
+					include: { author: { select: { name: true } } },
+				}),
+				ctx.prisma.notice.count({
+					where: {
+						...queryOptions.where,
+					},
+				}),
+			])
+
 			return {
 				noticeList,
 				totalCount,

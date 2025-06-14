@@ -1,7 +1,20 @@
 import { z } from 'zod/v4-mini'
 import { ZodEnum } from '@/enums'
+import { ZodType } from '@/shared/types'
 
-export const UserEntitySchema = z.strictObject({
+interface UserAttributes {
+	id: string
+	role: ZodType<typeof ZodEnum.Role>
+	createdAt: Date
+	updatedAt: Date
+	deletedAt: Date | null
+	image: string | null
+	name: string | null
+	email: string | null
+	emailVerified: Date | null
+}
+
+export const UserEntitySchema: z.ZodMiniType<UserAttributes> = z.strictObject({
 	id: z.string().check(z.cuid()),
 	role: ZodEnum.Role,
 	createdAt: z.date(),
