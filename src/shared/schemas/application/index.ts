@@ -4,6 +4,7 @@ import { UserEntitySchema } from '@/shared/schemas/user'
 import { VolunteerActivityEntitySchema } from '@/shared/schemas/volunteer-activity'
 import { SelectionEntitySchema } from '@/shared/schemas/selection'
 import { ZodType } from '@/shared/types'
+import { PageableSchema } from '@/shared/schemas'
 
 interface ApplicationAttributes {
 	id: string
@@ -33,3 +34,77 @@ export const ApplicationEntitySchema: z.ZodMiniType<ApplicationAttributes> =
 		deletedAt: z.nullable(z.date()),
 		selection: z.nullable(z.optional(z.lazy(() => SelectionEntitySchema))),
 	})
+
+export const CreateApplicationInputSchema = z.object({
+	volunteerActivityId: z
+		.string()
+		.check(z.cuid('올바른 봉사활동 ID가 아닙니다')),
+	emergencyContact: z
+		.string()
+		.check(
+			z.minLength(1, '긴급연락처를 입력해주세요'),
+			z.maxLength(100, '긴급연락처는 100자 이내로 입력해주세요'),
+			z.regex(/^[0-9-+().\s]+$/, '올바른 전화번호 형식이 아닙니다'),
+		),
+})
+
+export const UpdateApplicationStatusInputSchema = z.object({
+	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
+	status: ZodEnum.ApplicationStatus,
+})
+
+export const DeleteApplicationInputSchema = z.object({
+	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
+})
+
+export const ApplicationFilterInputSchema = z.object({
+	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
+})
+
+export const ApplicationListFilterInputSchema = z.optional(
+	z.object({
+		filter: z.optional(
+			z.object({
+				status: z.optional(z.string()),
+				volunteerActivityId: z.optional(z.string()),
+				userId: z.optional(z.string()),
+				search: z.optional(z.string()),
+			}),
+		),
+		pageable: z.optional(PageableSchema),
+	}),
+)
+
+export const MyApplicationListFilterInputSchema = z.optional(
+	z.object({
+		filter: z.optional(
+			z.object({
+				status: z.optional(z.string()),
+			}),
+		),
+		pageable: z.optional(PageableSchema),
+	}),
+)
+
+export const ApplicationListResponseSchema = z.object({
+	applicationList: z.array(ApplicationEntitySchema),
+	totalCount: z.number(),
+})
+
+export const MyApplicationListResponseSchema = z.object({
+	myApplicationList: z.array(ApplicationEntitySchema),
+	totalCount: z.number(),
+})
+
+export const ApplicationFormSchema = z.object({
+	emergencyContact: z
+		.string()
+		.check(
+			z.minLength(1, '긴급연락처를 입력해주세요'),
+			z.maxLength(100, '긴급연락처는 100자 이내로 입력해주세요'),
+			z.regex(
+				/^[0-9-+().\s]+$/,
+				'올바른 전화번호 형식이 아닙니다 (숫자, -, +, (), ., 공백만 가능)',
+			),
+		),
+})
