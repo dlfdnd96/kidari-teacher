@@ -1,12 +1,10 @@
 import React from 'react'
-import MyApplicationCard from './MyApplicationCard'
+import MyApplicationCard from '@/components/features/applications/MyApplicationCard'
 import type { MyApplicationListProps } from '@/types/application'
 
 export default function MyApplicationList({
 	applications,
 	onViewDetail,
-	onCancel,
-	currentUserId,
 	isLoading = false,
 }: MyApplicationListProps) {
 	if (isLoading) {
@@ -65,8 +63,6 @@ export default function MyApplicationList({
 						<MyApplicationCard
 							application={application}
 							onViewDetail={onViewDetail}
-							onCancel={onCancel}
-							currentUserId={currentUserId}
 						/>
 					</div>
 				))}

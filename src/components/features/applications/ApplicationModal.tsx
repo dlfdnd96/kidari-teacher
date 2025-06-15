@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
-import ApplicationForm from './ApplicationForm'
+import ApplicationForm from '@/components/features/applications/ApplicationForm'
 import type { ApplicationModalProps } from '@/types/application'
 import { FileText, X } from 'lucide-react'
 import { ZodType } from '@/shared/types'
@@ -26,7 +26,6 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 	const createApplicationMutation =
 		trpc.application.createApplication.useMutation({
 			onSuccess: async () => {
-				// 봉사활동 목록과 내 신청 내역 새로고침
 				await Promise.all([
 					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
 					utils.application.getMyApplicationList.invalidate(),
@@ -53,6 +52,7 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 				})
 			} catch (error) {
 				console.error('Application error:', error)
+
 				const errorMessage =
 					error instanceof Error
 						? error.message

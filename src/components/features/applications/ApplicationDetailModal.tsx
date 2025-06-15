@@ -10,6 +10,9 @@ import {
 	APPLICATION_STATUS_COLORS,
 	APPLICATION_STATUS_DESCRIPTIONS,
 } from '@/types/application'
+import { Enum } from '@/enums'
+import { TZDate } from '@date-fns/tz'
+import { TIME_ZONE } from '@/constants/date'
 
 const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 	open,
@@ -32,10 +35,11 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 		APPLICATION_STATUS_DESCRIPTIONS[application.status] || ''
 
 	const isMyApplication = currentUserId === application.userId
-	const isAdmin = userRole === 'ADMIN'
+	const isAdmin = userRole === Enum.Role.ADMIN
 	const canCancel =
-		application.status === 'WAITING' &&
-		new Date() < new Date(application.volunteerActivity.startAt)
+		application.status === Enum.ApplicationStatus.WAITING &&
+		new TZDate(new Date(), TIME_ZONE.UTC) <
+			new TZDate(application.volunteerActivity.startAt, TIME_ZONE.UTC)
 
 	return (
 		<div
@@ -80,9 +84,13 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 									<Clock className="w-4 h-4 mr-2" />
 									<time className="text-sm">
 										신청일:{' '}
-										{format(new Date(application.createdAt), 'yyyy년 M월 d일', {
-											locale: ko,
-										})}
+										{format(
+											new TZDate(application.createdAt, TIME_ZONE.SEOUL),
+											'yyyy년 M월 d일',
+											{
+												locale: ko,
+											},
+										)}
 									</time>
 								</div>
 							</div>
@@ -114,7 +122,10 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 									</div>
 									<div className="text-gray-700 dark:text-gray-300">
 										{format(
-											new Date(application.volunteerActivity.startAt),
+											new TZDate(
+												application.volunteerActivity.startAt,
+												TIME_ZONE.SEOUL,
+											),
 											'yyyy년 M월 d일 (E) HH:mm',
 											{ locale: ko },
 										)}
@@ -124,7 +135,10 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 												{' '}
 												~{' '}
 												{format(
-													new Date(application.volunteerActivity.endAt),
+													new TZDate(
+														application.volunteerActivity.endAt,
+														TIME_ZONE.SEOUL,
+													),
 													'HH:mm',
 													{ locale: ko },
 												)}
@@ -201,11 +215,14 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 										관리자 액션
 									</h3>
 									<div className="flex gap-2 flex-wrap">
-										{application.status === 'WAITING' && (
+										{application.status === Enum.ApplicationStatus.WAITING && (
 											<>
 												<button
 													onClick={() =>
-														onUpdateStatus?.(application.id, 'SELECTED')
+														onUpdateStatus?.(
+															application.id,
+															Enum.ApplicationStatus.SELECTED,
+														)
 													}
 													className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
 												>
@@ -213,7 +230,10 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 												</button>
 												<button
 													onClick={() =>
-														onUpdateStatus?.(application.id, 'REJECTED')
+														onUpdateStatus?.(
+															application.id,
+															Enum.ApplicationStatus.REJECTED,
+														)
 													}
 													className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
 												>
@@ -221,20 +241,26 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 												</button>
 											</>
 										)}
-										{application.status === 'SELECTED' && (
+										{application.status === Enum.ApplicationStatus.SELECTED && (
 											<button
 												onClick={() =>
-													onUpdateStatus?.(application.id, 'WAITING')
+													onUpdateStatus?.(
+														application.id,
+														Enum.ApplicationStatus.WAITING,
+													)
 												}
 												className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
 											>
 												대기 상태로 변경
 											</button>
 										)}
-										{application.status === 'REJECTED' && (
+										{application.status === Enum.ApplicationStatus.REJECTED && (
 											<button
 												onClick={() =>
-													onUpdateStatus?.(application.id, 'WAITING')
+													onUpdateStatus?.(
+														application.id,
+														Enum.ApplicationStatus.WAITING,
+													)
 												}
 												className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
 											>

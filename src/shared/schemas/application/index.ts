@@ -35,7 +35,7 @@ export const ApplicationEntitySchema: z.ZodMiniType<ApplicationAttributes> =
 		selection: z.nullable(z.optional(z.lazy(() => SelectionEntitySchema))),
 	})
 
-export const CreateApplicationInputSchema = z.object({
+export const CreateApplicationInputSchema = z.strictObject({
 	volunteerActivityId: z
 		.string()
 		.check(z.cuid('올바른 봉사활동 ID가 아닙니다')),
@@ -48,23 +48,23 @@ export const CreateApplicationInputSchema = z.object({
 		),
 })
 
-export const UpdateApplicationStatusInputSchema = z.object({
+export const UpdateApplicationStatusInputSchema = z.strictObject({
 	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
 	status: ZodEnum.ApplicationStatus,
 })
 
-export const DeleteApplicationInputSchema = z.object({
+export const DeleteApplicationInputSchema = z.strictObject({
 	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
 })
 
-export const ApplicationFilterInputSchema = z.object({
+export const ApplicationFilterInputSchema = z.strictObject({
 	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
 })
 
 export const ApplicationListFilterInputSchema = z.optional(
-	z.object({
+	z.strictObject({
 		filter: z.optional(
-			z.object({
+			z.strictObject({
 				status: z.optional(z.string()),
 				volunteerActivityId: z.optional(z.string()),
 				userId: z.optional(z.string()),
@@ -76,9 +76,10 @@ export const ApplicationListFilterInputSchema = z.optional(
 )
 
 export const MyApplicationListFilterInputSchema = z.optional(
-	z.object({
+	z.strictObject({
 		filter: z.optional(
-			z.object({
+			z.strictObject({
+				userId: z.optional(z.string()),
 				status: z.optional(z.string()),
 			}),
 		),
@@ -86,17 +87,17 @@ export const MyApplicationListFilterInputSchema = z.optional(
 	}),
 )
 
-export const ApplicationListResponseSchema = z.object({
+export const ApplicationListResponseSchema = z.strictObject({
 	applicationList: z.array(ApplicationEntitySchema),
 	totalCount: z.number(),
 })
 
-export const MyApplicationListResponseSchema = z.object({
+export const MyApplicationListResponseSchema = z.strictObject({
 	myApplicationList: z.array(ApplicationEntitySchema),
 	totalCount: z.number(),
 })
 
-export const ApplicationFormSchema = z.object({
+export const ApplicationFormSchema = z.strictObject({
 	emergencyContact: z
 		.string()
 		.check(

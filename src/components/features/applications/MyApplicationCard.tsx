@@ -21,18 +21,12 @@ import {
 	APPLICATION_STATUS_COLORS,
 	APPLICATION_STATUS_DESCRIPTIONS,
 } from '@/types/application'
+import { TZDate } from '@date-fns/tz'
+import { Enum } from '@/enums'
+import { TIME_ZONE } from '@/constants/date'
 
 const MyApplicationCard = memo(
-	({
-		application,
-		onViewDetail,
-		onCancel,
-		currentUserId,
-	}: MyApplicationCardProps) => {
-		if (!application || !application.volunteerActivity) {
-			return null
-		}
-
+	({ application, onViewDetail }: MyApplicationCardProps) => {
 		const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 		const router = useRouter()
 		const { showError } = useErrorModal()
@@ -47,24 +41,12 @@ const MyApplicationCard = memo(
 					router.refresh()
 				},
 				onError: (error) => {
-					showError(error.message, '신청 취소 오류')
+					showError(error.message, '봉사활동 신청 취소 오류')
 				},
 				onSettled: () => {
 					setShowCancelConfirm(false)
 				},
 			})
-
-		const statusColor =
-			APPLICATION_STATUS_COLORS[application.status] ||
-			'bg-gray-100 text-gray-800'
-		const statusLabel =
-			APPLICATION_STATUS_LABELS[application.status] || application.status
-		const statusDescription =
-			APPLICATION_STATUS_DESCRIPTIONS[application.status] || ''
-
-		const canCancel =
-			application.status === 'WAITING' &&
-			new Date() < new Date(application.volunteerActivity.startAt)
 
 		const handleViewDetail = useCallback(() => {
 			onViewDetail?.(application)
@@ -89,14 +71,32 @@ const MyApplicationCard = memo(
 				})
 			} catch (error) {
 				console.error('Cancel error:', error)
+
 				const errorMessage =
 					error instanceof Error
 						? error.message
 						: '알 수 없는 오류가 발생했습니다.'
-				showError(errorMessage, '신청 취소 오류')
+				showError(errorMessage, '봉사활동 신청 취소 오류')
 				setShowCancelConfirm(false)
 			}
 		}, [application.id, showError, cancelApplicationMutation])
+
+		if (!application || !application.volunteerActivity) {
+			return null
+		}
+
+		const statusColor =
+			APPLICATION_STATUS_COLORS[application.status] ||
+			'bg-gray-100 text-gray-800'
+		const statusLabel =
+			APPLICATION_STATUS_LABELS[application.status] || application.status
+		const statusDescription =
+			APPLICATION_STATUS_DESCRIPTIONS[application.status] || ''
+
+		const canCancel =
+			application.status === Enum.ApplicationStatus.WAITING &&
+			new TZDate(new Date(), TIME_ZONE.UTC) <
+				new TZDate(application.volunteerActivity.startAt, TIME_ZONE.UTC)
 
 		const isCanceling = cancelApplicationMutation.isPending
 
@@ -194,7 +194,10 @@ const MyApplicationCard = memo(
 						<span className="text-muted-foreground">일시:</span>
 						<span className="font-medium">
 							{format(
-								new Date(application.volunteerActivity.startAt),
+								new TZDate(
+									application.volunteerActivity.startAt,
+									TIME_ZONE.SEOUL,
+								),
 								'M/d (E) HH:mm',
 								{ locale: ko },
 							)}
@@ -204,7 +207,10 @@ const MyApplicationCard = memo(
 									{' '}
 									~{' '}
 									{format(
-										new Date(application.volunteerActivity.endAt),
+										new TZDate(
+											application.volunteerActivity.endAt,
+											TIME_ZONE.SEOUL,
+										),
 										'HH:mm',
 										{ locale: ko },
 									)}
@@ -245,7 +251,13 @@ const MyApplicationCard = memo(
 						<Clock className="w-4 h-4 mr-1.5" />
 						<span>
 							신청일:{' '}
-							{format(new Date(application.createdAt), 'M/d', { locale: ko })}
+							{format(
+								new TZDate(application.createdAt, TIME_ZONE.SEOUL),
+								'M/d',
+								{
+									locale: ko,
+								},
+							)}
 						</span>
 					</div>
 

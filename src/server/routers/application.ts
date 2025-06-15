@@ -17,6 +17,8 @@ import {
 	ApplicationListResponseSchema,
 	MyApplicationListResponseSchema,
 } from '@/shared/schemas/application'
+import { TIME_ZONE } from '@/constants/date'
+import { Enum } from '@/enums'
 
 export const applicationRouter = createTRPCRouter({
 	getApplication: protectedProcedure
@@ -59,7 +61,7 @@ export const applicationRouter = createTRPCRouter({
 			}
 
 			if (
-				ctx.session.user.role !== 'ADMIN' &&
+				ctx.session.user.role !== Enum.Role.ADMIN &&
 				application.userId !== ctx.session.user.id
 			) {
 				throw new TRPCError({
@@ -180,8 +182,8 @@ export const applicationRouter = createTRPCRouter({
 			}
 
 			if (
-				new TZDate(new Date(), 'UTC') >
-				new TZDate(volunteerActivity.applicationDeadline, 'UTC')
+				new TZDate(new Date(), TIME_ZONE.UTC) >
+				new TZDate(volunteerActivity.applicationDeadline, TIME_ZONE.UTC)
 			) {
 				throw new TRPCError({
 					code: 'BAD_REQUEST',
@@ -305,7 +307,7 @@ export const applicationRouter = createTRPCRouter({
 			}
 
 			if (
-				ctx.session.user.role !== 'ADMIN' &&
+				ctx.session.user.role !== Enum.Role.ADMIN &&
 				application.userId !== ctx.session.user.id
 			) {
 				throw new TRPCError({
@@ -322,8 +324,8 @@ export const applicationRouter = createTRPCRouter({
 			}
 
 			if (
-				new TZDate(new Date(), 'UTC') >=
-				new TZDate(application.volunteerActivity.startAt, 'UTC')
+				new TZDate(new Date(), TIME_ZONE.UTC) >=
+				new TZDate(application.volunteerActivity.startAt, TIME_ZONE.UTC)
 			) {
 				throw new TRPCError({
 					code: 'BAD_REQUEST',
@@ -334,7 +336,7 @@ export const applicationRouter = createTRPCRouter({
 			return await ctx.prisma.application.update({
 				where: { id: input.id },
 				data: {
-					deletedAt: new TZDate(new Date(), 'UTC'),
+					deletedAt: new TZDate(new Date(), TIME_ZONE.UTC),
 				},
 			})
 		}),

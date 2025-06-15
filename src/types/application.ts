@@ -5,6 +5,13 @@ import {
 } from '@/shared/schemas/application'
 import { ZodEnum } from '@/enums'
 
+export interface MyApplicationsPageProps {
+	searchParams: Promise<{
+		page?: string
+		status?: string
+	}>
+}
+
 export interface ApplicationFormProps {
 	volunteerActivityId: string
 	volunteerActivityTitle: string
@@ -20,46 +27,14 @@ export interface ApplicationModalProps {
 	volunteerActivityTitle: string
 }
 
-export interface ApplicationCardProps {
-	application: ZodType<typeof ApplicationEntitySchema>
-	onViewDetail?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	onUpdateStatus?: (
-		application: ZodType<typeof ApplicationEntitySchema>,
-		status: string,
-	) => void
-	onDelete?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	currentUserId?: string
-	userRole?: 'USER' | 'ADMIN'
-	showActions?: boolean
-}
-
-export interface ApplicationListProps {
-	applications: ZodType<typeof ApplicationEntitySchema>[]
-	totalCount: number
-	onViewDetail?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	onUpdateStatus?: (
-		application: ZodType<typeof ApplicationEntitySchema>,
-		status: string,
-	) => void
-	onDelete?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	currentUserId?: string
-	userRole?: 'USER' | 'ADMIN'
-	isLoading?: boolean
-}
-
 export interface MyApplicationCardProps {
 	application: ZodType<typeof ApplicationEntitySchema>
 	onViewDetail?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	onCancel?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	currentUserId?: string
 }
 
 export interface MyApplicationListProps {
 	applications: ZodType<typeof ApplicationEntitySchema>[]
-	totalCount: number
 	onViewDetail?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	onCancel?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	currentUserId?: string
 	isLoading?: boolean
 }
 
@@ -73,12 +48,7 @@ export interface ApplicationDetailModalProps {
 	) => void
 	onDelete?: (application: ZodType<typeof ApplicationEntitySchema>) => void
 	currentUserId?: string
-	userRole?: 'USER' | 'ADMIN'
-}
-
-export interface ApplicationPageClientProps {
-	isAdmin: boolean
-	initialPage?: number
+	userRole?: ZodType<typeof ZodEnum.Role>
 }
 
 export interface MyApplicationPageClientProps {

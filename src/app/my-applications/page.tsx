@@ -5,13 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { notFound, redirect } from 'next/navigation'
 import MyApplicationPageClient from '@/components/features/applications/MyApplicationPageClient'
 import { FileText, Heart, TrendingUp } from 'lucide-react'
-
-interface MyApplicationsPageProps {
-	searchParams: Promise<{
-		page?: string
-		status?: string
-	}>
-}
+import { MyApplicationsPageProps } from '@/types/application'
 
 export async function generateMetadata({
 	searchParams,
@@ -55,11 +49,10 @@ export default async function MyApplicationsPage({
 		notFound()
 	}
 
-	// 세션 확인 - 로그인 필요
 	const session = await getServerSession(authOptions)
 
 	if (!session?.user) {
-		redirect('/auth/signin?callbackUrl=/my-applications')
+		redirect('/')
 	}
 
 	return (
