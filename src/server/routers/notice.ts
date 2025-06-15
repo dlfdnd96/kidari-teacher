@@ -13,6 +13,7 @@ import {
 } from '@/shared/schemas/notice'
 import { TRPCError } from '@trpc/server'
 import { createDomainQueryBuilder } from '@/lib/query-builder'
+import { TIME_ZONE } from '@/constants/date'
 
 export const noticeRouter = createTRPCRouter({
 	getNoticeList: publicProcedure
@@ -45,7 +46,7 @@ export const noticeRouter = createTRPCRouter({
 				data: {
 					title: input.title,
 					content: input.content,
-					authorId: input.adminId,
+					authorId: ctx.session.user.id,
 					isPublished: true,
 				},
 			})
@@ -86,7 +87,7 @@ export const noticeRouter = createTRPCRouter({
 
 			return ctx.prisma.notice.update({
 				where: { id: input.id },
-				data: { deletedAt: new TZDate(new Date(), 'UTC') },
+				data: { deletedAt: new TZDate(new Date(), TIME_ZONE.UTC) },
 			})
 		}),
 })

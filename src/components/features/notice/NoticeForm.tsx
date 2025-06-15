@@ -43,11 +43,7 @@ const NoticeForm = memo(({ onSuccess, isModal = false }: NoticeFormProps) => {
 
 			try {
 				const validatedData = NoticeFormSchema.parse(data)
-				await createNoticeMutation.mutateAsync({
-					title: validatedData.title,
-					content: validatedData.content,
-					adminId: session.user.id,
-				})
+				await createNoticeMutation.mutateAsync(validatedData)
 			} catch (error: unknown) {
 				if (error instanceof ZodError) {
 					showError(error.message, '입력 검증 오류')

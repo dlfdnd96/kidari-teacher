@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import NoticeList from '@/components/features/notice/NoticeList'
 import Pagination from '@/components/features/pagination/Pagination'
 import { ZodType } from '@/shared/types'
-import { NoticeEntitySchema } from '@/shared/schemas/notice'
+import { NoticePickAuthorEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
@@ -37,7 +37,7 @@ function NoticePageClientContent({
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedNotice, setSelectedNotice] = useState<ZodType<
-		typeof NoticeEntitySchema
+		typeof NoticePickAuthorEntitySchema
 	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 
@@ -108,7 +108,7 @@ function NoticePageClientContent({
 	}, [])
 
 	const handleViewDetail = useCallback(
-		(notice: ZodType<typeof NoticeEntitySchema>) => {
+		(notice: ZodType<typeof NoticePickAuthorEntitySchema>) => {
 			setSelectedNotice(notice)
 			setIsDetailOpen(true)
 		},

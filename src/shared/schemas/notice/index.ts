@@ -28,14 +28,14 @@ export const NoticeEntitySchema: z.ZodMiniType<NoticeAttributes> =
 		deletedAt: z.nullable(z.date()),
 	})
 
-const NoticePickAuthorEntitySchema: z.ZodMiniType<
+export const NoticePickAuthorEntitySchema: z.ZodMiniType<
 	Omit<NoticeAttributes, 'author'> & { author: { name: string | null } }
 > = z.strictObject({
 	id: z.string().check(z.cuid()),
 	title: z.string(),
 	content: z.string(),
 	authorId: z.string(),
-	author: z.object({
+	author: z.strictObject({
 		name: z.nullable(z.string()),
 	}),
 	isPublished: z.boolean(),
@@ -46,15 +46,15 @@ const NoticePickAuthorEntitySchema: z.ZodMiniType<
 
 export const NoticeListEntitySchema = z.array(NoticePickAuthorEntitySchema)
 
-export const NoticeListResponseSchema = z.object({
+export const NoticeListResponseSchema = z.strictObject({
 	noticeList: NoticeListEntitySchema,
 	totalCount: z.number().check(z.nonnegative()),
 })
 
 export const NoticeListFilterInputSchema = z.optional(
-	z.object({
+	z.strictObject({
 		filter: z.optional(
-			z.object({
+			z.strictObject({
 				isPublished: z.boolean(),
 			}),
 		),
@@ -62,28 +62,27 @@ export const NoticeListFilterInputSchema = z.optional(
 	}),
 )
 
-export const CreateNoticeInputSchema = z.object({
+export const CreateNoticeInputSchema = z.strictObject({
 	title: z.string().check(z.minLength(1)),
 	content: z.string().check(z.minLength(1)),
-	adminId: z.string().check(z.cuid()),
 })
 
-export const UpdateNoticeInputSchema = z.object({
+export const UpdateNoticeInputSchema = z.strictObject({
 	id: z.string().check(z.cuid()),
 	title: z.string().check(z.minLength(1)),
 	content: z.string().check(z.minLength(1)),
 })
 
-export const DeleteNoticeInputSchema = z.object({
+export const DeleteNoticeInputSchema = z.strictObject({
 	id: z.string().check(z.cuid()),
 })
 
-export const NoticeFormSchema = z.object({
+export const NoticeFormSchema = z.strictObject({
 	title: z.string().check(z.minLength(1, '제목을 입력해주세요.')),
 	content: z.string().check(z.minLength(1, '내용을 입력해주세요.')),
 })
 
-export const NoticeEditFormSchema = z.object({
+export const NoticeEditFormSchema = z.strictObject({
 	title: z.string().check(z.minLength(1, '제목을 입력해주세요.')),
 	content: z.string().check(z.minLength(1, '내용을 입력해주세요.')),
 })
