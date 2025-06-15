@@ -5,6 +5,7 @@ import { ZodEnum } from '@/enums'
 import { UserEntitySchema } from '@/shared/schemas/user'
 import { ApplicationEntitySchema } from '@/shared/schemas/application'
 import { ZodType } from '@/shared/types'
+import { TIME_ZONE } from '@/constants/date'
 
 interface VolunteerActivityAttributes {
 	id: string
@@ -20,8 +21,6 @@ interface VolunteerActivityAttributes {
 	updatedAt: Date
 	deletedAt: Date | null
 	maxParticipants: number | null
-	qualifications: string | null
-	materials: string | null
 	manager?: ZodType<typeof UserEntitySchema>
 	applications?: ZodType<typeof ApplicationEntitySchema>[] | null
 }
@@ -42,8 +41,6 @@ export const VolunteerActivityEntitySchema: z.ZodMiniType<VolunteerActivityAttri
 		updatedAt: z.date(),
 		deletedAt: z.nullable(z.date()),
 		maxParticipants: z.number().check(z.positive()),
-		qualifications: z.string(),
-		materials: z.string(),
 		applications: z.nullable(
 			z.optional(z.array(z.lazy(() => ApplicationEntitySchema))),
 		),
@@ -53,12 +50,12 @@ export const VolunteerActivityListEntitySchema = z.array(
 	VolunteerActivityEntitySchema,
 )
 
-export const VolunteerActivityListResponseSchema = z.object({
+export const VolunteerActivityListResponseSchema = z.strictObject({
 	volunteerActivityList: VolunteerActivityListEntitySchema,
 	totalCount: z.number().check(z.nonnegative()),
 })
 
-export const VolunteerActivityFilterInputSchema = z.object({
+export const VolunteerActivityFilterInputSchema = z.strictObject({
 	id: z.string().check(z.cuid('올바른 활동 ID가 아닙니다')),
 })
 
@@ -78,23 +75,26 @@ export const VolunteerActivityListFilterInputSchema = z.optional(
 )
 
 export const CreateVolunteerActivityInputSchema = z
-	.object({
+	.strictObject({
 		title: z
 			.string()
 			.check(
 				z.minLength(1, '활동명을 입력해주세요'),
 				z.maxLength(255, '활동명은 255자 이내로 입력해주세요'),
-			)
+			),
+		description: z
+			.string()
 			.check(
 				z.minLength(1, '활동 설명을 입력해주세요'),
 				z.maxLength(2000, '활동 설명은 2000자 이내로 입력해주세요'),
 			),
-		description: z.string().check(z.minLength(1, '활동 설명을 입력해주세요')),
 		startAt: z
 			.date()
 			.check(
 				z.refine(
-					(date) => new TZDate(date, 'UTC') > new TZDate(new Date(), 'UTC'),
+					(date) =>
+						new TZDate(date, TIME_ZONE.UTC) >
+						new TZDate(new Date(), TIME_ZONE.UTC),
 					'시작 일시는 현재 시간보다 미래여야 합니다',
 				),
 			),
@@ -102,7 +102,9 @@ export const CreateVolunteerActivityInputSchema = z
 			.date()
 			.check(
 				z.refine(
-					(date) => new TZDate(date, 'UTC') > new TZDate(new Date(), 'UTC'),
+					(date) =>
+						new TZDate(date, TIME_ZONE.UTC) >
+						new TZDate(new Date(), TIME_ZONE.UTC),
 					'종료 일시는 현재 시간보다 미래여야 합니다',
 				),
 			),
@@ -112,11 +114,14 @@ export const CreateVolunteerActivityInputSchema = z
 				z.minLength(1, '활동 장소를 입력해주세요'),
 				z.maxLength(500, '활동 장소는 500자 이내로 입력해주세요'),
 			),
+		status: ZodEnum.VolunteerActivityStatus,
 		applicationDeadline: z
 			.date()
 			.check(
 				z.refine(
-					(date) => new TZDate(date, 'UTC') > new TZDate(new Date(), 'UTC'),
+					(date) =>
+						new TZDate(date, TIME_ZONE.UTC) >
+						new TZDate(new Date(), TIME_ZONE.UTC),
 					'신청 마감일은 현재 날짜보다 미래여야 합니다',
 				),
 			),
@@ -129,37 +134,89 @@ export const CreateVolunteerActivityInputSchema = z
 					z.maximum(1000, '최대 참가자 수는 1000명 이하여야 합니다'),
 				),
 		),
-		qualifications: z.optional(
-			z
-				.string()
-				.check(z.maxLength(1000, '참가 자격은 1000자 이내로 입력해주세요')),
-		),
-		materials: z.optional(
-			z
-				.string()
-				.check(z.maxLength(1000, '준비물은 1000자 이내로 입력해주세요')),
-		),
 	})
 	.check(
 		z.refine(
-			(data) => new TZDate(data.endAt, 'UTC') > new TZDate(data.startAt, 'UTC'),
+			(data) =>
+				new TZDate(data.endAt, TIME_ZONE.UTC) >
+				new TZDate(data.startAt, TIME_ZONE.UTC),
 			'종료 일시는 시작 일시보다 늦어야 합니다',
 		),
 	)
 	.check(
 		z.refine(
 			(data) =>
-				new TZDate(data.applicationDeadline, 'UTC') <
-				new TZDate(data.startAt, 'UTC'),
+				new TZDate(data.applicationDeadline, TIME_ZONE.UTC) <
+				new TZDate(data.startAt, TIME_ZONE.UTC),
 			'신청 마감일은 활동 시작일보다 빨라야 합니다',
 		),
 	)
 
-export const UpdateVolunteerActivityInputSchema = z.object({
+export const UpdateVolunteerActivityInputSchema = z.strictObject({
 	id: z.string().check(z.cuid('올바른 활동 ID가 아닙니다')),
-	...z.partial(CreateVolunteerActivityInputSchema).shape,
+	title: z
+		.string()
+		.check(
+			z.minLength(1, '활동명을 입력해주세요'),
+			z.maxLength(255, '활동명은 255자 이내로 입력해주세요'),
+		),
+	description: z
+		.string()
+		.check(
+			z.minLength(1, '활동 설명을 입력해주세요'),
+			z.maxLength(2000, '활동 설명은 2000자 이내로 입력해주세요'),
+		),
+	startAt: z
+		.date()
+		.check(
+			z.refine(
+				(date) =>
+					new TZDate(date, TIME_ZONE.UTC) >
+					new TZDate(new Date(), TIME_ZONE.UTC),
+				'시작 일시는 현재 시간보다 미래여야 합니다',
+			),
+		),
+	endAt: z
+		.date()
+		.check(
+			z.refine(
+				(date) =>
+					new TZDate(date, TIME_ZONE.UTC) >
+					new TZDate(new Date(), TIME_ZONE.UTC),
+				'종료 일시는 현재 시간보다 미래여야 합니다',
+			),
+		),
+	location: z
+		.string()
+		.check(
+			z.minLength(1, '활동 장소를 입력해주세요'),
+			z.maxLength(500, '활동 장소는 500자 이내로 입력해주세요'),
+		),
+	status: ZodEnum.VolunteerActivityStatus,
+	applicationDeadline: z
+		.date()
+		.check(
+			z.refine(
+				(date) =>
+					new TZDate(date, TIME_ZONE.UTC) >
+					new TZDate(new Date(), TIME_ZONE.UTC),
+				'신청 마감일은 현재 날짜보다 미래여야 합니다',
+			),
+		),
+	maxParticipants: z.optional(
+		z
+			.number()
+			.check(
+				z.positive(),
+				z.minimum(1, '최대 참가자 수는 1명 이상이어야 합니다'),
+				z.maximum(1000, '최대 참가자 수는 1000명 이하여야 합니다'),
+			),
+	),
 })
 
-export const DeleteVolunteerActivityInputSchema = z.object({
+export const DeleteVolunteerActivityInputSchema = z.strictObject({
 	id: z.string().check(z.cuid('올바른 활동 ID가 아닙니다')),
 })
+
+export const VolunteerActivityEditFormSchema =
+	CreateVolunteerActivityInputSchema

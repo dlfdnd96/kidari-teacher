@@ -13,37 +13,37 @@ datasource db {
 // ============================================================================
 
 model User {
-  id            String       @id @default(cuid()) @map("id")
-  name          String?      @db.VarChar(255) @map("name")
-  email         String?      @db.VarChar(255) @unique @map("email")
-  emailVerified DateTime?    @db.Timestamptz() @map("email_verified")
-  image         String?      @map("image")
-  role          Role         @default(USER) @map("role")
-  createdAt     DateTime     @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt     DateTime     @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt     DateTime?    @db.Timestamptz() @map("deleted_at")
+  id            String    @id @default(cuid()) @map("id")
+  name          String?   @map("name") @db.VarChar(255)
+  email         String?   @unique @map("email") @db.VarChar(255)
+  emailVerified DateTime? @map("email_verified") @db.Timestamptz()
+  image         String?   @map("image")
+  role          Role      @default(USER) @map("role")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz()
 
-  accounts              Account[]
-  sessions              Session[]
-  profile               UserProfile?
-  notices               Notice[]
-  volunteerActivities   VolunteerActivity[]
-  applications          Application[]
-  selections            Selection[]
+  accounts            Account[]
+  sessions            Session[]
+  profile             UserProfile?
+  notices             Notice[]
+  volunteerActivities VolunteerActivity[]
+  applications        Application[]
+  selections          Selection[]
 
   @@map("users")
 }
 
 model UserProfile {
-  id          String    @id @default(cuid()) @map("id")
-  userId      String    @unique @map("user_id")
-  phone       String?   @db.VarChar(20) @map("phone")
-  birthDate   DateTime? @db.Date @map("birth_date")
-  organization String?  @db.VarChar(255) @map("organization")
-  address     String?   @db.Text @map("address")
-  createdAt   DateTime  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt   DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt   DateTime? @db.Timestamptz() @map("deleted_at")
+  id           String    @id @default(cuid()) @map("id")
+  userId       String    @unique @map("user_id")
+  phone        String?   @map("phone") @db.VarChar(20)
+  birthDate    DateTime? @map("birth_date") @db.Date
+  organization String?   @map("organization") @db.VarChar(255)
+  address      String?   @map("address") @db.Text
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz()
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -55,23 +55,23 @@ model UserProfile {
 // ============================================================================
 
 model Account {
-  id                         String    @id @default(cuid()) @map("id")
-  userId                     String    @map("user_id")
-  type                       String    @db.VarChar(255) @map("type")
-  provider                   String    @db.VarChar(255) @map("provider")
-  providerAccountId          String    @db.VarChar(255) @map("provider_account_id")
-  createdAt                  DateTime  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt                  DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt                  DateTime? @db.Timestamptz() @map("deleted_at")
-  refresh_token              String?   @db.Text @map("refresh_token")
-  access_token               String?   @db.Text @map("access_token")
-  expires_at                 Int?      @map("expires_at")
-  refresh_token_expires_in   Int?      @map("refresh_token_expires_in")
-  token_type                 String?   @db.VarChar(255) @map("token_type")
-  scope                      String?   @db.VarChar(255) @map("scope")
-  id_token                   String?   @db.Text @map("id_token")
-  session_state              String?   @db.VarChar(255) @map("session_state")
-  user                       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String    @id @default(cuid()) @map("id")
+  userId                   String    @map("user_id")
+  type                     String    @map("type") @db.VarChar(255)
+  provider                 String    @map("provider") @db.VarChar(255)
+  providerAccountId        String    @map("provider_account_id") @db.VarChar(255)
+  createdAt                DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt                DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt                DateTime? @map("deleted_at") @db.Timestamptz()
+  refresh_token            String?   @map("refresh_token") @db.Text
+  access_token             String?   @map("access_token") @db.Text
+  expires_at               Int?      @map("expires_at")
+  refresh_token_expires_in Int?      @map("refresh_token_expires_in")
+  token_type               String?   @map("token_type") @db.VarChar(255)
+  scope                    String?   @map("scope") @db.VarChar(255)
+  id_token                 String?   @map("id_token") @db.Text
+  session_state            String?   @map("session_state") @db.VarChar(255)
+  user                     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -79,12 +79,12 @@ model Account {
 
 model Session {
   id           String    @id @default(cuid()) @map("id")
-  sessionToken String    @db.VarChar(255) @unique @map("session_token")
+  sessionToken String    @unique @map("session_token") @db.VarChar(255)
   userId       String    @map("user_id")
-  expires      DateTime  @db.Timestamptz() @map("expires")
-  createdAt    DateTime  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt    DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt    DateTime? @db.Timestamptz() @map("deleted_at")
+  expires      DateTime  @map("expires") @db.Timestamptz()
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz()
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
@@ -92,11 +92,11 @@ model Session {
 
 model VerificationToken {
   identifier String    @map("identifier")
-  token      String    @db.VarChar(255) @unique @map("token")
-  expires    DateTime  @db.Timestamptz() @map("expires")
-  createdAt  DateTime  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt  DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt  DateTime? @db.Timestamptz() @map("deleted_at")
+  token      String    @unique @map("token") @db.VarChar(255)
+  expires    DateTime  @map("expires") @db.Timestamptz()
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz()
 
   @@unique([identifier, token])
   @@map("verification_tokens")
@@ -107,37 +107,35 @@ model VerificationToken {
 // ============================================================================
 
 model VolunteerActivity {
-  id                  String                    @id @default(cuid()) @map("id")
-  title               String                    @db.VarChar(255) @map("title")
-  description         String                    @db.Text @map("description")
-  startAt             DateTime                  @db.Timestamptz() @map("start_at")
-  endAt               DateTime                  @db.Timestamptz() @map("end_at")
-  location            String                    @db.VarChar(500) @map("location")
-  status              VolunteerActivityStatus   @default(PLANNING) @map("status")
-  applicationDeadline DateTime                  @db.Date() @map("application_deadline")
-  managerId           String                    @map("manager_id")
-  createdAt           DateTime                  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt           DateTime                  @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt           DateTime?                 @db.Timestamptz() @map("deleted_at")
-  maxParticipants     Int?                      @map("max_participants")
-  qualifications      String?                   @db.Text @map("qualifications")
-  materials           String?                   @db.Text @map("materials")
+  id                  String                  @id @default(cuid()) @map("id")
+  title               String                  @map("title") @db.VarChar(255)
+  description         String                  @map("description") @db.Text
+  startAt             DateTime                @map("start_at") @db.Timestamptz()
+  endAt               DateTime                @map("end_at") @db.Timestamptz()
+  location            String                  @map("location") @db.VarChar(500)
+  status              VolunteerActivityStatus @default(PLANNING) @map("status")
+  applicationDeadline DateTime                @map("application_deadline") @db.Date()
+  managerId           String                  @map("manager_id")
+  createdAt           DateTime                @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt           DateTime                @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt           DateTime?               @map("deleted_at") @db.Timestamptz()
+  maxParticipants     Int?                    @map("max_participants")
 
-  manager      User           @relation(fields: [managerId], references: [id])
+  manager      User          @relation(fields: [managerId], references: [id])
   applications Application[]
 
   @@map("volunteer_activities")
 }
 
 model Application {
-  id                   String            @id @default(cuid()) @map("id")
-  userId               String            @map("user_id")
-  volunteerActivityId  String            @map("volunteer_activity_id")
-  emergencyContact     String            @db.VarChar(100) @map("emergency_contact")
-  status               ApplicationStatus @default(WAITING) @map("status")
-  createdAt            DateTime          @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt            DateTime          @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt            DateTime?         @db.Timestamptz() @map("deleted_at")
+  id                  String            @id @default(cuid()) @map("id")
+  userId              String            @map("user_id")
+  volunteerActivityId String            @map("volunteer_activity_id")
+  emergencyContact    String            @map("emergency_contact") @db.VarChar(100)
+  status              ApplicationStatus @default(WAITING) @map("status")
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt           DateTime          @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt           DateTime?         @map("deleted_at") @db.Timestamptz()
 
   user              User              @relation(fields: [userId], references: [id])
   volunteerActivity VolunteerActivity @relation(fields: [volunteerActivityId], references: [id])
@@ -148,18 +146,18 @@ model Application {
 }
 
 model Selection {
-  id              String    @id @default(cuid()) @map("id")
-  applicationId   String    @unique @map("application_id")
-  isSelected      Boolean   @map("is_selected")
-  selectedById    String    @map("selected_by_id")
-  createdAt       DateTime  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt       DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
-  selectionOrder  Int?      @map("selection_order")
-  waitingOrder    Int?      @map("waiting_order")
-  notes           String?   @db.Text @map("notes")
+  id             String   @id @default(cuid()) @map("id")
+  applicationId  String   @unique @map("application_id")
+  isSelected     Boolean  @map("is_selected")
+  selectedById   String   @map("selected_by_id")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  selectionOrder Int?     @map("selection_order")
+  waitingOrder   Int?     @map("waiting_order")
+  notes          String?  @map("notes") @db.Text
 
-  application  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  selectedBy   User        @relation(fields: [selectedById], references: [id])
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  selectedBy  User        @relation(fields: [selectedById], references: [id])
 
   @@map("selections")
 }
@@ -170,13 +168,13 @@ model Selection {
 
 model Notice {
   id          String    @id @default(cuid()) @map("id")
-  title       String    @db.VarChar(255) @map("title")
-  content     String    @db.Text @map("content")
+  title       String    @map("title") @db.VarChar(255)
+  content     String    @map("content") @db.Text
   authorId    String    @map("author_id")
   isPublished Boolean   @default(true) @map("is_published")
-  createdAt   DateTime  @default(now()) @db.Timestamptz() @map("created_at")
-  updatedAt   DateTime  @updatedAt @db.Timestamptz() @map("updated_at")
-  deletedAt   DateTime? @db.Timestamptz() @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz()
 
   author User @relation(fields: [authorId], references: [id])
 
@@ -194,16 +192,16 @@ enum Role {
 }
 
 enum VolunteerActivityStatus {
-  PLANNING              @map("PLANNING")              // 일정 계획 중
-  RECRUITING            @map("RECRUITING")            // 신청 접수 중
-  SELECTED              @map("SELECTED")              // 선발 완료
-  IN_PROGRESS           @map("IN_PROGRESS")           // 교육 진행 중
-  COMPLETED             @map("COMPLETED")             // 완료
-  CANCELLED             @map("CANCELLED")             // 취소됨
+  PLANNING    @map("PLANNING") // 일정 계획 중
+  RECRUITING  @map("RECRUITING") // 신청 접수 중
+  SELECTED    @map("SELECTED") // 선발 완료
+  IN_PROGRESS @map("IN_PROGRESS") // 교육 진행 중
+  COMPLETED   @map("COMPLETED") // 완료
+  CANCELLED   @map("CANCELLED") // 취소됨
 }
 
 enum ApplicationStatus {
-  WAITING   @map("WAITING")   // 대기자
-  SELECTED  @map("SELECTED")  // 선발됨
-  REJECTED  @map("REJECTED")  // 탈락
+  WAITING  @map("WAITING") // 대기자
+  SELECTED @map("SELECTED") // 선발됨
+  REJECTED @map("REJECTED") // 탈락
 }

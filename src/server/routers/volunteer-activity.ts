@@ -15,6 +15,8 @@ import {
 	VolunteerActivityListResponseSchema,
 } from '@/shared/schemas/volunteer-activity'
 import { TZDate } from '@date-fns/tz'
+import { TIME_ZONE } from '@/constants/date'
+import { Enum } from '@/enums'
 
 export const volunteerActivityRouter = createTRPCRouter({
 	getVolunteerActivity: protectedProcedure
@@ -112,7 +114,7 @@ export const volunteerActivityRouter = createTRPCRouter({
 				})
 			}
 			if (
-				ctx.session.user.role !== 'ADMIN' &&
+				ctx.session.user.role !== Enum.Role.ADMIN &&
 				volunteerActivity.managerId !== ctx.session.user.id
 			) {
 				throw new TRPCError({
@@ -143,7 +145,7 @@ export const volunteerActivityRouter = createTRPCRouter({
 				})
 			}
 			if (
-				ctx.session.user.role !== 'ADMIN' &&
+				ctx.session.user.role !== Enum.Role.ADMIN &&
 				volunteerActivity.managerId !== ctx.session.user.id
 			) {
 				throw new TRPCError({
@@ -155,7 +157,7 @@ export const volunteerActivityRouter = createTRPCRouter({
 			return await ctx.prisma.volunteerActivity.update({
 				where: { id: input.id },
 				data: {
-					deletedAt: new TZDate(new Date(), 'UTC'),
+					deletedAt: new TZDate(new Date(), TIME_ZONE.UTC),
 				},
 			})
 		}),

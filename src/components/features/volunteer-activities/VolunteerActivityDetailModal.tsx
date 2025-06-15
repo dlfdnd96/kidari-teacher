@@ -2,53 +2,93 @@
 
 import React, { FC, useCallback } from 'react'
 import {
-	Calendar,
-	MapPin,
-	Users,
-	Clock,
-	User,
-	FileText,
-	Package,
 	AlertCircle,
-	X,
+	Calendar,
 	ChevronDown,
+	Clock,
 	Eye,
-	Phone,
+	FileText,
 	Mail,
+	MapPin,
+	Phone,
+	User,
+	Users,
+	X,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { VolunteerActivityDetailModalProps } from '@/types/volunteer-activity'
 import {
-	VOLUNTEER_ACTIVITY_STATUS_LABELS,
 	VOLUNTEER_ACTIVITY_STATUS_COLORS,
+	VOLUNTEER_ACTIVITY_STATUS_LABELS,
 } from '@/types/volunteer-activity'
 import {
-	APPLICATION_STATUS_LABELS,
 	APPLICATION_STATUS_COLORS,
+	APPLICATION_STATUS_LABELS,
 } from '@/types/application'
-import { ZodEnum } from '@/enums'
-import { ZodType } from '@/shared/types'
+import { Enum, ZodEnum } from '@/enums'
+import { TZDate } from '@date-fns/tz'
+import { TIME_ZONE } from '@/constants/date'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 
 const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	open,
 	onClose,
 	activity,
 	onApply,
-	onEdit,
-	onUpdateApplicationStatus,
-	onViewApplicationDetail,
 	currentUserId,
 	userRole,
 }) => {
+	const { showError } = useErrorModal()
+
+	const utils = trpc.useUtils()
+
+	const updateApplicationStatusMutation =
+		trpc.application.updateApplicationStatus.useMutation({
+			onSuccess: async () => {
+				await Promise.all([
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getMyApplicationList.invalidate(),
+				])
+			},
+			onError: (error) => {
+				showError(error.message, '봉사활동 상태 수정 오류')
+			},
+		})
+
+	const handleStatusChange = useCallback(
+		async (applicationId: string, newStatus: string) => {
+			try {
+				const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
+				await updateApplicationStatusMutation.mutateAsync({
+					id: applicationId,
+					status: parsedNewStatus,
+				})
+			} catch (error) {
+				console.error('Status update error:', error)
+
+				const errorMessage =
+					error instanceof Error
+						? error.message
+						: '알 수 없는 오류가 발생했습니다.'
+
+				showError(errorMessage, '봉사활동 상태 수정 오류')
+			}
+		},
+		[showError, updateApplicationStatusMutation],
+	)
+
 	if (!open || !activity) {
 		return null
 	}
 
-	const isManager = currentUserId === activity.managerId || userRole === 'ADMIN'
+	const isManager =
+		currentUserId === activity.managerId || userRole === Enum.Role.ADMIN
 	const canApply =
-		activity.status === 'RECRUITING' &&
-		new Date() <= new Date(activity.applicationDeadline)
+		activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
+		new TZDate(new Date(), TIME_ZONE.UTC) <=
+			new TZDate(activity.applicationDeadline, TIME_ZONE.UTC)
 
 	const hasApplied = currentUserId
 		? activity.applications?.some((app) => app.user?.id === currentUserId)
@@ -65,24 +105,9 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	const statusLabel =
 		VOLUNTEER_ACTIVITY_STATUS_LABELS[activity.status] || activity.status
 
-	const isDeadlinePassed = new Date() > new Date(activity.applicationDeadline)
-
-	// 신청자 상태 변경 핸들러
-	const handleStatusChange = useCallback(
-		(applicationId: string, newStatus: string) => {
-			const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
-			onUpdateApplicationStatus?.(applicationId, parsedNewStatus)
-		},
-		[onUpdateApplicationStatus],
-	)
-
-	// 신청자 상세 보기 핸들러
-	const handleViewApplication = useCallback(
-		(applicationId: string) => {
-			onViewApplicationDetail?.(applicationId)
-		},
-		[onViewApplicationDetail],
-	)
+	const isDeadlinePassed =
+		new TZDate(new Date(), TIME_ZONE.UTC) >
+		new TZDate(activity.applicationDeadline, TIME_ZONE.UTC)
 
 	return (
 		<div
@@ -153,7 +178,7 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 									</div>
 									<div className="text-gray-700 dark:text-gray-300">
 										{format(
-											new Date(activity.startAt),
+											new TZDate(activity.startAt, TIME_ZONE.SEOUL),
 											'yyyy년 M월 d일 (E) HH:mm',
 											{ locale: ko },
 										)}
@@ -161,9 +186,13 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 											<>
 												{' '}
 												~{' '}
-												{format(new Date(activity.endAt), 'HH:mm', {
-													locale: ko,
-												})}
+												{format(
+													new TZDate(activity.endAt, TIME_ZONE.SEOUL),
+													'HH:mm',
+													{
+														locale: ko,
+													},
+												)}
 											</>
 										)}
 									</div>
@@ -214,7 +243,10 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 									<div className="flex items-center gap-2">
 										<span className="text-gray-700 dark:text-gray-300">
 											{format(
-												new Date(activity.applicationDeadline),
+												new TZDate(
+													activity.applicationDeadline,
+													TIME_ZONE.SEOUL,
+												),
 												'yyyy년 M월 d일 (E)',
 												{ locale: ko },
 											)}
@@ -246,42 +278,6 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 								</div>
 							</div>
 						</div>
-
-						{/* 참가 자격 */}
-						{activity.qualifications && (
-							<>
-								<div className="border-t border-gray-200 dark:border-gray-700"></div>
-								<div className="space-y-3">
-									<div className="flex items-center gap-2">
-										<AlertCircle className="h-5 w-5 text-amber-600" />
-										<h3 className="font-semibold text-gray-900 dark:text-gray-100">
-											참가 자격
-										</h3>
-									</div>
-									<div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed">
-										{activity.qualifications}
-									</div>
-								</div>
-							</>
-						)}
-
-						{/* 준비물 */}
-						{activity.materials && (
-							<>
-								<div className="border-t border-gray-200 dark:border-gray-700"></div>
-								<div className="space-y-3">
-									<div className="flex items-center gap-2">
-										<Package className="h-5 w-5 text-blue-600" />
-										<h3 className="font-semibold text-gray-900 dark:text-gray-100">
-											준비물
-										</h3>
-									</div>
-									<div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed">
-										{activity.materials}
-									</div>
-								</div>
-							</>
-						)}
 
 						{/* 신청 안내 */}
 						{currentUserId && !isManager && (
@@ -387,7 +383,10 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 																			<Clock className="w-3 h-3" />
 																			<span>
 																				{format(
-																					new Date(application.createdAt),
+																					new TZDate(
+																						application.createdAt,
+																						TIME_ZONE.SEOUL,
+																					),
 																					'M월 d일',
 																					{ locale: ko },
 																				)}
@@ -399,9 +398,6 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 																<div className="flex items-center gap-2 ml-4">
 																	{/* 신청 상세 보기 버튼 */}
 																	<button
-																		onClick={() =>
-																			handleViewApplication(application.id)
-																		}
 																		className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
 																		title="상세 보기"
 																	>
@@ -440,8 +436,13 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 													<button
 														onClick={() => {
 															activity.applications?.forEach((app) => {
-																if (app.status === 'WAITING') {
-																	handleStatusChange(app.id, 'SELECTED')
+																if (
+																	app.status === Enum.ApplicationStatus.WAITING
+																) {
+																	handleStatusChange(
+																		app.id,
+																		Enum.ApplicationStatus.SELECTED,
+																	)
 																}
 															})
 														}}
@@ -452,8 +453,13 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 													<button
 														onClick={() => {
 															activity.applications?.forEach((app) => {
-																if (app.status === 'WAITING') {
-																	handleStatusChange(app.id, 'REJECTED')
+																if (
+																	app.status === Enum.ApplicationStatus.WAITING
+																) {
+																	handleStatusChange(
+																		app.id,
+																		Enum.ApplicationStatus.REJECTED,
+																	)
 																}
 															})
 														}}
@@ -517,16 +523,6 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 									</button>
 								)}
 							</>
-						)}
-
-						{/* 수정 버튼 (관리자/매니저만) */}
-						{isManager && (
-							<button
-								onClick={() => onEdit?.(activity)}
-								className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
-							>
-								수정하기
-							</button>
 						)}
 					</div>
 				</div>

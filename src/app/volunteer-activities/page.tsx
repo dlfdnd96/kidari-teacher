@@ -2,10 +2,10 @@ import React from 'react'
 import { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { Enum } from '@/enums'
 import VolunteerActivityPageClient from '@/components/features/volunteer-activities/VolunteerActivityPageClient'
-import { Heart, Users, TrendingUp, Shield } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { VolunteerActivitiesPageProps } from '@/types/volunteer-activity'
 
 export async function generateMetadata({
@@ -53,6 +53,11 @@ export default async function VolunteerActivitiesPage({
 	}
 
 	const session = await getServerSession(authOptions)
+
+	if (!session?.user) {
+		redirect('/')
+	}
+
 	const isAdmin = session?.user?.email
 		? session.user.role === Enum.Role.ADMIN
 		: false
@@ -82,76 +87,8 @@ export default async function VolunteerActivitiesPage({
 					<p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
 						의미있는 봉사활동에 참여하여 함께 성장하고 세상을 변화시켜 나가요
 					</p>
-
-					{/* 통계 정보 (선택사항) */}
-					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto">
-						<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-4 border border-emerald-200/50 dark:border-emerald-700/50">
-							<div className="flex items-center justify-center w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl mx-auto mb-3">
-								<Heart className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-							</div>
-							<div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
-								활동
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								다양한 봉사활동
-							</div>
-						</div>
-
-						<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-4 border border-teal-200/50 dark:border-teal-700/50">
-							<div className="flex items-center justify-center w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl mx-auto mb-3">
-								<Users className="w-6 h-6 text-teal-600 dark:text-teal-400" />
-							</div>
-							<div className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400 mb-1">
-								참여
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								누구나 참여 가능
-							</div>
-						</div>
-
-						<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-4 border border-cyan-200/50 dark:border-cyan-700/50">
-							<div className="flex items-center justify-center w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl mx-auto mb-3">
-								<TrendingUp className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
-							</div>
-							<div className="text-2xl sm:text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-1">
-								성장
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								함께하는 성장
-							</div>
-						</div>
-					</div>
 				</div>
 			</section>
-
-			{/* 안내 섹션 */}
-			{isAdmin && (
-				<section className="max-w-4xl mx-auto px-4 sm:px-8 mb-8">
-					<div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-6 border border-emerald-200/50 dark:border-emerald-700/50">
-						<div className="flex items-center gap-4">
-							<div className="flex-shrink-0">
-								<div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
-									<Shield className="w-6 h-6 text-white" />
-								</div>
-							</div>
-							<div className="flex-1">
-								<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-									관리자 권한
-								</h3>
-								<p className="text-gray-600 dark:text-gray-400 text-sm">
-									새로운 봉사활동을 생성하고 참가자를 관리할 수 있습니다. 우측
-									하단의 + 버튼을 클릭하세요.
-								</p>
-							</div>
-							<div className="flex-shrink-0">
-								<div className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 rounded-full text-sm font-medium">
-									관리자
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-			)}
 
 			{/* 컨텐츠 섹션 */}
 			<section className="max-w-4xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">

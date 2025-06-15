@@ -1,5 +1,5 @@
 import React from 'react'
-import VolunteerActivityCard from './VolunteerActivityCard'
+import VolunteerActivityCard from '@/components/features/volunteer-activities/VolunteerActivityCard'
 import type { VolunteerActivityListProps } from '@/types/volunteer-activity'
 
 export default function VolunteerActivityList({

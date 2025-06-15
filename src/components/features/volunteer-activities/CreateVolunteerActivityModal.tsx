@@ -1,73 +1,14 @@
 'use client'
 
 import React, { FC, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { trpc } from '@/components/providers/TrpcProvider'
-import VolunteerActivityForm from './VolunteerActivityForm'
+import VolunteerActivityForm from '@/components/features/volunteer-activities/VolunteerActivityForm'
 import type { CreateVolunteerActivityModalProps } from '@/types/volunteer-activity'
 import { FileText } from 'lucide-react'
-import { ZodType } from '@/shared/types'
-import { CreateVolunteerActivityInputSchema } from '@/shared/schemas/volunteer-activity'
 
 const CreateVolunteerActivityModal: FC<CreateVolunteerActivityModalProps> = ({
 	open,
 	onClose,
 }) => {
-	const { data: session } = useSession()
-	const router = useRouter()
-	const { showError } = useErrorModal()
-
-	const utils = trpc.useUtils()
-
-	const createVolunteerActivityMutation =
-		trpc.volunteerActivity.createVolunteerActivity.useMutation({
-			onSuccess: async () => {
-				await utils.volunteerActivity.getVolunteerActivityList.invalidate()
-				router.refresh()
-				onClose()
-			},
-			onError: (error) => {
-				showError(error.message, '봉사활동 생성 오류')
-			},
-		})
-
-	const handleFormSubmit = useCallback(
-		async (data: ZodType<typeof CreateVolunteerActivityInputSchema>) => {
-			if (!session?.user) {
-				showError('로그인이 필요합니다.', '인증 오류')
-				return
-			}
-
-			try {
-				await createVolunteerActivityMutation.mutateAsync({
-					title: data.title,
-					description: data.description,
-					startAt: data.startAt,
-					endAt: data.endAt,
-					location: data.location,
-					applicationDeadline: data.applicationDeadline,
-					maxParticipants: data.maxParticipants,
-					qualifications: data.qualifications || '',
-					materials: data.materials || '',
-				})
-			} catch (error) {
-				console.error('Create error:', error)
-				const errorMessage =
-					error instanceof Error
-						? error.message
-						: '알 수 없는 오류가 발생했습니다.'
-				showError(errorMessage, '봉사활동 생성 오류')
-			}
-		},
-		[createVolunteerActivityMutation, session, showError],
-	)
-
-	const handleSuccess = useCallback(() => {
-		onClose()
-	}, [onClose])
-
 	const handleBackdropClick = useCallback(
 		(e: React.MouseEvent) => {
 			if (e.target === e.currentTarget) {
@@ -76,8 +17,6 @@ const CreateVolunteerActivityModal: FC<CreateVolunteerActivityModalProps> = ({
 		},
 		[onClose],
 	)
-
-	const loading = createVolunteerActivityMutation.isPending
 
 	if (!open) {
 		return null
@@ -131,12 +70,7 @@ const CreateVolunteerActivityModal: FC<CreateVolunteerActivityModalProps> = ({
 
 				{/* 폼 컨테이너 */}
 				<div className="p-0">
-					<VolunteerActivityForm
-						onSubmit={handleFormSubmit}
-						onCancel={onClose}
-						isLoading={loading}
-						isModal={true}
-					/>
+					<VolunteerActivityForm onClose={onClose} />
 				</div>
 			</div>
 		</div>
