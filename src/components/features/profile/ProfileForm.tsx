@@ -10,18 +10,50 @@ import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { ZodError } from 'zod/v4'
 import { UpdateUserInputSchema } from '@/shared/schemas/user'
 import type { ProfileFormProps } from '@/types/profile'
+import Image from 'next/image'
+import { ZodType } from '@/shared/types'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 const ProfileForm = memo(
-	({ user, onSubmit, onCancel, isLoading = false }: ProfileFormProps) => {
+	({ user, onCancel, isLoading = false }: ProfileFormProps) => {
+		const { data: session, update: updateSession } = useSession()
+		const router = useRouter()
 		const { showError } = useErrorModal()
 
-		const { register, handleSubmit, formState } = useForm({
-			resolver: zodResolver(UpdateUserInputSchema),
-			defaultValues: {
-				name: user.name ?? '',
-				email: user.email ?? '',
+		const { register, handleSubmit, formState } = useForm()
+
+		const updateProfileMutation = trpc.user.updateProfile.useMutation({
+			onSuccess: async (updatedUser) => {
+				await updateSession({
+					user: {
+						...session?.user,
+						name: updatedUser.name,
+						email: updatedUser.email,
+					},
+				})
+
+				await refetchUser()
+
+				setIsEditing(false)
+				router.refresh()
+			},
+			onError: (error) => {
+				showError(error.message, '프로필 업데이트 오류')
 			},
 		})
+
+		const onSubmit = useCallback(
+			async (data: ZodType<typeof UpdateUserInputSchema>) => {
+				try {
+					await updateProfileMutation.mutateAsync(data)
+				} catch (error) {
+					console.error('Profile update error:', error)
+				}
+			},
+			[updateProfileMutation],
+		)
 
 		const handleFormSubmit = useCallback(
 			async (data: unknown) => {
@@ -66,8 +98,10 @@ const ProfileForm = memo(
 						<div className="flex justify-center">
 							<div className="relative">
 								{user.image ? (
-									<img
+									<Image
 										src={user.image}
+										width={1000}
+										height={1000}
 										alt={`${user.name}의 프로필`}
 										className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
 									/>

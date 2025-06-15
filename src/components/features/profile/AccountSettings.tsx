@@ -1,82 +1,20 @@
 'use client'
 
-import React, { memo, useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { memo, useCallback } from 'react'
 import { signOut } from 'next-auth/react'
-import {
-	Settings,
-	Trash2,
-	LogOut,
-	Shield,
-	AlertTriangle,
-	CheckCircle,
-	X,
-} from 'lucide-react'
+import { Settings, LogOut, Shield, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { trpc } from '@/components/providers/TrpcProvider'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import type { AccountSettingsProps } from '@/types/profile'
+import { Enum } from '@/enums'
 
 const AccountSettings = memo(({ user }: AccountSettingsProps) => {
-	const router = useRouter()
-	const { showError } = useErrorModal()
-	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-	const [confirmEmail, setConfirmEmail] = useState('')
-	const [confirmText, setConfirmText] = useState('')
-
-	const deleteAccountMutation = trpc.user.deleteAccount.useMutation({
-		onSuccess: async () => {
-			// 계정 삭제 성공 시 로그아웃
-			await signOut({
-				callbackUrl: '/',
-				redirect: true,
-			})
-		},
-		onError: (error) => {
-			showError(error.message, '계정 삭제 오류')
-		},
-		onSettled: () => {
-			setIsDeleteDialogOpen(false)
-			setConfirmEmail('')
-			setConfirmText('')
-		},
-	})
-
 	const handleLogout = useCallback(async () => {
 		await signOut({
 			callbackUrl: '/',
 			redirect: true,
 		})
 	}, [])
-
-	const handleDeleteAccount = useCallback(async () => {
-		if (confirmEmail !== user.email || confirmText !== '계정을 삭제합니다') {
-			showError('확인 정보가 일치하지 않습니다.', '입력 오류')
-			return
-		}
-
-		try {
-			await deleteAccountMutation.mutateAsync({
-				confirmEmail,
-				confirmText,
-			})
-		} catch (error) {
-			console.error('Delete account error:', error)
-		}
-	}, [confirmEmail, confirmText, user.email, deleteAccountMutation, showError])
-
-	const canDeleteAccount =
-		confirmEmail === user.email && confirmText === '계정을 삭제합니다'
 
 	return (
 		<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
@@ -108,7 +46,7 @@ const AccountSettings = memo(({ user }: AccountSettingsProps) => {
 								역할
 							</div>
 							<div className="text-base font-semibold text-gray-900 dark:text-gray-100">
-								{user.role === 'ADMIN' ? '관리자' : '사용자'}
+								{user.role === Enum.Role.ADMIN ? '관리자' : '사용자'}
 							</div>
 						</div>
 
@@ -148,26 +86,6 @@ const AccountSettings = memo(({ user }: AccountSettingsProps) => {
 							로그아웃
 						</Button>
 					</div>
-
-					{/* 계정 삭제 */}
-					<div className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
-						<div>
-							<div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-								계정 삭제
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								계정과 모든 데이터가 영구적으로 삭제됩니다
-							</div>
-						</div>
-						<Button
-							onClick={() => setIsDeleteDialogOpen(true)}
-							variant="destructive"
-							className="flex items-center"
-						>
-							<Trash2 className="w-4 h-4 mr-1.5" />
-							계정 삭제
-						</Button>
-					</div>
 				</div>
 
 				{/* 주의사항 */}
@@ -179,136 +97,6 @@ const AccountSettings = memo(({ user }: AccountSettingsProps) => {
 					</AlertDescription>
 				</Alert>
 			</div>
-
-			{/* 계정 삭제 확인 다이얼로그 */}
-			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle className="flex items-center text-red-600 dark:text-red-400">
-							<AlertTriangle className="w-5 h-5 mr-2" />
-							계정 삭제 확인
-						</DialogTitle>
-						<DialogDescription className="text-left">
-							이 작업은 되돌릴 수 없습니다. 계정과 모든 데이터가 영구적으로
-							삭제됩니다.
-						</DialogDescription>
-					</DialogHeader>
-
-					<div className="space-y-4 py-4">
-						{/* 진행 중인 활동 경고 */}
-						<Alert variant="destructive">
-							<AlertTriangle className="h-4 w-4" />
-							<AlertDescription>
-								진행 중인 봉사활동이 있는 경우 계정을 삭제할 수 없습니다.
-							</AlertDescription>
-						</Alert>
-
-						{/* 이메일 확인 */}
-						<div>
-							<label
-								htmlFor="confirm-email"
-								className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-							>
-								이메일 주소를 입력하여 확인해주세요:
-							</label>
-							<Input
-								id="confirm-email"
-								type="email"
-								placeholder={user.email ?? ''}
-								value={confirmEmail}
-								onChange={(e) => setConfirmEmail(e.target.value)}
-								className="w-full"
-							/>
-						</div>
-
-						{/* 텍스트 확인 */}
-						<div>
-							<label
-								htmlFor="confirm-text"
-								className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-							>
-								다음 텍스트를 정확히 입력해주세요:{' '}
-								<span className="font-bold text-red-600">
-									"계정을 삭제합니다"
-								</span>
-							</label>
-							<Input
-								id="confirm-text"
-								type="text"
-								placeholder="계정을 삭제합니다"
-								value={confirmText}
-								onChange={(e) => setConfirmText(e.target.value)}
-								className="w-full"
-							/>
-						</div>
-
-						{/* 확인 상태 표시 */}
-						<div className="space-y-2 text-sm">
-							<div className="flex items-center">
-								{confirmEmail === user.email ? (
-									<CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-								) : (
-									<X className="w-4 h-4 text-red-600 mr-2" />
-								)}
-								<span
-									className={
-										confirmEmail === user.email
-											? 'text-green-600'
-											: 'text-red-600'
-									}
-								>
-									이메일 확인
-								</span>
-							</div>
-							<div className="flex items-center">
-								{confirmText === '계정을 삭제합니다' ? (
-									<CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-								) : (
-									<X className="w-4 h-4 text-red-600 mr-2" />
-								)}
-								<span
-									className={
-										confirmText === '계정을 삭제합니다'
-											? 'text-green-600'
-											: 'text-red-600'
-									}
-								>
-									텍스트 확인
-								</span>
-							</div>
-						</div>
-					</div>
-
-					<DialogFooter className="flex flex-col sm:flex-row gap-2">
-						<Button
-							variant="outline"
-							onClick={() => setIsDeleteDialogOpen(false)}
-							disabled={deleteAccountMutation.isPending}
-							className="flex-1"
-						>
-							취소
-						</Button>
-						<Button
-							variant="destructive"
-							onClick={handleDeleteAccount}
-							disabled={!canDeleteAccount || deleteAccountMutation.isPending}
-							className="flex-1"
-						>
-							{deleteAccountMutation.isPending ? (
-								<>
-									<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-									삭제 중...
-								</>
-							) : (
-								<>
-									<Trash2 className="w-4 h-4 mr-1.5" />
-									계정 삭제
-								</>
-							)}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
 		</div>
 	)
 })

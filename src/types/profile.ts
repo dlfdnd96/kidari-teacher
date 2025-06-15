@@ -7,7 +7,6 @@ export interface ProfilePageClientProps {
 
 export interface ProfileFormProps {
 	user: ZodType<typeof UserEntitySchema>
-	onSubmit: (data: ZodType<typeof UpdateUserInputSchema>) => void
 	onCancel: () => void
 	isLoading?: boolean
 }
@@ -21,6 +20,7 @@ export interface ProfileCardProps {
 export interface ProfileStatsProps {
 	applicationCount: number
 	participatedCount: number
+	completedCount: number
 	memberSince: Date
 }
 

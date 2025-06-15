@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import ProfilePageClient from '@/components/features/profile/ProfilePageClient'
 import { User, Settings, TrendingUp, Heart } from 'lucide-react'
+import { Enum } from '@/enums'
 
 export const metadata: Metadata = {
 	title: '프로필 | 키다리 선생님',
@@ -24,11 +25,10 @@ export const metadata: Metadata = {
 }
 
 export default async function ProfilePage() {
-	// 세션 확인 - 로그인 필요
 	const session = await getServerSession(authOptions)
 
 	if (!session?.user) {
-		redirect('/auth/signin?callbackUrl=/profile')
+		redirect('/')
 	}
 
 	return (
@@ -118,7 +118,7 @@ export default async function ProfilePage() {
 						</div>
 						<div className="flex-shrink-0">
 							<div className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
-								{session.user.role === 'ADMIN' ? '관리자' : '사용자'}
+								{session.user.role === Enum.Role.ADMIN ? '관리자' : '사용자'}
 							</div>
 						</div>
 					</div>

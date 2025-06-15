@@ -11,6 +11,7 @@ import {
 	UserProfileStatsSchema,
 	DeleteAccountInputSchema,
 } from '@/shared/schemas/user'
+import { TIME_ZONE } from '@/constants/date'
 
 export const userRouter = createTRPCRouter({
 	getCurrentUser: protectedProcedure
@@ -137,7 +138,7 @@ export const userRouter = createTRPCRouter({
 				data: {
 					name: input.name,
 					email: input.email,
-					updatedAt: new TZDate(new Date(), 'UTC'),
+					updatedAt: new TZDate(new Date(), TIME_ZONE.UTC),
 				},
 			})
 
@@ -192,7 +193,7 @@ export const userRouter = createTRPCRouter({
 					id: ctx.session.user.id,
 				},
 				data: {
-					deletedAt: new TZDate(new Date(), 'UTC'),
+					deletedAt: new TZDate(new Date(), TIME_ZONE.UTC),
 				},
 			})
 

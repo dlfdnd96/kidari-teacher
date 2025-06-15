@@ -4,13 +4,7 @@ import React, { memo } from 'react'
 import { FileText, CheckCircle, Trophy, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
-
-interface ProfileStatsProps {
-	applicationCount: number
-	participatedCount: number
-	completedCount: number
-	memberSince: Date
-}
+import { ProfileStatsProps } from '@/types/profile'
 
 const ProfileStats = memo(
 	({
