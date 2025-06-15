@@ -1,6 +1,13 @@
 'use client'
 
-import { memo, useCallback, useEffect, useRef, useState, useMemo } from 'react'
+import React, {
+	memo,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	useMemo,
+} from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -16,15 +23,7 @@ import {
 	User,
 	LogOut,
 } from 'lucide-react'
-
-interface NavLink {
-	href: string
-	label: string
-	isActive: boolean
-	color: 'blue' | 'emerald'
-	icon: React.ComponentType<any>
-	requireAuth?: boolean
-}
+import { NavLink } from '@/types/navbar'
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -51,7 +50,6 @@ const Navbar = memo(() => {
 		setIsMenuOpen((prev) => !prev)
 	}, [])
 
-	// 메인 네비게이션 링크들 (고정)
 	const navLinks = useMemo(
 		(): NavLink[] => [
 			{
@@ -76,7 +74,6 @@ const Navbar = memo(() => {
 		[pathname],
 	)
 
-	// 색상 클래스를 반환하는 함수 (간소화)
 	const getColorClasses = useCallback(
 		(color: 'blue' | 'emerald', isActive: boolean) => {
 			if (color === 'blue') {
@@ -92,7 +89,6 @@ const Navbar = memo(() => {
 		[],
 	)
 
-	// 드롭다운 메뉴용 색상 클래스 (간소화)
 	const getDropdownColorClasses = useCallback(
 		(color: 'blue' | 'emerald', isActive: boolean) => {
 			if (color === 'blue') {
