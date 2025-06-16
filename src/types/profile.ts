@@ -1,15 +1,13 @@
 import { ZodType } from '@/shared/types'
-import { UserEntitySchema, UpdateUserInputSchema } from '@/shared/schemas/user'
+import { UserEntitySchema } from '@/shared/schemas/user'
 
 export interface ProfilePageClientProps {
 	initialUser?: ZodType<typeof UserEntitySchema>
 }
 
 export interface ProfileFormProps {
-	user: ZodType<typeof UserEntitySchema>
-	onSubmit: (data: ZodType<typeof UpdateUserInputSchema>) => void
 	onCancel: () => void
-	isLoading?: boolean
+	refetchUser: () => Promise<any>
 }
 
 export interface ProfileCardProps {
@@ -21,6 +19,7 @@ export interface ProfileCardProps {
 export interface ProfileStatsProps {
 	applicationCount: number
 	participatedCount: number
+	completedCount: number
 	memberSince: Date
 }
 

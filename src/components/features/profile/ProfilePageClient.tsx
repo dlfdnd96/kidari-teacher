@@ -1,29 +1,22 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import React, { useCallback, useState } from 'react'
 import { trpc } from '@/components/providers/TrpcProvider'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import ProfileCard from '@/components/features/profile/ProfileCard'
 import ProfileForm from '@/components/features/profile/ProfileForm'
 import ProfileStats from '@/components/features/profile/ProfileStats'
 import AccountSettings from '@/components/features/profile/AccountSettings'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { RefreshCw, AlertCircle } from 'lucide-react'
+import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ProfilePageClientProps } from '@/types/profile'
 
 export default function ProfilePageClient({
 	initialUser,
 }: ProfilePageClientProps) {
-	const { data: session, update: updateSession } = useSession()
-	const router = useRouter()
-	const { showError } = useErrorModal()
 	const [isEditing, setIsEditing] = useState(false)
 
-	// 사용자 정보 조회
 	const {
 		data: user,
 		isLoading: userLoading,
@@ -32,41 +25,16 @@ export default function ProfilePageClient({
 		refetch: refetchUser,
 	} = trpc.user.getCurrentUser.useQuery(undefined, {
 		initialData: initialUser,
-		staleTime: 5 * 60 * 1000, // 5분
+		staleTime: 5 * 60 * 1000,
 	})
 
-	// 프로필 통계 조회
 	const {
 		data: stats,
-		isLoading: statsLoading,
 		isError: statsError,
 		error: statsErrorMsg,
 		refetch: refetchStats,
 	} = trpc.user.getProfileStats.useQuery(undefined, {
-		staleTime: 5 * 60 * 1000, // 5분
-	})
-
-	// 프로필 업데이트 뮤테이션
-	const updateProfileMutation = trpc.user.updateProfile.useMutation({
-		onSuccess: async (updatedUser) => {
-			// 세션 업데이트
-			await updateSession({
-				user: {
-					...session?.user,
-					name: updatedUser.name,
-					email: updatedUser.email,
-				},
-			})
-
-			// 사용자 정보 다시 조회
-			await refetchUser()
-
-			setIsEditing(false)
-			router.refresh()
-		},
-		onError: (error) => {
-			showError(error.message, '프로필 업데이트 오류')
-		},
+		staleTime: 5 * 60 * 1000,
 	})
 
 	const handleEdit = useCallback(() => {
@@ -77,23 +45,11 @@ export default function ProfilePageClient({
 		setIsEditing(false)
 	}, [])
 
-	const handleSubmit = useCallback(
-		async (data: any) => {
-			try {
-				await updateProfileMutation.mutateAsync(data)
-			} catch (error) {
-				console.error('Profile update error:', error)
-			}
-		},
-		[updateProfileMutation],
-	)
-
 	const handleRefresh = useCallback(() => {
 		refetchUser()
 		refetchStats()
 	}, [refetchUser, refetchStats])
 
-	// 로딩 상태
 	if (userLoading) {
 		return (
 			<div className="space-y-6">
@@ -137,7 +93,6 @@ export default function ProfilePageClient({
 		)
 	}
 
-	// 에러 상태
 	if (userError || !user) {
 		return (
 			<div className="text-center py-12">
@@ -168,12 +123,7 @@ export default function ProfilePageClient({
 				{!isEditing ? (
 					<ProfileCard user={user} onEdit={handleEdit} canEdit={true} />
 				) : (
-					<ProfileForm
-						user={user}
-						onSubmit={handleSubmit}
-						onCancel={handleCancelEdit}
-						isLoading={updateProfileMutation.isPending}
-					/>
+					<ProfileForm onCancel={handleCancelEdit} refetchUser={refetchUser} />
 				)}
 			</div>
 

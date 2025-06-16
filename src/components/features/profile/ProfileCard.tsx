@@ -7,10 +7,15 @@ import { ko } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { ProfileCardProps } from '@/types/profile'
+import { ZodType } from '@/shared/types'
+import { Enum, ZodEnum } from '@/enums'
+import Image from 'next/image'
+import { TZDate } from '@date-fns/tz'
+import { TIME_ZONE } from '@/constants/date'
 
 const ProfileCard = memo(
 	({ user, onEdit, canEdit = true }: ProfileCardProps) => {
-		const getRoleLabel = (role: string) => {
+		const getRoleLabel = (role: ZodType<typeof ZodEnum.Role>) => {
 			switch (role) {
 				case 'ADMIN':
 					return '관리자'
@@ -21,7 +26,7 @@ const ProfileCard = memo(
 			}
 		}
 
-		const getRoleBadgeColor = (role: string) => {
+		const getRoleBadgeColor = (role: ZodType<typeof ZodEnum.Role>) => {
 			switch (role) {
 				case 'ADMIN':
 					return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
@@ -69,8 +74,10 @@ const ProfileCard = memo(
 						<div className="flex-shrink-0">
 							<div className="relative">
 								{user.image ? (
-									<img
+									<Image
 										src={user.image}
+										width={1000}
+										height={1000}
 										alt={`${user.name}의 프로필`}
 										className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
 									/>
@@ -84,7 +91,7 @@ const ProfileCard = memo(
 									<Badge
 										className={`${getRoleBadgeColor(user.role)} text-xs font-medium px-2 py-1`}
 									>
-										{user.role === 'ADMIN' && (
+										{user.role === Enum.Role.ADMIN && (
 											<Shield className="w-3 h-3 mr-1" />
 										)}
 										{getRoleLabel(user.role)}
@@ -129,9 +136,13 @@ const ProfileCard = memo(
 										가입일
 									</div>
 									<div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-										{format(new Date(user.createdAt), 'yyyy년 M월 d일', {
-											locale: ko,
-										})}
+										{format(
+											new TZDate(user.createdAt, TIME_ZONE.SEOUL),
+											'yyyy년 M월 d일',
+											{
+												locale: ko,
+											},
+										)}
 									</div>
 								</div>
 							</div>
@@ -146,7 +157,7 @@ const ProfileCard = memo(
 										</div>
 										<div className="text-sm text-gray-700 dark:text-gray-300">
 											{format(
-												new Date(user.updatedAt),
+												new TZDate(user.updatedAt, TIME_ZONE.SEOUL),
 												'yyyy년 M월 d일 HH:mm',
 												{
 													locale: ko,
