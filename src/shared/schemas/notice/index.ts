@@ -1,36 +1,22 @@
 import { z } from 'zod/v4-mini'
 import { PageableSchema } from '@/shared/schemas'
 import { UserEntitySchema } from '@/shared/schemas/user'
-import { ZodType } from '@/shared/types'
 
-interface NoticeAttributes {
-	id: string
-	title: string
-	content: string
-	authorId: string
-	isPublished: boolean
-	createdAt: Date
-	updatedAt: Date
-	deletedAt: Date | null
-	author?: ZodType<typeof UserEntitySchema>
-}
+export const NoticeEntitySchema = z.strictObject({
+	id: z.string().check(z.cuid()),
+	title: z.string(),
+	content: z.string(),
+	authorId: z.string(),
+	get author(): z.ZodMiniOptional<typeof UserEntitySchema> {
+		return z.optional(UserEntitySchema)
+	},
+	isPublished: z.boolean(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	deletedAt: z.nullable(z.date()),
+})
 
-export const NoticeEntitySchema: z.ZodMiniType<NoticeAttributes> =
-	z.strictObject({
-		id: z.string().check(z.cuid()),
-		title: z.string(),
-		content: z.string(),
-		authorId: z.string(),
-		author: z.optional(z.lazy(() => UserEntitySchema)),
-		isPublished: z.boolean(),
-		createdAt: z.date(),
-		updatedAt: z.date(),
-		deletedAt: z.nullable(z.date()),
-	})
-
-export const NoticePickAuthorEntitySchema: z.ZodMiniType<
-	Omit<NoticeAttributes, 'author'> & { author: { name: string | null } }
-> = z.strictObject({
+export const NoticePickAuthorEntitySchema = z.strictObject({
 	id: z.string().check(z.cuid()),
 	title: z.string(),
 	content: z.string(),

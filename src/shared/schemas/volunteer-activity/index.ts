@@ -4,47 +4,31 @@ import { PageableSchema } from '@/shared/schemas'
 import { ZodEnum } from '@/enums'
 import { UserEntitySchema } from '@/shared/schemas/user'
 import { ApplicationEntitySchema } from '@/shared/schemas/application'
-import { ZodType } from '@/shared/types'
 import { TIME_ZONE } from '@/constants/date'
 
-interface VolunteerActivityAttributes {
-	id: string
-	title: string
-	description: string
-	startAt: Date
-	endAt: Date
-	location: string
-	status: ZodType<typeof ZodEnum.VolunteerActivityStatus>
-	applicationDeadline: Date
-	managerId: string
-	createdAt: Date
-	updatedAt: Date
-	deletedAt: Date | null
-	maxParticipants: number | null
-	manager?: ZodType<typeof UserEntitySchema>
-	applications?: ZodType<typeof ApplicationEntitySchema>[] | null
-}
-
-export const VolunteerActivityEntitySchema: z.ZodMiniType<VolunteerActivityAttributes> =
-	z.strictObject({
-		id: z.string().check(z.cuid()),
-		title: z.string().check(z.minLength(1), z.maxLength(255)),
-		description: z.string().check(z.minLength(1)),
-		startAt: z.date(),
-		endAt: z.date(),
-		location: z.string().check(z.minLength(1), z.maxLength(500)),
-		status: ZodEnum.VolunteerActivityStatus,
-		applicationDeadline: z.date(),
-		managerId: z.string().check(z.cuid()),
-		manager: z.optional(z.lazy(() => UserEntitySchema)),
-		createdAt: z.date(),
-		updatedAt: z.date(),
-		deletedAt: z.nullable(z.date()),
-		maxParticipants: z.number().check(z.positive()),
-		applications: z.nullable(
-			z.optional(z.array(z.lazy(() => ApplicationEntitySchema))),
-		),
-	})
+export const VolunteerActivityEntitySchema = z.strictObject({
+	id: z.string().check(z.cuid()),
+	title: z.string().check(z.minLength(1), z.maxLength(255)),
+	description: z.string().check(z.minLength(1)),
+	startAt: z.date(),
+	endAt: z.date(),
+	location: z.string().check(z.minLength(1), z.maxLength(500)),
+	status: ZodEnum.VolunteerActivityStatus,
+	applicationDeadline: z.date(),
+	managerId: z.string().check(z.cuid()),
+	get manager(): z.ZodMiniOptional<typeof UserEntitySchema> {
+		return z.optional(UserEntitySchema)
+	},
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	deletedAt: z.nullable(z.date()),
+	maxParticipants: z.number().check(z.positive()),
+	get applications(): z.ZodMiniOptional<
+		z.ZodMiniNullable<z.ZodMiniArray<typeof ApplicationEntitySchema>>
+	> {
+		return z.optional(z.nullable(z.array(ApplicationEntitySchema)))
+	},
+})
 
 export const VolunteerActivityListEntitySchema = z.array(
 	VolunteerActivityEntitySchema,
