@@ -28,33 +28,6 @@ export const volunteerActivityRouter = createTRPCRouter({
 					id: input.id,
 					deletedAt: null,
 				},
-				include: {
-					manager: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-						},
-					},
-					applications: {
-						where: {
-							deletedAt: null,
-						},
-						include: {
-							user: {
-								select: {
-									id: true,
-									name: true,
-									email: true,
-								},
-							},
-							selection: true,
-						},
-						orderBy: {
-							createdAt: 'desc',
-						},
-					},
-				},
 			})
 
 			if (!activity) {

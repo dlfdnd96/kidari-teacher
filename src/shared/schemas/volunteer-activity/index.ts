@@ -22,7 +22,7 @@ export const VolunteerActivityEntitySchema = z.strictObject({
 	createdAt: z.date(),
 	updatedAt: z.date(),
 	deletedAt: z.nullable(z.date()),
-	maxParticipants: z.number().check(z.positive()),
+	maxParticipants: z.nullable(z.number().check(z.positive())),
 	get applications(): z.ZodMiniOptional<
 		z.ZodMiniNullable<z.ZodMiniArray<typeof ApplicationEntitySchema>>
 	> {
