@@ -1,8 +1,5 @@
 import { ZodType } from '@/shared/types'
-import {
-	ApplicationEntitySchema,
-	ApplicationFormSchema,
-} from '@/shared/schemas/application'
+import { ApplicationEntitySchema } from '@/shared/schemas/application'
 import { ZodEnum } from '@/enums'
 
 export interface MyApplicationsPageProps {
@@ -15,9 +12,8 @@ export interface MyApplicationsPageProps {
 export interface ApplicationFormProps {
 	volunteerActivityId: string
 	volunteerActivityTitle: string
-	onSubmit: (data: ZodType<typeof ApplicationFormSchema>) => void
 	onCancel: () => void
-	isLoading?: boolean
+	onClose: () => void
 }
 
 export interface ApplicationModalProps {

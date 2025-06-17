@@ -30,27 +30,6 @@ export const applicationRouter = createTRPCRouter({
 					id: input.id,
 					deletedAt: null,
 				},
-				include: {
-					user: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-						},
-					},
-					volunteerActivity: {
-						include: {
-							manager: {
-								select: {
-									id: true,
-									name: true,
-									email: true,
-								},
-							},
-						},
-					},
-					selection: true,
-				},
 			})
 
 			if (!application) {
@@ -79,29 +58,7 @@ export const applicationRouter = createTRPCRouter({
 			const queryOptions = createDomainQueryBuilder(input)
 
 			const [applicationList, totalCount] = await Promise.all([
-				ctx.prisma.application.findMany({
-					...queryOptions,
-					include: {
-						user: {
-							select: {
-								id: true,
-								name: true,
-								email: true,
-							},
-						},
-						volunteerActivity: {
-							select: {
-								id: true,
-								title: true,
-								startAt: true,
-								endAt: true,
-								location: true,
-								status: true,
-							},
-						},
-						selection: true,
-					},
-				}),
+				ctx.prisma.application.findMany(queryOptions),
 				ctx.prisma.application.count({
 					where: queryOptions.where,
 				}),
@@ -125,29 +82,7 @@ export const applicationRouter = createTRPCRouter({
 			})
 
 			const [myApplicationList, totalCount] = await Promise.all([
-				ctx.prisma.application.findMany({
-					...queryOptions,
-					include: {
-						volunteerActivity: {
-							select: {
-								id: true,
-								title: true,
-								description: true,
-								startAt: true,
-								endAt: true,
-								location: true,
-								status: true,
-								applicationDeadline: true,
-								manager: {
-									select: {
-										name: true,
-									},
-								},
-							},
-						},
-						selection: true,
-					},
-				}),
+				ctx.prisma.application.findMany(queryOptions),
 				ctx.prisma.application.count({
 					where: queryOptions.where,
 				}),

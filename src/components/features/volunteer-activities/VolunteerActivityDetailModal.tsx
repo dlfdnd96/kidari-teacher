@@ -31,6 +31,7 @@ import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { formatPhoneNumber } from '@/utils/phone'
 
 const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	open,
@@ -376,7 +377,9 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 																		<div className="flex items-center gap-1">
 																			<Phone className="w-3 h-3" />
 																			<span>
-																				{application.emergencyContact}
+																				{formatPhoneNumber(
+																					application.emergencyContact,
+																				)}
 																			</span>
 																		</div>
 																		<div className="flex items-center gap-1">

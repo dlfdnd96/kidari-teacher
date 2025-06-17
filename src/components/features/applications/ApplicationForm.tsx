@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback } from 'react'
+import React, { memo, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Phone, Send, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -9,23 +9,67 @@ import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { ZodError } from 'zod/v4'
 import { ApplicationFormSchema } from '@/shared/schemas/application'
 import type { ApplicationFormProps } from '@/types/application'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { formatPhoneNumber, removePhoneNumberFormat } from '@/utils/phone'
 
 const ApplicationForm = memo(
 	({
+		volunteerActivityId,
 		volunteerActivityTitle,
-		onSubmit,
 		onCancel,
-		isLoading = false,
+		onClose,
 	}: ApplicationFormProps) => {
+		const router = useRouter()
+		const { data: session } = useSession()
 		const { showError } = useErrorModal()
 
-		const { register, handleSubmit, formState } = useForm()
+		const utils = trpc.useUtils()
 
-		const handleFormSubmit = useCallback(
+		const { handleSubmit, formState, setValue } = useForm()
+		const [displayPhone, setDisplayPhone] = useState('')
+
+		const createApplicationMutation =
+			trpc.application.createApplication.useMutation({
+				onSuccess: async () => {
+					await Promise.all([
+						utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+						utils.application.getMyApplicationList.invalidate(),
+					])
+					router.refresh()
+					onClose()
+				},
+				onError: (error) => {
+					showError(error.message, '봉사활동 지원 등록 오류')
+				},
+			})
+
+		const handlePhoneChange = useCallback(
+			(e: React.ChangeEvent<HTMLInputElement>) => {
+				const value = e.target.value
+				const formatted = formatPhoneNumber(value)
+				setDisplayPhone(formatted)
+
+				const numbersOnly = removePhoneNumberFormat(formatted)
+				setValue('emergencyContact', numbersOnly)
+			},
+			[setValue],
+		)
+
+		const onSubmit = useCallback(
 			async (data: unknown) => {
+				if (!session?.user) {
+					showError('로그인이 필요합니다.', '인증 오류')
+					return
+				}
+
 				try {
 					const validatedData = ApplicationFormSchema.parse(data)
-					onSubmit(validatedData)
+					await createApplicationMutation.mutateAsync({
+						volunteerActivityId,
+						emergencyContact: validatedData.emergencyContact,
+					})
 				} catch (error: unknown) {
 					if (error instanceof ZodError) {
 						showError(error.message, '입력 검증 오류')
@@ -40,12 +84,19 @@ const ApplicationForm = memo(
 					}
 				}
 			},
-			[onSubmit, showError],
+			[
+				createApplicationMutation,
+				session?.user,
+				showError,
+				volunteerActivityId,
+			],
 		)
+
+		const isLoading = createApplicationMutation.isPending
 
 		return (
 			<>
-				<form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					{/* 활동 정보 표시 */}
 					<div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
 						<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
@@ -68,29 +119,16 @@ const ApplicationForm = memo(
 						<Input
 							id="emergency-contact"
 							type="tel"
-							{...register('emergencyContact', { required: true })}
+							value={displayPhone}
+							onChange={handlePhoneChange}
 							placeholder="예: 010-1234-5678"
 							disabled={isLoading}
 							className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 						/>
 						<p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-							활동 중 비상상황 발생 시 연락받을 번호를 입력해주세요.
+							활동 중 비상상황 발생 시 연락받을 번호를 입력해주세요. (숫자만
+							입력하면 자동으로 형식이 적용됩니다)
 						</p>
-					</div>
-
-					{/* 개인정보 동의 */}
-					<div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-						<div className="text-yellow-800 dark:text-yellow-200 text-sm">
-							<strong>개인정보 수집·이용 동의</strong>
-							<div className="mt-2 space-y-1">
-								<div>• 수집항목: 이름, 이메일, 긴급연락처</div>
-								<div>• 이용목적: 봉사활동 참가자 관리 및 비상연락</div>
-								<div>• 보유기간: 활동 종료 후 1년</div>
-							</div>
-							<div className="mt-2 text-xs">
-								신청 시 위 내용에 동의한 것으로 간주됩니다.
-							</div>
-						</div>
 					</div>
 
 					{/* 버튼들 */}

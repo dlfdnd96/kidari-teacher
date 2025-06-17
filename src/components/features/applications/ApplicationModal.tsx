@@ -1,15 +1,9 @@
 'use client'
 
 import React, { FC, useCallback } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { trpc } from '@/components/providers/TrpcProvider'
 import ApplicationForm from '@/components/features/applications/ApplicationForm'
 import type { ApplicationModalProps } from '@/types/application'
 import { FileText, X } from 'lucide-react'
-import { ZodType } from '@/shared/types'
-import { ApplicationFormSchema } from '@/shared/schemas/application'
 
 const ApplicationModal: FC<ApplicationModalProps> = ({
 	open,
@@ -17,52 +11,6 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 	volunteerActivityId,
 	volunteerActivityTitle,
 }) => {
-	const { data: session } = useSession()
-	const router = useRouter()
-	const { showError } = useErrorModal()
-
-	const utils = trpc.useUtils()
-
-	const createApplicationMutation =
-		trpc.application.createApplication.useMutation({
-			onSuccess: async () => {
-				await Promise.all([
-					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
-					utils.application.getMyApplicationList.invalidate(),
-				])
-				router.refresh()
-				onClose()
-			},
-			onError: (error) => {
-				showError(error.message, '봉사활동 신청 오류')
-			},
-		})
-
-	const handleFormSubmit = useCallback(
-		async (data: ZodType<typeof ApplicationFormSchema>) => {
-			if (!session?.user) {
-				showError('로그인이 필요합니다.', '인증 오류')
-				return
-			}
-
-			try {
-				await createApplicationMutation.mutateAsync({
-					volunteerActivityId,
-					emergencyContact: data.emergencyContact,
-				})
-			} catch (error) {
-				console.error('Application error:', error)
-
-				const errorMessage =
-					error instanceof Error
-						? error.message
-						: '알 수 없는 오류가 발생했습니다.'
-				showError(errorMessage, '봉사활동 신청 오류')
-			}
-		},
-		[createApplicationMutation, session, showError, volunteerActivityId],
-	)
-
 	const handleBackdropClick = useCallback(
 		(e: React.MouseEvent) => {
 			if (e.target === e.currentTarget) {
@@ -71,8 +19,6 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 		},
 		[onClose],
 	)
-
-	const loading = createApplicationMutation.isPending
 
 	if (!open) {
 		return null
@@ -132,9 +78,8 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 					<ApplicationForm
 						volunteerActivityId={volunteerActivityId}
 						volunteerActivityTitle={volunteerActivityTitle}
-						onSubmit={handleFormSubmit}
 						onCancel={onClose}
-						isLoading={loading}
+						onClose={onClose}
 					/>
 				</div>
 			</div>

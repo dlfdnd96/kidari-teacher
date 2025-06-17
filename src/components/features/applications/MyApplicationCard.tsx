@@ -24,6 +24,7 @@ import {
 import { TZDate } from '@date-fns/tz'
 import { Enum } from '@/enums'
 import { TIME_ZONE } from '@/constants/date'
+import { formatPhoneNumber } from '@/utils/phone'
 
 const MyApplicationCard = memo(
 	({ application, onViewDetail }: MyApplicationCardProps) => {
@@ -241,7 +242,9 @@ const MyApplicationCard = memo(
 					<div className="flex items-center gap-2 text-sm">
 						<Phone className="h-4 w-4 text-muted-foreground shrink-0" />
 						<span className="text-muted-foreground">긴급연락처:</span>
-						<span className="font-medium">{application.emergencyContact}</span>
+						<span className="font-medium">
+							{formatPhoneNumber(application.emergencyContact)}
+						</span>
 					</div>
 				</div>
 

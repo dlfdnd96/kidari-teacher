@@ -13,6 +13,7 @@ import {
 import { Enum } from '@/enums'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
+import { formatPhoneNumber } from '@/utils/phone'
 
 const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 	open,
@@ -182,7 +183,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 										긴급연락처
 									</div>
 									<div className="text-gray-700 dark:text-gray-300">
-										{application.emergencyContact}
+										{formatPhoneNumber(application.emergencyContact)}
 									</div>
 								</div>
 							</div>

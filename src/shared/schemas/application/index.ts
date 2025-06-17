@@ -36,9 +36,9 @@ export const CreateApplicationInputSchema = z.strictObject({
 	emergencyContact: z
 		.string()
 		.check(
-			z.minLength(1, '긴급연락처를 입력해주세요'),
-			z.maxLength(100, '긴급연락처는 100자 이내로 입력해주세요'),
-			z.regex(/^[0-9-+().\s]+$/, '올바른 전화번호 형식이 아닙니다'),
+			z.minLength(9, '긴급연락처는 최소 9자리 이상이어야 합니다'),
+			z.maxLength(11, '긴급연락처는 최대 11자리까지 가능합니다'),
+			z.regex(/^[0-9]+$/, '숫자만 입력 가능합니다'),
 		),
 })
 
@@ -95,11 +95,8 @@ export const ApplicationFormSchema = z.strictObject({
 	emergencyContact: z
 		.string()
 		.check(
-			z.minLength(1, '긴급연락처를 입력해주세요'),
-			z.maxLength(100, '긴급연락처는 100자 이내로 입력해주세요'),
-			z.regex(
-				/^[0-9-+().\s]+$/,
-				'올바른 전화번호 형식이 아닙니다 (숫자, -, +, (), ., 공백만 가능)',
-			),
+			z.minLength(9, '긴급연락처는 최소 9자리 이상이어야 합니다'),
+			z.maxLength(11, '긴급연락처는 최대 11자리까지 가능합니다'),
+			z.regex(/^[0-9]+$/, '숫자만 입력 가능합니다'),
 		),
 })
