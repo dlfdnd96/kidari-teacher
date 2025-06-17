@@ -9,15 +9,8 @@ import React, {
 } from 'react'
 import { toast } from 'sonner'
 import { AlertTriangle, CheckCircle, Info, Zap, X } from 'lucide-react'
-
-interface ToastContextType {
-	showLoginRequired: () => void
-	showError: (title: string, description?: string) => void
-	showSuccess: (title: string, description?: string) => void
-	showWarning: (title: string, description?: string) => void
-	showInfo: (title: string, description?: string) => void
-	triggerLoginRequired: () => void
-}
+import { ToastContextType, ToastOptions } from '@/types/toast-context'
+import { Enum } from '@/enums'
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
@@ -32,6 +25,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 		toast.error('로그인이 필요한 페이지입니다', {
 			description: '계속하려면 먼저 로그인을 해주세요.',
 			duration: 4000,
+			position: Enum.ToastPosition['top-center'],
 			icon: <AlertTriangle className="w-5 h-5" />,
 			onDismiss: () => {
 				loginRequiredTriggered.current = false
@@ -45,41 +39,57 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 		})
 	}, [])
 
-	const showError = useCallback((title: string, description?: string) => {
-		toast.error(title, {
-			description,
-			duration: 5000,
-			icon: <AlertTriangle className="w-5 h-5" />,
-			cancel: {
-				label: <X className="w-4 h-4" />,
-				onClick: () => {},
-			},
-		})
-	}, [])
+	const showError = useCallback(
+		(title: string, description?: string, options?: ToastOptions) => {
+			toast.error(title, {
+				description,
+				duration: options?.duration || 5000,
+				position: options?.position || Enum.ToastPosition['bottom-right'],
+				icon: <AlertTriangle className="w-5 h-5" />,
+				cancel: {
+					label: <X className="w-4 h-4" />,
+					onClick: () => {},
+				},
+			})
+		},
+		[],
+	)
 
-	const showSuccess = useCallback((title: string, description?: string) => {
-		toast.success(title, {
-			description,
-			duration: 4000,
-			icon: <CheckCircle className="w-5 h-5" />,
-		})
-	}, [])
+	const showSuccess = useCallback(
+		(title: string, description?: string, options?: ToastOptions) => {
+			toast.success(title, {
+				description,
+				duration: options?.duration || 4000,
+				position: options?.position || Enum.ToastPosition['top-center'],
+				icon: <CheckCircle className="w-5 h-5" />,
+			})
+		},
+		[],
+	)
 
-	const showWarning = useCallback((title: string, description?: string) => {
-		toast.warning(title, {
-			description,
-			duration: 4500,
-			icon: <Zap className="w-5 h-5" />,
-		})
-	}, [])
+	const showWarning = useCallback(
+		(title: string, description?: string, options?: ToastOptions) => {
+			toast.warning(title, {
+				description,
+				duration: options?.duration || 4500,
+				position: options?.position || Enum.ToastPosition['top-center'],
+				icon: <Zap className="w-5 h-5" />,
+			})
+		},
+		[],
+	)
 
-	const showInfo = useCallback((title: string, description?: string) => {
-		toast.info(title, {
-			description,
-			duration: 4000,
-			icon: <Info className="w-5 h-5" />,
-		})
-	}, [])
+	const showInfo = useCallback(
+		(title: string, description?: string, options?: ToastOptions) => {
+			toast.info(title, {
+				description,
+				duration: options?.duration || 4000,
+				position: options?.position || Enum.ToastPosition['top-center'],
+				icon: <Info className="w-5 h-5" />,
+			})
+		},
+		[],
+	)
 
 	const triggerLoginRequired = useCallback(() => {
 		if (typeof window !== 'undefined') {
