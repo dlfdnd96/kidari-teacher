@@ -51,27 +51,28 @@ const Navbar = memo(() => {
 	}, [])
 
 	const navLinks = useMemo(
-		(): NavLink[] => [
-			{
-				href: '/notice',
-				label: '공지사항',
-				isActive: pathname === '/notice' || pathname.startsWith('/notice/'),
-				color: 'blue',
-				icon: Bell,
-				requireAuth: false,
-			},
-			{
-				href: '/volunteer-activities',
-				label: '봉사활동',
-				isActive:
-					pathname === '/volunteer-activities' ||
-					pathname.startsWith('/volunteer-activities/'),
-				color: 'emerald',
-				icon: Heart,
-				requireAuth: false,
-			},
-		],
-		[pathname],
+		(): NavLink[] =>
+			[
+				{
+					href: '/notice',
+					label: '공지사항',
+					isActive: pathname === '/notice' || pathname.startsWith('/notice/'),
+					color: 'blue' as const,
+					icon: Bell,
+					requireAuth: false,
+				},
+				{
+					href: '/volunteer-activities',
+					label: '봉사활동',
+					isActive:
+						pathname === '/volunteer-activities' ||
+						pathname.startsWith('/volunteer-activities/'),
+					color: 'emerald' as const,
+					icon: Heart,
+					requireAuth: true,
+				},
+			].filter((link) => !link.requireAuth || session),
+		[pathname, session],
 	)
 
 	const getColorClasses = useCallback(
