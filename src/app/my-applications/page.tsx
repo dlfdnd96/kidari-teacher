@@ -1,11 +1,9 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { notFound, redirect } from 'next/navigation'
 import MyApplicationPageClient from '@/components/features/applications/MyApplicationPageClient'
 import { FileText, Heart, TrendingUp } from 'lucide-react'
 import { MyApplicationsPageProps } from '@/types/application'
+import { requireAuth } from '@/utils/auth'
 
 export async function generateMetadata({
 	searchParams,
@@ -45,15 +43,7 @@ export default async function MyApplicationsPage({
 	const pageParam = resolvedSearchParams.page
 	const page = pageParam ? parseInt(pageParam, 10) : 1
 
-	if (pageParam && (isNaN(page) || page < 1)) {
-		notFound()
-	}
-
-	const session = await getServerSession(authOptions)
-
-	if (!session?.user) {
-		redirect('/')
-	}
+	const session = await requireAuth('/')
 
 	return (
 		<main className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">

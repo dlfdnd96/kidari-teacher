@@ -3,6 +3,8 @@ import '@/app/globals.css'
 import React from 'react'
 import { Inter } from 'next/font/google'
 import ClientLayout from '@/components/ClientLayout'
+import { Toaster } from '@/components/ui/sonner'
+import { ToastProvider } from '@/contexts/ToastContext'
 
 const inter = Inter({
 	subsets: ['latin'],
@@ -70,7 +72,10 @@ export default function RootLayout({
 	return (
 		<html lang="ko" className={inter.variable}>
 			<body className="font-sans antialiased">
-				<ClientLayout>{children}</ClientLayout>
+				<ToastProvider>
+					<ClientLayout>{children}</ClientLayout>
+					<Toaster />
+				</ToastProvider>
 			</body>
 		</html>
 	)

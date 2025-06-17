@@ -1,11 +1,9 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import ProfilePageClient from '@/components/features/profile/ProfilePageClient'
-import { User, Settings, TrendingUp, Heart } from 'lucide-react'
+import { Heart, Settings, TrendingUp, User } from 'lucide-react'
 import { Enum } from '@/enums'
+import { requireAuth } from '@/utils/auth'
 
 export const metadata: Metadata = {
 	title: '프로필 | 키다리 선생님',
@@ -25,11 +23,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ProfilePage() {
-	const session = await getServerSession(authOptions)
-
-	if (!session?.user) {
-		redirect('/')
-	}
+	const session = await requireAuth('/')
 
 	return (
 		<main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">

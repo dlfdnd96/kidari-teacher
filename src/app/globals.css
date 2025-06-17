@@ -286,4 +286,197 @@
 			border-color 0.2s ease-in-out,
 			color 0.2s ease-in-out;
 	}
+
+	/* 토스트 컨테이너 z-index */
+	.toaster {
+		z-index: 9999 !important;
+	}
+
+	/* 토스트 기본 스타일 개선 */
+	[data-sonner-toast] {
+		background: white !important;
+		border: 2px solid #e5e7eb !important;
+		border-radius: 12px !important;
+		box-shadow:
+			0 20px 25px -5px rgba(0, 0, 0, 0.1),
+			0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+		font-family: var(--font-geist-sans, ui-sans-serif, system-ui) !important;
+		min-width: 380px !important;
+		max-width: 480px !important;
+	}
+
+	/* 다크모드 토스트 */
+	.dark [data-sonner-toast] {
+		background: #1f2937 !important;
+		border-color: #374151 !important;
+		color: #f9fafb !important;
+	}
+
+	/* 에러 토스트 색상 */
+	[data-sonner-toast][data-type='error'] {
+		border-color: #fca5a5 !important;
+		background: #fef2f2 !important;
+	}
+
+	[data-sonner-toast][data-type='error'] [data-title] {
+		color: #991b1b !important;
+	}
+
+	[data-sonner-toast][data-type='error'] [data-description] {
+		color: #b91c1c !important;
+	}
+
+	.dark [data-sonner-toast][data-type='error'] {
+		border-color: #dc2626 !important;
+		background: #7f1d1d !important;
+	}
+
+	.dark [data-sonner-toast][data-type='error'] [data-title] {
+		color: #fecaca !important;
+	}
+
+	.dark [data-sonner-toast][data-type='error'] [data-description] {
+		color: #f87171 !important;
+	}
+
+	/* 성공 토스트 색상 */
+	[data-sonner-toast][data-type='success'] {
+		border-color: #86efac !important;
+		background: #f0fdf4 !important;
+	}
+
+	[data-sonner-toast][data-type='success'] [data-title] {
+		color: #14532d !important;
+	}
+
+	[data-sonner-toast][data-type='success'] [data-description] {
+		color: #166534 !important;
+	}
+
+	.dark [data-sonner-toast][data-type='success'] {
+		border-color: #16a34a !important;
+		background: #14532d !important;
+	}
+
+	.dark [data-sonner-toast][data-type='success'] [data-title] {
+		color: #bbf7d0 !important;
+	}
+
+	.dark [data-sonner-toast][data-type='success'] [data-description] {
+		color: #86efac !important;
+	}
+
+	/* 경고 토스트 색상 */
+	[data-sonner-toast][data-type='warning'] {
+		border-color: #fbbf24 !important;
+		background: #fffbeb !important;
+	}
+
+	.dark [data-sonner-toast][data-type='warning'] {
+		border-color: #d97706 !important;
+		background: #78350f !important;
+	}
+
+	/* 정보 토스트 색상 */
+	[data-sonner-toast][data-type='info'] {
+		border-color: #93c5fd !important;
+		background: #eff6ff !important;
+	}
+
+	.dark [data-sonner-toast][data-type='info'] {
+		border-color: #3b82f6 !important;
+		background: #1e3a8a !important;
+	}
+
+	/* 토스트 내용 스타일 */
+	[data-sonner-toast] [data-title] {
+		font-weight: 700 !important;
+		font-size: 17px !important;
+		line-height: 1.3 !important;
+		color: #1f2937 !important;
+	}
+
+	[data-sonner-toast] [data-description] {
+		font-size: 15px !important;
+		line-height: 1.4 !important;
+		margin-top: 6px !important;
+		font-weight: 500 !important;
+		color: #4b5563 !important;
+	}
+
+	/* 다크모드 텍스트 색상 */
+	.dark [data-sonner-toast] [data-title] {
+		color: #f9fafb !important;
+	}
+
+	.dark [data-sonner-toast] [data-description] {
+		color: #d1d5db !important;
+	}
+
+	/* 취소(닫기) 버튼 스타일 */
+	[data-sonner-toast] [data-cancel] {
+		position: absolute !important;
+		top: 12px !important;
+		right: 12px !important;
+		margin: 0 !important;
+		padding: 6px !important;
+		border-radius: 6px !important;
+		background: transparent !important;
+		border: none !important;
+		cursor: pointer !important;
+		transition: all 0.2s ease !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		min-width: 28px !important;
+		height: 28px !important;
+	}
+
+	[data-sonner-toast] [data-cancel]:hover {
+		background: rgba(0, 0, 0, 0.05) !important;
+		transform: scale(1.05) !important;
+	}
+
+	.dark [data-sonner-toast] [data-cancel] {
+		background: transparent !important;
+	}
+
+	.dark [data-sonner-toast] [data-cancel]:hover {
+		background: rgba(255, 255, 255, 0.1) !important;
+	}
+
+	/* 에러 토스트 취소 버튼 */
+	[data-sonner-toast][data-type='error'] [data-cancel] {
+		background: transparent !important;
+		color: #dc2626 !important;
+	}
+
+	[data-sonner-toast][data-type='error'] [data-cancel]:hover {
+		background: rgba(220, 38, 38, 0.1) !important;
+	}
+
+	.dark [data-sonner-toast][data-type='error'] [data-cancel] {
+		background: transparent !important;
+		color: #fca5a5 !important;
+	}
+
+	.dark [data-sonner-toast][data-type='error'] [data-cancel]:hover {
+		background: rgba(220, 38, 38, 0.2) !important;
+	}
+
+	/* 부드러운 애니메이션 */
+	[data-sonner-toast] {
+		animation: slide-in 0.3s ease-out !important;
+	}
+
+	@keyframes slide-in {
+		from {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
 }
