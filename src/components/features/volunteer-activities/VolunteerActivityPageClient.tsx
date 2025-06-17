@@ -85,7 +85,6 @@ function VolunteerActivityPageClientContent({
 		data: activityData,
 		isLoading,
 		isError,
-		error,
 		refetch,
 		isFetching,
 	} = trpc.volunteerActivity.getVolunteerActivityList.useQuery(
@@ -244,9 +243,6 @@ function VolunteerActivityPageClientContent({
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
 					봉사활동을 불러올 수 없습니다
 				</h3>
-				<p className="text-gray-500 dark:text-gray-400 mb-4">
-					{error?.message || '네트워크 오류가 발생했습니다.'}
-				</p>
 				<div className="flex justify-center">
 					<Button
 						onClick={() => refetch()}

@@ -21,7 +21,6 @@ export default function ProfilePageClient({
 		data: user,
 		isLoading: userLoading,
 		isError: userError,
-		error: userErrorMsg,
 		refetch: refetchUser,
 	} = trpc.user.getCurrentUser.useQuery(undefined, {
 		initialData: initialUser,
@@ -102,9 +101,6 @@ export default function ProfilePageClient({
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
 					프로필을 불러올 수 없습니다
 				</h3>
-				<p className="text-gray-500 dark:text-gray-400 mb-4">
-					{userErrorMsg?.message || '네트워크 오류가 발생했습니다.'}
-				</p>
 				<Button
 					onClick={handleRefresh}
 					className="flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
