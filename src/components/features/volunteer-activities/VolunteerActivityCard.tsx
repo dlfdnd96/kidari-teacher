@@ -11,7 +11,7 @@ import {
 	Trash,
 	X,
 } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -62,8 +62,8 @@ const VolunteerActivityCard = memo(
 			currentUserId === activity.managerId || userRole === Enum.Role.ADMIN
 		const canApply =
 			activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
-			new TZDate(new Date(), TIME_ZONE.UTC) <=
-				new TZDate(activity.applicationDeadline, TIME_ZONE.UTC)
+			startOfDay(new TZDate(new Date(), TIME_ZONE.UTC)) <=
+				startOfDay(activity.applicationDeadline)
 
 		const hasApplied = currentUserId
 			? activity.applications?.some((app) => app.user?.id === currentUserId)
@@ -133,9 +133,7 @@ const VolunteerActivityCard = memo(
 					initialEndAt={new TZDate(activity.endAt, TIME_ZONE.SEOUL)}
 					initialLocation={activity.location}
 					initialStatus={activity.status}
-					initialApplicationDeadline={
-						new TZDate(activity.applicationDeadline, TIME_ZONE.SEOUL)
-					}
+					initialApplicationDeadline={activity.applicationDeadline}
 					initialMaxParticipants={activity.maxParticipants ?? undefined}
 					onCancel={handleCancelEdit}
 				/>
@@ -310,16 +308,10 @@ const VolunteerActivityCard = memo(
 							<Clock className="h-4 w-4 text-muted-foreground shrink-0" />
 							<span className="text-muted-foreground">마감:</span>
 							<span className="font-medium">
-								{format(
-									new TZDate(activity.applicationDeadline, TIME_ZONE.SEOUL),
-									'M/d (E)',
-									{
-										locale: ko,
-									},
-								)}
+								{format(activity.applicationDeadline, 'M/d (E)')}
 							</span>
-							{new TZDate(new Date(), TIME_ZONE.SEOUL) >
-								new TZDate(activity.applicationDeadline, TIME_ZONE.SEOUL) && (
+							{startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) >
+								startOfDay(activity.applicationDeadline) && (
 								<span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
 									마감됨
 								</span>

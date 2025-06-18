@@ -19,6 +19,7 @@ import {
 } from '@/shared/schemas/application'
 import { TIME_ZONE } from '@/constants/date'
 import { Enum } from '@/enums'
+import { startOfDay } from 'date-fns'
 
 export const applicationRouter = createTRPCRouter({
 	getApplication: protectedProcedure
@@ -125,10 +126,9 @@ export const applicationRouter = createTRPCRouter({
 				})
 			}
 
-			// FIXME: 날짜끼리 비교하기
 			if (
-				new TZDate(new Date(), TIME_ZONE.UTC) >
-				new TZDate(volunteerActivity.applicationDeadline, TIME_ZONE.UTC)
+				startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) >
+				startOfDay(volunteerActivity.applicationDeadline)
 			) {
 				throw new TRPCError({
 					code: 'BAD_REQUEST',

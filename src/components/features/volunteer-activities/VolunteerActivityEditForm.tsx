@@ -37,7 +37,7 @@ import {
 	SelectValue,
 } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
@@ -205,7 +205,8 @@ const VolunteerActivityEditForm = memo(
 													)
 												}
 												disabled={(date) =>
-													date < new TZDate(new Date(), TIME_ZONE.SEOUL)
+													startOfDay(date) <
+													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
 											/>
 											<div className="p-3 border-t">
@@ -275,7 +276,8 @@ const VolunteerActivityEditForm = memo(
 													)
 												}
 												disabled={(date) =>
-													date < new TZDate(new Date(), TIME_ZONE.SEOUL)
+													startOfDay(date) <
+													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
 											/>
 											<div className="p-3 border-t">
@@ -334,6 +336,11 @@ const VolunteerActivityEditForm = memo(
 									<Settings className="w-4 h-4 mr-2" />
 									<span>상태 *</span>
 								</label>
+								<input
+									{...register('status', { required: true })}
+									type="hidden"
+									value={watch('status')}
+								/>
 								<Select
 									value={watch('status')}
 									defaultValue={initialStatus}
@@ -358,11 +365,6 @@ const VolunteerActivityEditForm = memo(
 										)}
 									</SelectContent>
 								</Select>
-								{formState.errors.status && (
-									<p className="text-red-500 text-sm mt-1">
-										{formState.errors.status.message}
-									</p>
-								)}
 							</div>
 
 							{/* 신청 마감일과 최대 참가자 수 */}
@@ -401,14 +403,17 @@ const VolunteerActivityEditForm = memo(
 											<Calendar
 												mode="single"
 												selected={watch('applicationDeadline')}
-												onSelect={(date) =>
-													setValue(
-														'applicationDeadline',
-														date || new TZDate(new Date(), TIME_ZONE.SEOUL),
+												onSelect={(date) => {
+													const newDate = new TZDate(
+														date || new Date(),
+														TIME_ZONE.SEOUL,
 													)
-												}
+													newDate.setHours(23, 59, 59, 999)
+													setValue('applicationDeadline', newDate)
+												}}
 												disabled={(date) =>
-													date < new TZDate(new Date(), TIME_ZONE.SEOUL)
+													startOfDay(date) <
+													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
 											/>
 										</PopoverContent>

@@ -15,7 +15,7 @@ import {
 	Users,
 	X,
 } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { VolunteerActivityDetailModalProps } from '@/types/volunteer-activity'
 import {
@@ -88,8 +88,8 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 		currentUserId === activity.managerId || userRole === Enum.Role.ADMIN
 	const canApply =
 		activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
-		new TZDate(new Date(), TIME_ZONE.UTC) <=
-			new TZDate(activity.applicationDeadline, TIME_ZONE.UTC)
+		startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) <=
+			startOfDay(activity.applicationDeadline)
 
 	const hasApplied = currentUserId
 		? activity.applications?.some((app) => app.user?.id === currentUserId)
@@ -107,8 +107,8 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 		VOLUNTEER_ACTIVITY_STATUS_LABELS[activity.status] || activity.status
 
 	const isDeadlinePassed =
-		new TZDate(new Date(), TIME_ZONE.UTC) >
-		new TZDate(activity.applicationDeadline, TIME_ZONE.UTC)
+		startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) >
+		startOfDay(activity.applicationDeadline)
 
 	return (
 		<div

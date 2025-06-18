@@ -10,7 +10,7 @@ import {
 	Clock,
 	Settings,
 } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -173,7 +173,8 @@ const VolunteerActivityForm = memo(
 													)
 												}
 												disabled={(date) =>
-													date < new TZDate(new Date(), TIME_ZONE.SEOUL)
+													startOfDay(date) <
+													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
 											/>
 											<div className="p-3 border-t">
@@ -243,7 +244,8 @@ const VolunteerActivityForm = memo(
 													)
 												}
 												disabled={(date) =>
-													date < new TZDate(new Date(), TIME_ZONE.SEOUL)
+													startOfDay(date) <
+													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
 											/>
 											<div className="p-3 border-t">
@@ -302,16 +304,19 @@ const VolunteerActivityForm = memo(
 									<Settings className="w-4 h-4 mr-2" />
 									<span>상태 *</span>
 								</label>
-								<Select
-									value={watch('status')}
-									defaultValue={Enum.VolunteerActivityStatus.PLANNING}
-									disabled={loading}
-									onValueChange={(value) =>
-										setValue(
-											'status',
-											ZodEnum.VolunteerActivityStatus.parse(value),
-										)
+								<input
+									{...register('status', { required: true })}
+									type="hidden"
+									value={
+										watch('status') || Enum.VolunteerActivityStatus.PLANNING
 									}
+								/>
+								<Select
+									value={
+										watch('status') || Enum.VolunteerActivityStatus.PLANNING
+									}
+									disabled={loading}
+									onValueChange={(value) => setValue('status', value)}
 								>
 									<SelectTrigger className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200">
 										<SelectValue placeholder="상태를 선택하세요" />
@@ -347,13 +352,7 @@ const VolunteerActivityForm = memo(
 												)}
 											>
 												{watch('applicationDeadline') ? (
-													format(
-														watch('applicationDeadline'),
-														'yyyy년 M월 d일',
-														{
-															locale: ko,
-														},
-													)
+													format(watch('applicationDeadline'), 'yyyy년 M월 d일')
 												) : (
 													<span>마감일 선택</span>
 												)}
@@ -364,14 +363,17 @@ const VolunteerActivityForm = memo(
 											<Calendar
 												mode="single"
 												selected={watch('applicationDeadline')}
-												onSelect={(date) =>
-													setValue(
-														'applicationDeadline',
-														date || new TZDate(new Date(), TIME_ZONE.SEOUL),
+												onSelect={(date) => {
+													const newDate = new TZDate(
+														date || new Date(),
+														TIME_ZONE.SEOUL,
 													)
-												}
+													newDate.setHours(23, 59, 59, 999)
+													setValue('applicationDeadline', newDate)
+												}}
 												disabled={(date) =>
-													date < new TZDate(new Date(), TIME_ZONE.SEOUL)
+													startOfDay(date) <
+													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
 											/>
 										</PopoverContent>

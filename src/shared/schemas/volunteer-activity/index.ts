@@ -5,6 +5,7 @@ import { ZodEnum } from '@/enums'
 import { UserEntitySchema } from '@/shared/schemas/user'
 import { ApplicationEntitySchema } from '@/shared/schemas/application'
 import { TIME_ZONE } from '@/constants/date'
+import { startOfDay } from 'date-fns'
 
 export const VolunteerActivityEntitySchema = z.strictObject({
 	id: z.string().check(z.cuid()),
@@ -104,9 +105,9 @@ export const CreateVolunteerActivityInputSchema = z
 			.check(
 				z.refine(
 					(date) =>
-						new TZDate(date, TIME_ZONE.UTC) >
-						new TZDate(new Date(), TIME_ZONE.UTC),
-					'신청 마감일은 현재 날짜보다 미래여야 합니다',
+						startOfDay(date) >=
+						startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)),
+					'신청 마감일은 어제 날짜보다 미래여야 합니다',
 				),
 			),
 		maxParticipants: z.optional(
@@ -130,8 +131,8 @@ export const CreateVolunteerActivityInputSchema = z
 	.check(
 		z.refine(
 			(data) =>
-				new TZDate(data.applicationDeadline, TIME_ZONE.UTC) <
-				new TZDate(data.startAt, TIME_ZONE.UTC),
+				startOfDay(data.applicationDeadline) <
+				startOfDay(new TZDate(data.startAt, TIME_ZONE.SEOUL)),
 			'신청 마감일은 활동 시작일보다 빨라야 합니다',
 		),
 	)
@@ -182,9 +183,9 @@ export const UpdateVolunteerActivityInputSchema = z.strictObject({
 		.check(
 			z.refine(
 				(date) =>
-					new TZDate(date, TIME_ZONE.UTC) >
-					new TZDate(new Date(), TIME_ZONE.UTC),
-				'신청 마감일은 현재 날짜보다 미래여야 합니다',
+					startOfDay(date) >=
+					startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)),
+				'신청 마감일은 어제 날짜보다 미래여야 합니다',
 			),
 		),
 	maxParticipants: z.optional(
