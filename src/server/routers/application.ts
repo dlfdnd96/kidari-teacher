@@ -82,7 +82,16 @@ export const applicationRouter = createTRPCRouter({
 			})
 
 			const [myApplicationList, totalCount] = await Promise.all([
-				ctx.prisma.application.findMany(queryOptions),
+				ctx.prisma.application.findMany({
+					...queryOptions,
+					include: {
+						volunteerActivity: {
+							include: {
+								manager: true,
+							},
+						},
+					},
+				}),
 				ctx.prisma.application.count({
 					where: queryOptions.where,
 				}),
@@ -116,6 +125,7 @@ export const applicationRouter = createTRPCRouter({
 				})
 			}
 
+			// FIXME: 날짜끼리 비교하기
 			if (
 				new TZDate(new Date(), TIME_ZONE.UTC) >
 				new TZDate(volunteerActivity.applicationDeadline, TIME_ZONE.UTC)

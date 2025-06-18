@@ -172,13 +172,14 @@ function MyApplicationPageClientContent({
 				</div>
 			)}
 
-			{/* 동적으로 로드되는 모달 */}
-			<ApplicationDetailModal
-				open={isDetailOpen}
-				onClose={handleCloseDetail}
-				application={selectedApplication}
-				userRole={session?.user?.role}
-			/>
+			{selectedApplication && (
+				<ApplicationDetailModal
+					open={isDetailOpen}
+					onClose={handleCloseDetail}
+					application={selectedApplication}
+					userRole={session?.user?.role}
+				/>
+			)}
 		</>
 	)
 }

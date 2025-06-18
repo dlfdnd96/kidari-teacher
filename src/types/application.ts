@@ -35,16 +35,10 @@ export interface MyApplicationListProps {
 }
 
 export interface ApplicationDetailModalProps {
-	application: ZodType<typeof ApplicationEntitySchema> | null
+	application: ZodType<typeof ApplicationEntitySchema>
 	open: boolean
 	onClose: () => void
-	onUpdateStatus?: (
-		applicationId: string,
-		status: ZodType<typeof ZodEnum.ApplicationStatus>,
-	) => void
-	onDelete?: (application: ZodType<typeof ApplicationEntitySchema>) => void
-	currentUserId?: string
-	userRole?: ZodType<typeof ZodEnum.Role>
+	userRole: ZodType<typeof ZodEnum.Role> | undefined
 }
 
 export interface MyApplicationPageClientProps {

@@ -1,30 +1,69 @@
 'use client'
 
-import React, { FC } from 'react'
-import { Calendar, MapPin, User, Phone, FileText, Clock, X } from 'lucide-react'
+import React, { FC, useCallback } from 'react'
+import { Calendar, Clock, FileText, MapPin, Phone, User, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { ApplicationDetailModalProps } from '@/types/application'
 import {
-	APPLICATION_STATUS_LABELS,
 	APPLICATION_STATUS_COLORS,
 	APPLICATION_STATUS_DESCRIPTIONS,
+	APPLICATION_STATUS_LABELS,
 } from '@/types/application'
-import { Enum } from '@/enums'
+import { Enum, ZodEnum } from '@/enums'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { formatPhoneNumber } from '@/utils/phone'
+import { trpc } from '@/components/providers/TrpcProvider'
+import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 
 const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 	open,
 	onClose,
 	application,
-	onUpdateStatus,
-	onDelete,
-	currentUserId,
 	userRole,
 }) => {
-	if (!open || !application || !application.volunteerActivity) {
+	const { showError } = useErrorModal()
+
+	const utils = trpc.useUtils()
+
+	const updateApplicationStatusMutation =
+		trpc.application.updateApplicationStatus.useMutation({
+			onSuccess: async () => {
+				await Promise.all([
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getMyApplicationList.invalidate(),
+				])
+			},
+			onError: (error) => {
+				showError(error.message, '봉사활동 상태 수정 오류')
+			},
+		})
+
+	const handleStatusChange = useCallback(
+		async (applicationId: string, newStatus: string) => {
+			try {
+				const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
+				await updateApplicationStatusMutation.mutateAsync({
+					id: applicationId,
+					status: parsedNewStatus,
+				})
+				onClose()
+			} catch (error) {
+				console.error('Status update error:', error)
+
+				const errorMessage =
+					error instanceof Error
+						? error.message
+						: '알 수 없는 오류가 발생했습니다.'
+
+				showError(errorMessage, '봉사활동 상태 수정 오류')
+			}
+		},
+		[showError, updateApplicationStatusMutation, onClose],
+	)
+
+	if (!open || !application.volunteerActivity) {
 		return null
 	}
 
@@ -35,12 +74,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 	const statusDescription =
 		APPLICATION_STATUS_DESCRIPTIONS[application.status] || ''
 
-	const isMyApplication = currentUserId === application.userId
 	const isAdmin = userRole === Enum.Role.ADMIN
-	const canCancel =
-		application.status === Enum.ApplicationStatus.WAITING &&
-		new TZDate(new Date(), TIME_ZONE.UTC) <
-			new TZDate(application.volunteerActivity.startAt, TIME_ZONE.UTC)
 
 	return (
 		<div
@@ -220,23 +254,23 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 											<>
 												<button
 													onClick={() =>
-														onUpdateStatus?.(
+														handleStatusChange(
 															application.id,
 															Enum.ApplicationStatus.SELECTED,
 														)
 													}
-													className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+													className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors cursor-pointer"
 												>
 													선발하기
 												</button>
 												<button
 													onClick={() =>
-														onUpdateStatus?.(
+														handleStatusChange(
 															application.id,
 															Enum.ApplicationStatus.REJECTED,
 														)
 													}
-													className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+													className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors cursor-pointer"
 												>
 													불합격 처리
 												</button>
@@ -245,7 +279,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 										{application.status === Enum.ApplicationStatus.SELECTED && (
 											<button
 												onClick={() =>
-													onUpdateStatus?.(
+													handleStatusChange(
 														application.id,
 														Enum.ApplicationStatus.WAITING,
 													)
@@ -258,7 +292,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 										{application.status === Enum.ApplicationStatus.REJECTED && (
 											<button
 												onClick={() =>
-													onUpdateStatus?.(
+													handleStatusChange(
 														application.id,
 														Enum.ApplicationStatus.WAITING,
 													)
@@ -284,16 +318,6 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 						>
 							닫기
 						</button>
-
-						{/* 취소 버튼 (본인 신청이고 취소 가능한 경우) */}
-						{isMyApplication && canCancel && (
-							<button
-								onClick={() => onDelete?.(application)}
-								className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50 cursor-pointer"
-							>
-								신청 취소
-							</button>
-						)}
 					</div>
 				</div>
 			</div>

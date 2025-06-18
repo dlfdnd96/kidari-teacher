@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import MyApplicationPageClient from '@/components/features/applications/MyApplicationPageClient'
-import { FileText, Heart, TrendingUp } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { MyApplicationsPageProps } from '@/types/application'
 import { requireAuth } from '@/utils/auth'
 
@@ -43,7 +43,7 @@ export default async function MyApplicationsPage({
 	const pageParam = resolvedSearchParams.page
 	const page = pageParam ? parseInt(pageParam, 10) : 1
 
-	const session = await requireAuth('/')
+	await requireAuth('/')
 
 	return (
 		<main className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
@@ -70,45 +70,6 @@ export default async function MyApplicationsPage({
 					<p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
 						나의 봉사활동 신청 현황과 결과를 한눈에 확인하세요
 					</p>
-
-					{/* 통계 정보 */}
-					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto">
-						<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/50 dark:border-blue-700/50">
-							<div className="flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl mx-auto mb-3">
-								<FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-							</div>
-							<div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
-								신청
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								신청한 활동들
-							</div>
-						</div>
-
-						<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-4 border border-purple-200/50 dark:border-purple-700/50">
-							<div className="flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl mx-auto mb-3">
-								<Heart className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-							</div>
-							<div className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1">
-								참여
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								의미있는 활동
-							</div>
-						</div>
-
-						<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-4 border border-indigo-200/50 dark:border-indigo-700/50">
-							<div className="flex items-center justify-center w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl mx-auto mb-3">
-								<TrendingUp className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-							</div>
-							<div className="text-2xl sm:text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">
-								성장
-							</div>
-							<div className="text-sm text-gray-600 dark:text-gray-400">
-								지속적인 발전
-							</div>
-						</div>
-					</div>
 				</div>
 			</section>
 
@@ -129,11 +90,6 @@ export default async function MyApplicationsPage({
 								신청 상태는 실시간으로 업데이트됩니다. 대기 중인 신청은 활동
 								시작 전까지 취소가 가능합니다.
 							</p>
-						</div>
-						<div className="flex-shrink-0">
-							<div className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
-								{session.user.name || '사용자'}님
-							</div>
 						</div>
 					</div>
 				</div>
