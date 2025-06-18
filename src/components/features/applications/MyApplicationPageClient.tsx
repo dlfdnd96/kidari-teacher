@@ -1,37 +1,19 @@
 'use client'
 
-import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
-import dynamic from 'next/dynamic'
 import MyApplicationList from '@/components/features/applications/MyApplicationList'
 import Pagination from '@/components/features/pagination/Pagination'
-import { ZodType } from '@/shared/types'
-import { ApplicationEntitySchema } from '@/shared/schemas/application'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import type { MyApplicationPageClientProps } from '@/types/application'
 import { CircleAlert, OctagonX, RefreshCw } from 'lucide-react'
-import { useSession } from 'next-auth/react'
-
-const ApplicationDetailModal = dynamic(
-	() => import('@/components/features/applications/ApplicationDetailModal'),
-	{
-		ssr: false,
-		loading: () => null,
-	},
-)
 
 function MyApplicationPageClientContent({
 	initialPage = 1,
 }: MyApplicationPageClientProps) {
-	const { data: session } = useSession()
 	const searchParams = useSearchParams()
-
-	const [selectedApplication, setSelectedApplication] = useState<ZodType<
-		typeof ApplicationEntitySchema
-	> | null>(null)
-	const [isDetailOpen, setIsDetailOpen] = useState(false)
 
 	const [currentPage, setCurrentPage] = useState(initialPage)
 	const [isPageChanging, setIsPageChanging] = useState(false)
@@ -61,9 +43,6 @@ function MyApplicationPageClientContent({
 		isFetching,
 	} = trpc.application.getMyApplicationList.useQuery(
 		{
-			filter: {
-				userId: session?.user?.id,
-			},
 			pageable: {
 				offset: (currentPage - 1) * pageSize,
 				limit: pageSize,
@@ -89,19 +68,6 @@ function MyApplicationPageClientContent({
 			notFound()
 		}
 	}, [isLoading, totalPages, currentPage])
-
-	const handleViewDetail = useCallback(
-		(application: ZodType<typeof ApplicationEntitySchema>) => {
-			setSelectedApplication(application)
-			setIsDetailOpen(true)
-		},
-		[],
-	)
-
-	const handleCloseDetail = useCallback(() => {
-		setIsDetailOpen(false)
-		setSelectedApplication(null)
-	}, [])
 
 	const showLoading = isLoading || isPageChanging || isFetching
 
@@ -134,11 +100,7 @@ function MyApplicationPageClientContent({
 	return (
 		<>
 			{/* 내 신청 목록 */}
-			<MyApplicationList
-				applications={applications}
-				onViewDetail={handleViewDetail}
-				isLoading={false}
-			/>
+			<MyApplicationList applications={applications} isLoading={false} />
 
 			{/* 페이지네이션 */}
 			{applications.length > 0 && (
@@ -170,15 +132,6 @@ function MyApplicationPageClientContent({
 						봉사활동 둘러보기
 					</Button>
 				</div>
-			)}
-
-			{selectedApplication && (
-				<ApplicationDetailModal
-					open={isDetailOpen}
-					onClose={handleCloseDetail}
-					application={selectedApplication}
-					userRole={session?.user?.role}
-				/>
 			)}
 		</>
 	)

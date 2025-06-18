@@ -25,12 +25,10 @@ export interface ApplicationModalProps {
 
 export interface MyApplicationCardProps {
 	application: ZodType<typeof ApplicationEntitySchema>
-	onViewDetail?: (application: ZodType<typeof ApplicationEntitySchema>) => void
 }
 
 export interface MyApplicationListProps {
 	applications: ZodType<typeof ApplicationEntitySchema>[]
-	onViewDetail?: (application: ZodType<typeof ApplicationEntitySchema>) => void
 	isLoading?: boolean
 }
 

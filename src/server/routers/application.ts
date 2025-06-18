@@ -86,6 +86,7 @@ export const applicationRouter = createTRPCRouter({
 				ctx.prisma.application.findMany({
 					...queryOptions,
 					where: {
+						...queryOptions.where,
 						volunteerActivity: {
 							is: {
 								deletedAt: null,

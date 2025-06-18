@@ -4,7 +4,6 @@ import type { MyApplicationListProps } from '@/types/application'
 
 export default function MyApplicationList({
 	applications,
-	onViewDetail,
 	isLoading = false,
 }: MyApplicationListProps) {
 	if (isLoading) {
@@ -60,10 +59,7 @@ export default function MyApplicationList({
 							animationDelay: `${index * 100}ms`,
 						}}
 					>
-						<MyApplicationCard
-							application={application}
-							onViewDetail={onViewDetail}
-						/>
+						<MyApplicationCard application={application} />
 					</div>
 				))}
 			</div>
