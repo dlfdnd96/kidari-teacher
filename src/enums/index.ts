@@ -26,25 +26,37 @@ export const Enum = {
 }
 
 export const ZodEnum = {
-	Role: z.enum(['ADMIN', 'USER']),
-	VolunteerActivityStatus: z.enum([
-		'PLANNING',
-		'RECRUITING',
-		'SELECTED',
-		'IN_PROGRESS',
-		'COMPLETED',
-		'CANCELLED',
-	]),
-	ApplicationStatus: z.enum(['WAITING', 'SELECTED', 'REJECTED']),
+	Role: z.enum(['ADMIN', 'USER'], '권한 오류'),
+	VolunteerActivityStatus: z.enum(
+		[
+			'PLANNING',
+			'RECRUITING',
+			'SELECTED',
+			'IN_PROGRESS',
+			'COMPLETED',
+			'CANCELLED',
+		],
+		'봉사활동 상태 오류',
+	),
+	ApplicationStatus: z.enum(
+		['WAITING', 'SELECTED', 'REJECTED'],
+		'봉사활동 신청 상태 오류',
+	),
 
-	ToastPosition: z.enum([
-		'top-left',
-		'top-center',
-		'top-right',
-		'bottom-left',
-		'bottom-center',
-		'bottom-right',
-	]),
+	ToastPosition: z.enum(
+		[
+			'top-left',
+			'top-center',
+			'top-right',
+			'bottom-left',
+			'bottom-center',
+			'bottom-right',
+		],
+		'토스트 위치 오류',
+	),
 
-	TestDataType: z.enum(['notices', 'users', 'sessions', 'all', 'test-data']),
+	TestDataType: z.enum(
+		['notices', 'users', 'sessions', 'all', 'test-data'],
+		'테스트 데이터 타입 오류',
+	),
 }
