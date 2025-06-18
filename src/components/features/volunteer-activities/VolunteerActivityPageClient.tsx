@@ -313,14 +313,16 @@ function VolunteerActivityPageClientContent({
 				onClose={handleCloseModal}
 			/>
 
-			<VolunteerActivityDetailModal
-				open={isDetailOpen}
-				onClose={handleCloseDetail}
-				activity={selectedActivity}
-				onApply={handleApplyFromDetail}
-				currentUserId={session?.user?.id}
-				userRole={session?.user?.role}
-			/>
+			{selectedActivity && (
+				<VolunteerActivityDetailModal
+					open={isDetailOpen}
+					onClose={handleCloseDetail}
+					activity={selectedActivity}
+					onApply={handleApplyFromDetail}
+					currentUserId={session?.user?.id}
+					userRole={session?.user?.role}
+				/>
+			)}
 
 			{/* 신청 모달 */}
 			{applicationActivity && (

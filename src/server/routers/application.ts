@@ -85,12 +85,15 @@ export const applicationRouter = createTRPCRouter({
 			const [myApplicationList, totalCount] = await Promise.all([
 				ctx.prisma.application.findMany({
 					...queryOptions,
-					include: {
+					where: {
 						volunteerActivity: {
-							include: {
-								manager: true,
+							is: {
+								deletedAt: null,
 							},
 						},
+					},
+					include: {
+						volunteerActivity: true,
 					},
 				}),
 				ctx.prisma.application.count({
@@ -167,25 +170,7 @@ export const applicationRouter = createTRPCRouter({
 					userId: ctx.session.user.id,
 					volunteerActivityId: input.volunteerActivityId,
 					emergencyContact: input.emergencyContact,
-					status: 'WAITING',
-				},
-				include: {
-					user: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-						},
-					},
-					volunteerActivity: {
-						select: {
-							id: true,
-							title: true,
-							startAt: true,
-							endAt: true,
-							location: true,
-						},
-					},
+					status: Enum.ApplicationStatus.WAITING,
 				},
 			})
 		}),
@@ -211,24 +196,6 @@ export const applicationRouter = createTRPCRouter({
 				data: {
 					status: input.status,
 				},
-				include: {
-					user: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-						},
-					},
-					volunteerActivity: {
-						select: {
-							id: true,
-							title: true,
-							startAt: true,
-							endAt: true,
-							location: true,
-						},
-					},
-				},
 			})
 		}),
 	deleteApplication: protectedProcedure
@@ -238,6 +205,11 @@ export const applicationRouter = createTRPCRouter({
 				where: {
 					id: input.id,
 					deletedAt: null,
+					volunteerActivity: {
+						is: {
+							deletedAt: null,
+						},
+					},
 				},
 				include: {
 					volunteerActivity: true,

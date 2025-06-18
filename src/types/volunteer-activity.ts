@@ -37,7 +37,7 @@ export interface VolunteerActivityListProps {
 }
 
 export interface VolunteerActivityDetailModalProps {
-	activity: ZodType<typeof VolunteerActivityEntitySchema> | null
+	activity: ZodType<typeof VolunteerActivityEntitySchema>
 	open: boolean
 	onClose: () => void
 	onApply?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void

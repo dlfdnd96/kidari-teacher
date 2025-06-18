@@ -48,6 +48,21 @@ export const volunteerActivityRouter = createTRPCRouter({
 			const [volunteerActivityList, totalCount] = await Promise.all([
 				ctx.prisma.volunteerActivity.findMany({
 					...queryOptions,
+					include: {
+						applications: {
+							where: {
+								deletedAt: null,
+								user: {
+									is: {
+										deletedAt: null,
+									},
+								},
+							},
+							include: {
+								user: true,
+							},
+						},
+					},
 				}),
 				ctx.prisma.volunteerActivity.count({
 					where: queryOptions.where,
