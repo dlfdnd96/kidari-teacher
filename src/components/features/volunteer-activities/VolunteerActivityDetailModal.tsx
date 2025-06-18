@@ -79,7 +79,7 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 				)
 
 				await updateApplicationStatusMutation.mutateAsync({
-					id: applicationId,
+					ids: [applicationId],
 					status: parsedNewStatus,
 				})
 			} catch (error) {
@@ -118,14 +118,10 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 					),
 				)
 
-				await Promise.all(
-					applicationsToUpdate.map((app) =>
-						updateApplicationStatusMutation.mutateAsync({
-							id: app.id,
-							status: parsedNewStatus,
-						}),
-					),
-				)
+				await updateApplicationStatusMutation.mutateAsync({
+					ids: applicationsToUpdate.map(({ id }) => id),
+					status: parsedNewStatus,
+				})
 			} catch (error) {
 				console.error('Bulk status update error:', error)
 

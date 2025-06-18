@@ -178,22 +178,24 @@ export const applicationRouter = createTRPCRouter({
 	updateApplicationStatus: adminProcedure
 		.input(UpdateApplicationStatusInputSchema)
 		.mutation(async ({ ctx, input }) => {
-			const application = await ctx.prisma.application.findFirst({
+			const applications = await ctx.prisma.application.findMany({
 				where: {
-					id: input.id,
+					id: {
+						in: input.ids,
+					},
 					deletedAt: null,
 				},
 			})
 
-			if (!application) {
+			if (applications.length !== input.ids.length) {
 				throw new TRPCError({
 					code: 'NOT_FOUND',
 					message: '존재하지 않는 신청입니다',
 				})
 			}
 
-			return await ctx.prisma.application.update({
-				where: { id: input.id },
+			return await ctx.prisma.application.updateMany({
+				where: { id: { in: input.ids } },
 				data: {
 					status: input.status,
 				},

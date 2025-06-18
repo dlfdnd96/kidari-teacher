@@ -43,7 +43,7 @@ export const CreateApplicationInputSchema = z.strictObject({
 })
 
 export const UpdateApplicationStatusInputSchema = z.strictObject({
-	id: z.string().check(z.cuid('올바른 신청 ID가 아닙니다')),
+	ids: z.array(z.string().check(z.cuid('올바른 신청 ID가 아닙니다'))),
 	status: ZodEnum.ApplicationStatus,
 })
 

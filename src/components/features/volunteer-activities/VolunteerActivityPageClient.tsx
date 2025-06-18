@@ -93,7 +93,7 @@ function VolunteerActivityPageClientContent({
 				offset: (currentPage - 1) * pageSize,
 				limit: pageSize,
 				sort: {
-					createdAt: 'desc',
+					startAt: 'asc',
 				},
 			},
 		},

@@ -45,7 +45,7 @@ const ApplicationDetailModal: FC<ApplicationDetailModalProps> = ({
 			try {
 				const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
 				await updateApplicationStatusMutation.mutateAsync({
-					id: applicationId,
+					ids: [applicationId],
 					status: parsedNewStatus,
 				})
 				onClose()
