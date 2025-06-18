@@ -38,7 +38,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui'
-import { Enum, ZodEnum } from '@/enums'
+import { Enum } from '@/enums'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
