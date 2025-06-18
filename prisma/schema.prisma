@@ -141,7 +141,6 @@ model Application {
   volunteerActivity VolunteerActivity @relation(fields: [volunteerActivityId], references: [id])
   selection         Selection?
 
-  @@unique([userId, volunteerActivityId])
   @@map("applications")
 }
 
