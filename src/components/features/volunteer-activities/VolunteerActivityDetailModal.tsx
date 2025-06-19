@@ -4,7 +4,6 @@ import React, { FC, useCallback } from 'react'
 import {
 	AlertCircle,
 	Calendar,
-	ChevronDown,
 	Clock,
 	Eye,
 	FileText,
@@ -34,6 +33,13 @@ import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { formatPhoneNumber } from '@/utils/phone'
 import { useSession } from 'next-auth/react'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui'
 
 const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	open,
@@ -374,9 +380,8 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 							</>
 						)}
 
-						{/* 관리자용 신청자 관리 섹션 */}
-						{isManager &&
-							applicationListResult?.applicationList &&
+						{/* 신청자 섹션 */}
+						{applicationListResult?.applicationList &&
 							applicationListResult?.applicationList.length > 0 && (
 								<>
 									<div className="border-t border-gray-200 dark:border-gray-700"></div>
@@ -384,8 +389,8 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 										<div className="flex items-center gap-2">
 											<Users className="h-5 w-5 text-blue-600" />
 											<h3 className="font-semibold text-gray-900 dark:text-gray-100">
-												신청자 관리 (
-												{applicationListResult?.applicationList.length}명)
+												신청자 ({applicationListResult?.applicationList.length}
+												명)
 											</h3>
 										</div>
 
@@ -453,41 +458,50 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 																		</div>
 																	</div>
 
-																	<div className="flex items-center gap-2 ml-4">
-																		{/* 신청 상세 보기 버튼 */}
-																		<button
-																			type="button"
-																			className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-																			title="상세 보기"
-																		>
-																			<Eye className="w-4 h-4" />
-																		</button>
-
-																		{/* 상태 변경 드롭다운 */}
-																		<div className="relative">
-																			<select
-																				value={application.status}
-																				onChange={(e) =>
-																					handleStatusChange(
-																						application.id,
-																						e.target.value,
-																					)
-																				}
-																				disabled={
-																					updateApplicationStatusMutation.isPending
-																				}
-																				className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+																	{isManager && (
+																		<div className="flex items-center gap-2 ml-4">
+																			{/* 신청 상세 보기 버튼 */}
+																			<button
+																				type="button"
+																				className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+																				title="상세 보기"
 																			>
-																				<option value="WAITING">대기 중</option>
-																				<option value="SELECTED">선발됨</option>
-																				<option value="REJECTED">불합격</option>
-																				<option value="CANCELLED">
-																					취소됨
-																				</option>
-																			</select>
-																			<ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+																				<Eye className="w-4 h-4" />
+																			</button>
+
+																			{/* 상태 변경 드롭다운 - 관리자만 변경 가능 */}
+																			<div className="relative">
+																				<Select
+																					value={application.status}
+																					onValueChange={(value) =>
+																						handleStatusChange(
+																							application.id,
+																							value,
+																						)
+																					}
+																					disabled={
+																						updateApplicationStatusMutation.isPending
+																					}
+																				>
+																					<SelectTrigger className="w-auto bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+																						<SelectValue />
+																					</SelectTrigger>
+																					<SelectContent>
+																						{Object.entries(
+																							APPLICATION_STATUS_LABELS,
+																						).map(([value, label]) => (
+																							<SelectItem
+																								key={value}
+																								value={value}
+																							>
+																								{label}
+																							</SelectItem>
+																						))}
+																					</SelectContent>
+																				</Select>
+																			</div>
 																		</div>
-																	</div>
+																	)}
 																</div>
 															</div>
 														)
@@ -496,48 +510,52 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 											</div>
 
 											{/* 일괄 작업 버튼들 */}
-											<div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-												<div className="flex flex-wrap gap-2">
-													<button
-														type="button"
-														onClick={() =>
-															handleBulkStatusChange(
-																Enum.ApplicationStatus.WAITING,
-																Enum.ApplicationStatus.SELECTED,
-															)
-														}
-														disabled={
-															updateApplicationStatusMutation.isPending ||
-															!applicationListResult?.applicationList.some(
-																(app) =>
-																	app.status === Enum.ApplicationStatus.WAITING,
-															)
-														}
-														className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer"
-													>
-														대기자 전체 선발
-													</button>
-													<button
-														type="button"
-														onClick={() =>
-															handleBulkStatusChange(
-																Enum.ApplicationStatus.WAITING,
-																Enum.ApplicationStatus.REJECTED,
-															)
-														}
-														disabled={
-															updateApplicationStatusMutation.isPending ||
-															!applicationListResult?.applicationList.some(
-																(app) =>
-																	app.status === Enum.ApplicationStatus.WAITING,
-															)
-														}
-														className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer"
-													>
-														대기자 전체 불합격
-													</button>
+											{isManager && (
+												<div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+													<div className="flex flex-wrap gap-2">
+														<button
+															type="button"
+															onClick={() =>
+																handleBulkStatusChange(
+																	Enum.ApplicationStatus.WAITING,
+																	Enum.ApplicationStatus.SELECTED,
+																)
+															}
+															disabled={
+																updateApplicationStatusMutation.isPending ||
+																!applicationListResult?.applicationList.some(
+																	(app) =>
+																		app.status ===
+																		Enum.ApplicationStatus.WAITING,
+																)
+															}
+															className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer"
+														>
+															대기자 전체 선발
+														</button>
+														<button
+															type="button"
+															onClick={() =>
+																handleBulkStatusChange(
+																	Enum.ApplicationStatus.WAITING,
+																	Enum.ApplicationStatus.REJECTED,
+																)
+															}
+															disabled={
+																updateApplicationStatusMutation.isPending ||
+																!applicationListResult?.applicationList.some(
+																	(app) =>
+																		app.status ===
+																		Enum.ApplicationStatus.WAITING,
+																)
+															}
+															className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer"
+														>
+															대기자 전체 불합격
+														</button>
+													</div>
 												</div>
-											</div>
+											)}
 										</div>
 									</div>
 								</>

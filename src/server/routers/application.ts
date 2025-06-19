@@ -52,7 +52,7 @@ export const applicationRouter = createTRPCRouter({
 
 			return application
 		}),
-	getApplicationList: adminProcedure
+	getApplicationList: protectedProcedure
 		.input(ApplicationListFilterInputSchema)
 		.output(ApplicationListResponseSchema)
 		.query(async ({ ctx, input }) => {
