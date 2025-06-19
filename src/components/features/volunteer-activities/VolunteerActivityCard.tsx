@@ -59,7 +59,7 @@ const VolunteerActivityCard = memo(
 
 		const canApply =
 			activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
-			startOfDay(new TZDate(new Date(), TIME_ZONE.UTC)) <=
+			startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) <=
 				startOfDay(activity.applicationDeadline)
 
 		const hasApplied = session?.user.id
@@ -237,7 +237,7 @@ const VolunteerActivityCard = memo(
 										}}
 										type="button"
 										aria-label="봉사활동 삭제"
-										disabled={isDeleting || applicationCount > 0}
+										disabled={isDeleting}
 									>
 										<Trash className="w-4 h-4 mr-1.5" />
 										<span>삭제</span>
