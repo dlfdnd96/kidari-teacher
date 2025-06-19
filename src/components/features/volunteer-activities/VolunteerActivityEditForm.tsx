@@ -8,7 +8,11 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
-import { ZodError } from 'zod/v4'
+import {
+	ERROR_MESSAGES,
+	handleClientError,
+	isValidationError,
+} from '@/utils/error'
 import { VolunteerActivityEditFormSchema } from '@/shared/schemas/volunteer-activity'
 import {
 	VOLUNTEER_ACTIVITY_STATUS_LABELS,
@@ -42,6 +46,7 @@ import { ko } from 'date-fns/locale'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { ZodEnum } from '@/enums'
+import { useSession } from 'next-auth/react'
 
 const VolunteerActivityEditForm = memo(
 	({
@@ -70,6 +75,7 @@ const VolunteerActivityEditForm = memo(
 		})
 
 		const router = useRouter()
+		const { data: session } = useSession()
 		const { showError } = useErrorModal()
 
 		const utils = trpc.useUtils()
@@ -81,12 +87,21 @@ const VolunteerActivityEditForm = memo(
 					onCancel()
 				},
 				onError: (error) => {
-					showError(error.message, '봉사활동 수정 오류')
+					handleClientError(error, showError, '봉사활동 수정 오류')
 				},
 			})
 
 		const onSubmit = useCallback(
 			async (data: unknown) => {
+				if (!session?.user) {
+					handleClientError(
+						ERROR_MESSAGES.AUTHENTICATION_ERROR,
+						showError,
+						'인증 오류',
+					)
+					return
+				}
+
 				try {
 					const validatedData = VolunteerActivityEditFormSchema.parse(data)
 					await updateVolunteerActivityMutation.mutateAsync({
@@ -94,20 +109,14 @@ const VolunteerActivityEditForm = memo(
 						...validatedData,
 					})
 				} catch (error: unknown) {
-					if (error instanceof ZodError) {
-						showError(error.message, '입력 검증 오류')
+					if (isValidationError(error)) {
+						handleClientError(error, showError, '입력 검증 오류')
 					} else {
-						console.error('Update error:', error)
-
-						const errorMessage =
-							error instanceof Error
-								? error.message
-								: '알 수 없는 오류가 발생했습니다.'
-						showError(errorMessage, '봉사활동 수정 오류')
+						handleClientError(error, showError, '봉사활동 수정 오류')
 					}
 				}
 			},
-			[id, updateVolunteerActivityMutation, showError],
+			[session?.user, showError, updateVolunteerActivityMutation, id],
 		)
 
 		const loading = updateVolunteerActivityMutation.isPending

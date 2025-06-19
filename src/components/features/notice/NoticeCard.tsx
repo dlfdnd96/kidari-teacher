@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { NoticeCardProps } from '@/types/notice'
 import { Calendar, PenLine, Trash, X } from 'lucide-react'
@@ -27,7 +28,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 			router.refresh()
 		},
 		onError: (error) => {
-			showError(error.message, '공지사항 수정 오류')
+			handleClientError(error, showError, '공지사항 수정 오류')
 		},
 	})
 	const deleteNoticeMutation = trpc.notice.deleteNotice.useMutation({
@@ -36,7 +37,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 			router.refresh()
 		},
 		onError: (error) => {
-			showError(error.message, '공지사항 삭제 오류')
+			handleClientError(error, showError, '공지사항 삭제 오류')
 		},
 		onSettled: () => {
 			setShowDeleteConfirm(false)
@@ -68,22 +69,24 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	}, [])
 
 	const handleDelete = useCallback(async () => {
+		if (!session?.user) {
+			handleClientError(
+				ERROR_MESSAGES.AUTHENTICATION_ERROR,
+				showError,
+				'인증 오류',
+			)
+			return
+		}
+
 		try {
 			await deleteNoticeMutation.mutateAsync({
 				id: notice.id,
 			})
 		} catch (error) {
-			console.error('Delete error:', error)
-
-			const errorMessage =
-				error instanceof Error
-					? error.message
-					: '알 수 없는 오류가 발생했습니다.'
-
-			showError(errorMessage, '공지사항 삭제 오류')
+			handleClientError(error, showError, '공지사항 삭제 오류')
 			setShowDeleteConfirm(false)
 		}
-	}, [notice.id, showError, deleteNoticeMutation])
+	}, [session?.user, showError, deleteNoticeMutation, notice.id])
 
 	const isUpdating = updateNoticeMutation.isPending
 	const isDeleting = deleteNoticeMutation.isPending

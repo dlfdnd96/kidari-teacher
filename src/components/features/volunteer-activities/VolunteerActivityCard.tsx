@@ -17,6 +17,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { trpc } from '@/components/providers/TrpcProvider'
 import VolunteerActivityEditForm from '@/components/features/volunteer-activities/VolunteerActivityEditForm'
 import type { VolunteerActivityCardProps } from '@/types/volunteer-activity'
@@ -28,13 +29,7 @@ import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 
 const VolunteerActivityCard = memo(
-	({
-		activity,
-		onViewDetail,
-		onApply,
-		currentUserId,
-		userRole,
-	}: VolunteerActivityCardProps) => {
+	({ activity, onViewDetail, onApply }: VolunteerActivityCardProps) => {
 		const { data: session } = useSession()
 		const isAdmin = session?.user.role === Enum.Role.ADMIN
 		const [editing, setEditing] = useState(false)
@@ -51,7 +46,7 @@ const VolunteerActivityCard = memo(
 					router.refresh()
 				},
 				onError: (error) => {
-					showError(error.message, '봉사활동 삭제 오류')
+					handleClientError(error, showError, '봉사활동 삭제 오류')
 				},
 				onSettled: () => {
 					setShowDeleteConfirm(false)
@@ -59,14 +54,15 @@ const VolunteerActivityCard = memo(
 			})
 
 		const isManager =
-			currentUserId === activity.managerId || userRole === Enum.Role.ADMIN
+			session?.user.id === activity.managerId ||
+			session?.user.role === Enum.Role.ADMIN
 		const canApply =
 			activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
 			startOfDay(new TZDate(new Date(), TIME_ZONE.UTC)) <=
 				startOfDay(activity.applicationDeadline)
 
-		const hasApplied = currentUserId
-			? activity.applications?.some((app) => app.user?.id === currentUserId)
+		const hasApplied = session?.user.id
+			? activity.applications?.some((app) => app.user?.id === session?.user.id)
 			: false
 
 		const applicationCount = activity.applications?.length || 0
@@ -105,21 +101,24 @@ const VolunteerActivityCard = memo(
 		}, [])
 
 		const handleDelete = useCallback(async () => {
+			if (!session?.user) {
+				handleClientError(
+					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					showError,
+					'인증 오류',
+				)
+				return
+			}
+
 			try {
 				await deleteVolunteerActivityMutation.mutateAsync({
 					id: activity.id,
 				})
 			} catch (error) {
-				console.error('Delete error:', error)
-
-				const errorMessage =
-					error instanceof Error
-						? error.message
-						: '알 수 없는 오류가 발생했습니다.'
-				showError(errorMessage, '봉사활동 삭제 오류')
+				handleClientError(error, showError, '봉사활동 삭제 오류')
 				setShowDeleteConfirm(false)
 			}
-		}, [activity.id, showError, deleteVolunteerActivityMutation])
+		}, [session?.user, showError, deleteVolunteerActivityMutation, activity.id])
 
 		const isDeleting = deleteVolunteerActivityMutation.isPending
 
@@ -362,7 +361,7 @@ const VolunteerActivityCard = memo(
 						</button>
 
 						{/* 신청 버튼 (로그인된 일반 사용자, 신청 가능한 상태) */}
-						{currentUserId && !isManager && canApply && !isFullyBooked && (
+						{session?.user.id && !isManager && canApply && !isFullyBooked && (
 							<button
 								className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-4 py-2 rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 								onClick={(e) => {

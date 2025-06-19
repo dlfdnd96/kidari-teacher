@@ -31,16 +31,17 @@ import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { formatPhoneNumber } from '@/utils/phone'
+import { useSession } from 'next-auth/react'
 
 const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	open,
 	onClose,
 	activity,
 	onApply,
-	currentUserId,
-	userRole,
 }) => {
+	const { data: session } = useSession()
 	const { showError } = useErrorModal()
 
 	const utils = trpc.useUtils()
@@ -59,12 +60,21 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 				])
 			},
 			onError: (error) => {
-				showError(error.message, '봉사활동 상태 수정 오류')
+				handleClientError(error, showError, '봉사활동 상태 수정 오류')
 			},
 		})
 
 	const handleStatusChange = useCallback(
 		async (applicationId: string, newStatus: string) => {
+			if (!session?.user) {
+				handleClientError(
+					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					showError,
+					'인증 오류',
+				)
+				return
+			}
+
 			try {
 				const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
 
@@ -73,21 +83,23 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 					status: parsedNewStatus,
 				})
 			} catch (error) {
-				console.error('Status update error:', error)
-
-				const errorMessage =
-					error instanceof Error
-						? error.message
-						: '알 수 없는 오류가 발생했습니다.'
-
-				showError(errorMessage, '봉사활동 상태 수정 오류')
+				handleClientError(error, showError, '봉사활동 상태 수정 오류')
 			}
 		},
-		[showError, updateApplicationStatusMutation],
+		[session?.user, showError, updateApplicationStatusMutation],
 	)
 
 	const handleBulkStatusChange = useCallback(
 		async (targetStatus: string, newStatus: string) => {
+			if (!session?.user) {
+				handleClientError(
+					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					showError,
+					'인증 오류',
+				)
+				return
+			}
+
 			try {
 				const parsedNewStatus = ZodEnum.ApplicationStatus.parse(newStatus)
 				const parsedTargetStatus = ZodEnum.ApplicationStatus.parse(targetStatus)
@@ -106,20 +118,14 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 					status: parsedNewStatus,
 				})
 			} catch (error) {
-				console.error('Bulk status update error:', error)
-
-				const errorMessage =
-					error instanceof Error
-						? error.message
-						: '일괄 상태 변경 중 오류가 발생했습니다.'
-
-				showError(errorMessage, '봉사활동 상태 수정 오류')
+				handleClientError(error, showError, '봉사활동 상태 수정 오류')
 			}
 		},
 		[
+			session?.user,
+			showError,
 			applicationListResult?.applicationList,
 			updateApplicationStatusMutation,
-			showError,
 		],
 	)
 
@@ -128,15 +134,16 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	}
 
 	const isManager =
-		currentUserId === activity.managerId || userRole === Enum.Role.ADMIN
+		session?.user.id === activity.managerId ||
+		session?.user.role === Enum.Role.ADMIN
 	const canApply =
 		activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
 		startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) <=
 			startOfDay(activity.applicationDeadline)
 
-	const hasApplied = currentUserId
+	const hasApplied = session?.user.id
 		? applicationListResult?.applicationList.some(
-				(app) => app.user?.id === currentUserId,
+				(app) => app.user?.id === session?.user.id,
 			)
 		: false
 
@@ -327,7 +334,7 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 						</div>
 
 						{/* 신청 안내 */}
-						{currentUserId && (
+						{session?.user.id && (
 							<>
 								<div className="border-t border-gray-200 dark:border-gray-700"></div>
 								<div className="space-y-3">
@@ -550,7 +557,7 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 						</button>
 
 						{/* 신청 버튼 - 조건 분리 */}
-						{currentUserId && (
+						{session?.user.id && (
 							<>
 								{/* 신청 가능한 경우 */}
 								{canApply && !isFullyBooked && !hasApplied && (

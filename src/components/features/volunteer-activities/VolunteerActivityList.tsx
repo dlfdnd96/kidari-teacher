@@ -8,8 +8,6 @@ export default function VolunteerActivityList({
 	onApply,
 	onEdit,
 	onDelete,
-	currentUserId,
-	userRole,
 }: VolunteerActivityListProps) {
 	return (
 		<div className="space-y-6 sm:space-y-8">
@@ -29,8 +27,6 @@ export default function VolunteerActivityList({
 							onApply={onApply}
 							onEdit={onEdit}
 							onDelete={onDelete}
-							currentUserId={currentUserId}
-							userRole={userRole}
 						/>
 					</div>
 				))}

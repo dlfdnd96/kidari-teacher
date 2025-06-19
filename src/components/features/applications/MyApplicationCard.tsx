@@ -14,6 +14,7 @@ import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { trpc } from '@/components/providers/TrpcProvider'
 import type { MyApplicationCardProps } from '@/types/application'
 import {
@@ -25,10 +26,12 @@ import { TZDate } from '@date-fns/tz'
 import { Enum } from '@/enums'
 import { TIME_ZONE } from '@/constants/date'
 import { formatPhoneNumber } from '@/utils/phone'
+import { useSession } from 'next-auth/react'
 
 const MyApplicationCard = memo(({ application }: MyApplicationCardProps) => {
 	const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 	const router = useRouter()
+	const { data: session } = useSession()
 	const { showError } = useErrorModal()
 
 	const utils = trpc.useUtils()
@@ -41,7 +44,7 @@ const MyApplicationCard = memo(({ application }: MyApplicationCardProps) => {
 				router.refresh()
 			},
 			onError: (error) => {
-				showError(error.message, '봉사활동 신청 취소 오류')
+				handleClientError(error, showError, '봉사활동 신청 취소 오류')
 			},
 			onSettled: () => {
 				setShowCancelConfirm(false)
@@ -60,21 +63,24 @@ const MyApplicationCard = memo(({ application }: MyApplicationCardProps) => {
 	)
 
 	const handleCancel = useCallback(async () => {
+		if (!session?.user) {
+			handleClientError(
+				ERROR_MESSAGES.AUTHENTICATION_ERROR,
+				showError,
+				'인증 오류',
+			)
+			return
+		}
+
 		try {
 			await cancelApplicationMutation.mutateAsync({
 				id: application.id,
 			})
 		} catch (error) {
-			console.error('Cancel error:', error)
-
-			const errorMessage =
-				error instanceof Error
-					? error.message
-					: '알 수 없는 오류가 발생했습니다.'
-			showError(errorMessage, '봉사활동 신청 취소 오류')
+			handleClientError(error, showError, '봉사활동 신청 취소 오류')
 			setShowCancelConfirm(false)
 		}
-	}, [application.id, showError, cancelApplicationMutation])
+	}, [session?.user, showError, cancelApplicationMutation, application.id])
 
 	if (!application.volunteerActivity) {
 		return null

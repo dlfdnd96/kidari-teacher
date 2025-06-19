@@ -8,11 +8,16 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
-import { ZodError } from 'zod/v4'
+import {
+	ERROR_MESSAGES,
+	handleClientError,
+	isValidationError,
+} from '@/utils/error'
 
 import { NoticeEditFormSchema } from '@/shared/schemas/notice'
 import { NoticeEditFormProps } from '@/types/notice'
 import { FileText, PenLine, Save, X } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 
 const NoticeEditForm = memo(
 	({ id, initialTitle, initialContent, onCancel }: NoticeEditFormProps) => {
@@ -20,6 +25,7 @@ const NoticeEditForm = memo(
 			defaultValues: { title: initialTitle, content: initialContent },
 		})
 		const router = useRouter()
+		const { data: session } = useSession()
 		const { showError } = useErrorModal()
 
 		const utils = trpc.useUtils()
@@ -30,12 +36,21 @@ const NoticeEditForm = memo(
 				onCancel()
 			},
 			onError: (error) => {
-				showError(error.message, '공지사항 수정 오류')
+				handleClientError(error, showError, '공지사항 수정 오류')
 			},
 		})
 
 		const onSubmit = useCallback(
 			async (data: unknown) => {
+				if (!session?.user) {
+					handleClientError(
+						ERROR_MESSAGES.AUTHENTICATION_ERROR,
+						showError,
+						'인증 오류',
+					)
+					return
+				}
+
 				try {
 					const validatedData = NoticeEditFormSchema.parse(data)
 					await updateNoticeMutation.mutateAsync({
@@ -44,20 +59,14 @@ const NoticeEditForm = memo(
 						content: validatedData.content,
 					})
 				} catch (error: unknown) {
-					if (error instanceof ZodError) {
-						showError(error.message, '입력 검증 오류')
+					if (isValidationError(error)) {
+						handleClientError(error, showError, '입력 검증 오류')
 					} else {
-						console.error('Update error:', error)
-
-						const errorMessage =
-							error instanceof Error
-								? error.message
-								: '알 수 없는 오류가 발생했습니다.'
-						showError(errorMessage, '공지사항 수정 오류')
+						handleClientError(error, showError, '공지사항 수정 오류')
 					}
 				}
 			},
-			[id, updateNoticeMutation, showError],
+			[session?.user, showError, updateNoticeMutation, id],
 		)
 
 		const loading = updateNoticeMutation.isPending

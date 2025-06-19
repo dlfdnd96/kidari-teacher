@@ -6,7 +6,11 @@ import { Save, User, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { ZodError } from 'zod/v4'
+import {
+	ERROR_MESSAGES,
+	handleClientError,
+	isValidationError,
+} from '@/utils/error'
 import { UpdateUserInputSchema } from '@/shared/schemas/user'
 import type { ProfileFormProps } from '@/types/profile'
 import { trpc } from '@/components/providers/TrpcProvider'
@@ -35,14 +39,18 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 			router.refresh()
 		},
 		onError: (error) => {
-			showError(error.message, '프로필 업데이트 오류')
+			handleClientError(error, showError, '프로필 업데이트 오류')
 		},
 	})
 
 	const onSubmit = useCallback(
 		async (data: unknown) => {
 			if (!session?.user) {
-				showError('로그인이 필요합니다.', '인증 오류')
+				handleClientError(
+					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					showError,
+					'인증 오류',
+				)
 				return
 			}
 
@@ -50,16 +58,10 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 				const validatedData = UpdateUserInputSchema.parse(data)
 				await updateProfileMutation.mutateAsync(validatedData)
 			} catch (error: unknown) {
-				if (error instanceof ZodError) {
-					showError(error.message, '입력 검증 오류')
+				if (isValidationError(error)) {
+					handleClientError(error, showError, '입력 검증 오류')
 				} else {
-					console.error('Form error:', error)
-
-					const errorMessage =
-						error instanceof Error
-							? error.message
-							: '알 수 없는 오류가 발생했습니다.'
-					showError(errorMessage, '프로필 업데이트 오류')
+					handleClientError(error, showError, '프로필 업데이트 오류')
 				}
 			}
 		},

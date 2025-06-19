@@ -18,8 +18,6 @@ export interface VolunteerActivityCardProps {
 	onApply?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
 	onEdit?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
 	onDelete?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
-	currentUserId?: string
-	userRole?: ZodType<typeof ZodEnum.Role>
 }
 
 export interface VolunteerActivityListProps {
@@ -32,8 +30,6 @@ export interface VolunteerActivityListProps {
 	onEdit?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
 	onDelete?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
 	onCreate?: () => void
-	currentUserId?: string
-	userRole?: ZodType<typeof ZodEnum.Role>
 }
 
 export interface VolunteerActivityDetailModalProps {
@@ -41,8 +37,6 @@ export interface VolunteerActivityDetailModalProps {
 	open: boolean
 	onClose: () => void
 	onApply?: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
-	currentUserId?: string
-	userRole?: ZodType<typeof ZodEnum.Role>
 }
 
 export interface VolunteerActivityFormProps {

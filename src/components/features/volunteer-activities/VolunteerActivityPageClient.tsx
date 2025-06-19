@@ -264,8 +264,6 @@ function VolunteerActivityPageClientContent({
 				onViewDetail={handleViewDetail}
 				onApply={handleApply}
 				totalCount={totalCount}
-				currentUserId={session?.user?.id}
-				userRole={session?.user?.role}
 			/>
 
 			{/* 페이지네이션 */}
@@ -319,8 +317,6 @@ function VolunteerActivityPageClientContent({
 					onClose={handleCloseDetail}
 					activity={selectedActivity}
 					onApply={handleApplyFromDetail}
-					currentUserId={session?.user?.id}
-					userRole={session?.user?.role}
 				/>
 			)}
 

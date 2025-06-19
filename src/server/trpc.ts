@@ -3,16 +3,25 @@ import { Context } from '@/server/context'
 import { ZodError } from 'zod/v4'
 import { z } from 'zod/v4-mini'
 import superjson from 'superjson'
+import { getErrorMessage, logError } from '@/utils/error'
 
 const t = initTRPC.context<Context>().create({
 	errorFormatter(opts) {
-		const { shape, error } = opts
+		const { shape, error, path } = opts
+
+		logError(error, `tRPC ${path || 'unknown'}`)
+
+		const safeMessage = getErrorMessage(error)
+
 		return {
 			...shape,
+			message: safeMessage,
 			data: {
 				...shape.data,
 				zodError:
-					error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+					process.env.NODE_ENV === 'development' &&
+					error.code === 'BAD_REQUEST' &&
+					error.cause instanceof ZodError
 						? z.treeifyError(error.cause)
 						: null,
 			},
