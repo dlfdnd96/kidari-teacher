@@ -87,8 +87,7 @@ export default async function MyApplicationsPage({
 								신청 내역 안내
 							</h3>
 							<p className="text-gray-600 dark:text-gray-400 text-sm">
-								신청 상태는 실시간으로 업데이트됩니다. 대기 중인 신청은 활동
-								시작 전까지 취소가 가능합니다.
+								대기 중인 신청은 활동시작 전까지 취소가 가능합니다.
 							</p>
 						</div>
 					</div>
