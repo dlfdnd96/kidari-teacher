@@ -147,11 +147,9 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 		startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) <=
 			startOfDay(activity.applicationDeadline)
 
-	const hasApplied = session?.user.id
-		? applicationListResult?.applicationList.some(
-				(app) => app.user?.id === session?.user.id,
-			)
-		: false
+	const hasApplied = applicationListResult?.applicationList.some(
+		(app) => app.user?.id === session?.user.id,
+	)
 
 	const applicationCount = applicationListResult?.applicationList.length || 0
 	const maxParticipants = activity.maxParticipants || 0

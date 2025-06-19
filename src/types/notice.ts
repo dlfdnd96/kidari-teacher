@@ -49,6 +49,7 @@ export interface NoticePageClientProps {
 export interface PaginationProps {
 	currentPage: number
 	totalPages: number
+	basePath: string
 	className?: string
-	basePath?: string
+	extraParams?: Record<string, string>
 }

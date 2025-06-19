@@ -2,16 +2,18 @@
 
 import React, { memo, useCallback, useState } from 'react'
 import {
+	AlertTriangle,
 	Calendar,
-	MapPin,
-	Users,
+	CheckCircle2,
 	Clock,
-	User,
+	MapPin,
 	PenLine,
 	Trash,
+	User,
+	Users,
 	X,
 } from 'lucide-react'
-import { format, startOfDay } from 'date-fns'
+import { differenceInDays, format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -20,13 +22,15 @@ import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { trpc } from '@/components/providers/TrpcProvider'
 import VolunteerActivityEditForm from '@/components/features/volunteer-activities/VolunteerActivityEditForm'
-import type { VolunteerActivityCardProps } from '@/types/volunteer-activity'
 import {
+	VOLUNTEER_ACTIVITY_STATUS_CONFIG,
 	VOLUNTEER_ACTIVITY_STATUS_LABELS,
-	VOLUNTEER_ACTIVITY_STATUS_COLORS,
+	VolunteerActivityCardProps,
 } from '@/types/volunteer-activity'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 
 const VolunteerActivityCard = memo(
 	({ activity, onViewDetail, onApply }: VolunteerActivityCardProps) => {
@@ -53,9 +57,6 @@ const VolunteerActivityCard = memo(
 				},
 			})
 
-		const isManager =
-			session?.user.id === activity.managerId ||
-			session?.user.role === Enum.Role.ADMIN
 		const canApply =
 			activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
 			startOfDay(new TZDate(new Date(), TIME_ZONE.UTC)) <=
@@ -70,9 +71,18 @@ const VolunteerActivityCard = memo(
 		const isFullyBooked =
 			maxParticipants > 0 && applicationCount >= maxParticipants
 
-		const statusColor =
-			VOLUNTEER_ACTIVITY_STATUS_COLORS[activity.status] ||
-			'bg-gray-100 text-gray-800'
+		const daysUntilDeadline = differenceInDays(
+			startOfDay(activity.applicationDeadline),
+			startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)),
+		)
+		const statusConfig =
+			VOLUNTEER_ACTIVITY_STATUS_CONFIG[activity.status] ||
+			VOLUNTEER_ACTIVITY_STATUS_CONFIG[Enum.VolunteerActivityStatus.PLANNING]
+		const StatusIcon = statusConfig.icon
+
+		const participationRate =
+			maxParticipants > 0 ? (applicationCount / maxParticipants) * 100 : 0
+
 		const statusLabel =
 			VOLUNTEER_ACTIVITY_STATUS_LABELS[activity.status] || activity.status
 
@@ -142,22 +152,63 @@ const VolunteerActivityCard = memo(
 		return (
 			<>
 				<div
-					className="group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer relative"
+					className={`
+						group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 
+						border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl 
+						transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer relative
+						border-l-4 ${statusConfig.color}
+					`}
 					onClick={handleCardClick}
 				>
 					{/* 헤더 */}
 					<div className="flex items-start justify-between mb-4">
 						<div className="flex items-center flex-1 min-w-0 mr-4">
-							<h3
-								className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200"
-								title={activity.title}
-							>
-								{activity.title}
-							</h3>
-							<div
-								className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
-							>
-								{statusLabel}
+							<div className="flex items-center gap-3">
+								<StatusIcon
+									className={`h-5 w-5 ${statusConfig.iconColor} shrink-0`}
+								/>
+								<h3
+									className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200"
+									title={activity.title}
+								>
+									{activity.title}
+								</h3>
+							</div>
+							<div className="ml-3 flex items-center gap-2">
+								<Badge className={statusConfig.badgeColor}>{statusLabel}</Badge>
+
+								{/* 마감 임박 배지 */}
+								{activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
+									daysUntilDeadline <= 3 &&
+									daysUntilDeadline >= 0 && (
+										<Badge
+											variant="destructive"
+											className="flex items-center gap-1"
+										>
+											<AlertTriangle className="w-3 h-3" />
+											{daysUntilDeadline === 0
+												? '오늘 마감'
+												: `${daysUntilDeadline}일 남음`}
+										</Badge>
+									)}
+
+								{/* 신청 완료 배지 */}
+								{hasApplied && (
+									<Badge
+										variant="outline"
+										className="flex items-center gap-1 bg-green-50 text-green-700 border-green-200"
+									>
+										<CheckCircle2 className="w-3 h-3" />
+										신청 완료
+									</Badge>
+								)}
+
+								{/* 정원 마감 배지 */}
+								{isFullyBooked &&
+									activity.status ===
+										Enum.VolunteerActivityStatus.RECRUITING && (
+										<Badge variant="destructive">정원 마감</Badge>
+									)}
 							</div>
 						</div>
 
@@ -296,11 +347,23 @@ const VolunteerActivityCard = memo(
 								{maxParticipants > 0 && ` / ${maxParticipants}명`}
 							</span>
 							{isFullyBooked && (
-								<span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+								<Badge variant="destructive" className="text-xs">
 									마감
-								</span>
+								</Badge>
 							)}
 						</div>
+
+						{/* 참가율 프로그레스 바 (모집 중이고 정원이 있을 때만) */}
+						{activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
+							maxParticipants > 0 && (
+								<div className="mt-2">
+									<div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+										<span>참가율</span>
+										<span>{Math.round(participationRate)}%</span>
+									</div>
+									<Progress value={participationRate} className="h-2" />
+								</div>
+							)}
 
 						{/* 신청 마감일 */}
 						<div className="flex items-center gap-2 text-sm">
@@ -311,9 +374,9 @@ const VolunteerActivityCard = memo(
 							</span>
 							{startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) >
 								startOfDay(activity.applicationDeadline) && (
-								<span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+								<Badge variant="destructive" className="text-xs">
 									마감됨
-								</span>
+								</Badge>
 							)}
 						</div>
 
@@ -360,8 +423,8 @@ const VolunteerActivityCard = memo(
 							자세히 보기
 						</button>
 
-						{/* 신청 버튼 (로그인된 일반 사용자, 신청 가능한 상태) */}
-						{session?.user.id && !isManager && canApply && !isFullyBooked && (
+						{/* 신청 버튼 */}
+						{session?.user.id && canApply && !isFullyBooked && (
 							<button
 								className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-4 py-2 rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
 								onClick={(e) => {
@@ -375,8 +438,18 @@ const VolunteerActivityCard = memo(
 						)}
 					</div>
 
-					{/* 액센트 라인 */}
-					<div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-b-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+					{/* 액센트 라인 - 상태별 색상 */}
+					<div
+						className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${
+							activity.status === Enum.VolunteerActivityStatus.RECRUITING
+								? 'from-emerald-500 to-teal-600'
+								: activity.status === Enum.VolunteerActivityStatus.IN_PROGRESS
+									? 'from-orange-500 to-red-500'
+									: activity.status === Enum.VolunteerActivityStatus.COMPLETED
+										? 'from-gray-400 to-gray-600'
+										: 'from-blue-500 to-purple-600'
+						} rounded-b-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+					/>
 				</div>
 			</>
 		)

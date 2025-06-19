@@ -1,18 +1,24 @@
 'use client'
 
 import React, { Suspense, useCallback, useEffect, useState } from 'react'
-import { notFound, useSearchParams } from 'next/navigation'
+import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import VolunteerActivityList from '@/components/features/volunteer-activities/VolunteerActivityList'
+import VolunteerActivityFilterTab from '@/components/features/volunteer-activities/VolunteerActivityFilterTab'
 import Pagination from '@/components/features/pagination/Pagination'
 import { ZodType } from '@/shared/types'
 import { VolunteerActivityEntitySchema } from '@/shared/schemas/volunteer-activity'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
-import type { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
+import {
+	VOLUNTEER_ACTIVITY_STATUS_PRIORITY,
+	VolunteerActivityPageClientProps,
+} from '@/types/volunteer-activity'
 import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
+import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
+import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 
 const CreateVolunteerActivityModal = dynamic(
 	() =>
@@ -49,6 +55,8 @@ function VolunteerActivityPageClientContent({
 	initialPage = 1,
 }: VolunteerActivityPageClientProps) {
 	const searchParams = useSearchParams()
+	const router = useRouter()
+	const { showError } = useErrorModal()
 
 	const { data: session } = useSession()
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -63,10 +71,17 @@ function VolunteerActivityPageClientContent({
 
 	const [currentPage, setCurrentPage] = useState(initialPage)
 	const [isPageChanging, setIsPageChanging] = useState(false)
+	const [selectedStatus, setSelectedStatus] = useState<string | 'all'>('all')
 	const pageSize = 10
 
 	useEffect(() => {
+		const statusFromUrl = searchParams?.get('status') || 'all'
 		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 10)
+
+		if (statusFromUrl !== selectedStatus) {
+			setSelectedStatus(statusFromUrl)
+		}
+
 		if (pageFromUrl !== currentPage) {
 			setIsPageChanging(true)
 			setCurrentPage(pageFromUrl)
@@ -79,7 +94,24 @@ function VolunteerActivityPageClientContent({
 				setIsPageChanging(false)
 			}, 150)
 		}
-	}, [searchParams, currentPage])
+	}, [searchParams, currentPage, selectedStatus])
+
+	const { data: allActivitiesData } =
+		trpc.volunteerActivity.getVolunteerActivityList.useQuery(
+			{
+				pageable: {
+					offset: 0,
+					limit: 100,
+					sort: {
+						startAt: 'asc',
+					},
+				},
+			},
+			{
+				staleTime: 5 * 60 * 1000,
+				refetchOnWindowFocus: false,
+			},
+		)
 
 	const {
 		data: activityData,
@@ -96,6 +128,7 @@ function VolunteerActivityPageClientContent({
 					startAt: 'asc',
 				},
 			},
+			filter: selectedStatus !== 'all' ? { status: selectedStatus } : undefined,
 		},
 		{
 			staleTime: 60 * 1000,
@@ -105,8 +138,47 @@ function VolunteerActivityPageClientContent({
 		},
 	)
 
-	const activities = activityData?.volunteerActivityList || []
-	const totalCount = activityData?.totalCount || activities.length
+	const statusCounts = React.useMemo(() => {
+		if (!allActivitiesData?.volunteerActivityList) {
+			return []
+		}
+
+		const counts = allActivitiesData.volunteerActivityList.reduce(
+			(acc, activity) => {
+				acc[activity.status] = (acc[activity.status] || 0) + 1
+				return acc
+			},
+			{} as Record<string, number>,
+		)
+
+		return Object.entries(counts).map(([status, count]) => ({
+			status,
+			count,
+		}))
+	}, [allActivitiesData])
+
+	const sortedActivities = React.useMemo(() => {
+		if (!activityData?.volunteerActivityList) {
+			return []
+		}
+
+		if (selectedStatus === 'all') {
+			return [...activityData.volunteerActivityList].sort((a, b) => {
+				const priorityA = VOLUNTEER_ACTIVITY_STATUS_PRIORITY[a.status] || 999
+				const priorityB = VOLUNTEER_ACTIVITY_STATUS_PRIORITY[b.status] || 999
+
+				if (priorityA !== priorityB) {
+					return priorityA - priorityB
+				}
+
+				return a.startAt.getTime() - b.startAt.getTime()
+			})
+		}
+
+		return activityData.volunteerActivityList
+	}, [activityData, selectedStatus])
+
+	const totalCount = activityData?.totalCount || sortedActivities.length
 	const totalPages = Math.ceil(totalCount / pageSize)
 
 	useEffect(() => {
@@ -139,7 +211,11 @@ function VolunteerActivityPageClientContent({
 	const handleApply = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
 			if (!session?.user) {
-				alert('로그인이 필요합니다.')
+				handleClientError(
+					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					showError,
+					'인증 오류',
+				)
 				return
 			}
 
@@ -147,7 +223,7 @@ function VolunteerActivityPageClientContent({
 			setIsApplicationModalOpen(true)
 			setIsDetailOpen(false)
 		},
-		[session],
+		[session?.user, showError],
 	)
 
 	const handleCloseApplicationModal = useCallback(() => {
@@ -162,21 +238,58 @@ function VolunteerActivityPageClientContent({
 		[handleApply],
 	)
 
+	const handleStatusChange = useCallback(
+		(status: string | 'all') => {
+			setSelectedStatus(status)
+			setCurrentPage(1)
+
+			const params = new URLSearchParams()
+			if (status !== 'all') {
+				params.set('status', status)
+			}
+			params.set('page', '1')
+
+			const newUrl = params.toString() ? `?${params.toString()}` : ''
+			router.push(`/volunteer-activities${newUrl}`, { scroll: false })
+		},
+		[router],
+	)
+
 	const showLoading = isLoading || isPageChanging || isFetching
 
 	if (showLoading) {
 		return (
 			<div className="space-y-6">
+				{/* 필터 탭 스켈레톤 */}
+				<div className="space-y-4">
+					<div className="flex items-center gap-2">
+						<div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+						<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse" />
+					</div>
+					<div className="flex flex-wrap gap-3">
+						{[1, 2, 3, 4].map((i) => (
+							<div
+								key={i}
+								className="h-10 bg-gray-200 dark:bg-gray-700 rounded-full w-24 animate-pulse"
+							/>
+						))}
+					</div>
+					<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+				</div>
+
 				{/* 봉사활동 목록 스켈레톤 */}
 				{[1, 2, 3].map((i) => (
 					<div
 						key={i}
-						className="bg-white/90 dark:bg-gray-800/90 rounded-3xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 animate-pulse"
+						className="bg-white/90 dark:bg-gray-800/90 rounded-3xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 animate-pulse border-l-4 border-l-gray-300"
 					>
 						<div className="flex items-start justify-between mb-4">
 							<div className="flex-1">
-								<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2" />
-								<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+								<div className="flex items-center gap-3 mb-2">
+									<div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
+									<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+									<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-16" />
+								</div>
 							</div>
 							{isAdmin && (
 								<div className="flex gap-2">
@@ -188,7 +301,6 @@ function VolunteerActivityPageClientContent({
 						<div className="space-y-2 mb-4">
 							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full" />
 							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6" />
-							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6" />
 						</div>
 						<div className="space-y-2 mb-4">
 							{[1, 2, 3, 4, 5].map((j) => (
@@ -198,16 +310,6 @@ function VolunteerActivityPageClientContent({
 									<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32" />
 								</div>
 							))}
-						</div>
-						<div className="flex items-center justify-between pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
-							<div className="flex items-center">
-								<div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full mr-2" />
-								<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20" />
-							</div>
-							<div className="flex items-center">
-								<div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full mr-2" />
-								<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24" />
-							</div>
 						</div>
 						<div className="mt-4 flex gap-2">
 							<div className="flex-1 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl" />
@@ -258,38 +360,61 @@ function VolunteerActivityPageClientContent({
 
 	return (
 		<>
+			{/* 필터 탭 */}
+			<div className="mb-8">
+				<VolunteerActivityFilterTab
+					selectedStatus={selectedStatus}
+					onStatusChange={handleStatusChange}
+					statusCounts={statusCounts}
+				/>
+			</div>
+
 			{/* 봉사활동 목록 */}
 			<VolunteerActivityList
-				activities={activities}
+				activities={sortedActivities}
 				onViewDetail={handleViewDetail}
 				onApply={handleApply}
 				totalCount={totalCount}
 			/>
 
 			{/* 페이지네이션 */}
-			{activities.length > 0 && (
+			{sortedActivities.length > 0 && totalPages > 1 && (
 				<div className="mt-8 sm:mt-12">
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
 						basePath="/volunteer-activities"
+						extraParams={
+							selectedStatus !== 'all' ? { status: selectedStatus } : {}
+						}
 					/>
 				</div>
 			)}
 
 			{/* 빈 상태 표시 */}
-			{activities.length === 0 && (
+			{sortedActivities.length === 0 && (
 				<div className="text-center py-12">
 					<div className="flex justify-center mb-6">
 						<CircleAlert className="w-16 h-16 text-gray-400 dark:text-gray-500" />
 					</div>
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-						아직 등록된 봉사활동이 없습니다
+						{selectedStatus === 'all'
+							? '아직 등록된 봉사활동이 없습니다'
+							: `${
+									statusCounts.find((s) => s.status === selectedStatus)
+										?.count === 0
+										? '해당 상태의 봉사활동이 없습니다'
+										: '봉사활동이 없습니다'
+								}`}
 					</h3>
 					<p className="text-gray-500 dark:text-gray-400">
 						{isAdmin
-							? '첫 번째 봉사활동을 생성해보세요!'
-							: '새로운 봉사활동을 기다려주세요.'}
+							? selectedStatus === 'all'
+								? '첫 번째 봉사활동을 생성해보세요!'
+								: '다른 상태로 전환하거나 새로운 봉사활동을 생성해보세요.'
+							: selectedStatus === 'all'
+								? '새로운 봉사활동을 기다려주세요.'
+								: '다른 상태의 봉사활동을 확인해보세요.'}
 					</p>
 				</div>
 			)}

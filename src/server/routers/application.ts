@@ -59,7 +59,12 @@ export const applicationRouter = createTRPCRouter({
 			const queryOptions = createDomainQueryBuilder(input)
 
 			const [applicationList, totalCount] = await Promise.all([
-				ctx.prisma.application.findMany(queryOptions),
+				ctx.prisma.application.findMany({
+					...queryOptions,
+					include: {
+						user: true,
+					},
+				}),
 				ctx.prisma.application.count({
 					where: queryOptions.where,
 				}),
