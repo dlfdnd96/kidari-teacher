@@ -45,6 +45,21 @@ export const volunteerActivityRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			const queryOptions = createDomainQueryBuilder(input)
 
+			if (input?.filter?.search) {
+				queryOptions.where = {
+					...queryOptions.where,
+					OR: [
+						{ title: { contains: input.filter.search, mode: 'insensitive' } },
+						{
+							description: {
+								contains: input.filter.search,
+								mode: 'insensitive',
+							},
+						},
+					],
+				}
+			}
+
 			const [volunteerActivityList, totalCount] = await Promise.all([
 				ctx.prisma.volunteerActivity.findMany({
 					...queryOptions,

@@ -18,15 +18,12 @@ export interface VolunteerActivitiesPageProps {
 	}>
 }
 
-export interface ActivityStatusCount {
-	status: string
-	count: number
-}
-
-export interface ActivityFilterTabsProps {
+export interface VolunteerActivityFilterTabProps {
 	selectedStatus: string | 'all'
-	onStatusChange: (status: string | 'all') => void
-	statusCounts: ActivityStatusCount[]
+	statusChangeAction: (status: string | 'all') => void
+	allStatusCount: number
+	searchQuery: string
+	searchChangeAction: (query: string) => void
 }
 
 export interface VolunteerActivityCardProps {
@@ -176,15 +173,6 @@ export const VOLUNTEER_ACTIVITY_STATUS_COLORS = {
 	[Enum.VolunteerActivityStatus.IN_PROGRESS]: 'bg-cyan-100 text-cyan-800',
 	[Enum.VolunteerActivityStatus.COMPLETED]: 'bg-emerald-100 text-emerald-800',
 	[Enum.VolunteerActivityStatus.CANCELLED]: 'bg-red-100 text-red-800',
-} as const
-
-export const VOLUNTEER_ACTIVITY_STATUS_PRIORITY = {
-	[Enum.VolunteerActivityStatus.RECRUITING]: 1,
-	[Enum.VolunteerActivityStatus.PLANNING]: 2,
-	[Enum.VolunteerActivityStatus.IN_PROGRESS]: 3,
-	[Enum.VolunteerActivityStatus.SELECTED]: 4,
-	[Enum.VolunteerActivityStatus.COMPLETED]: 5,
-	[Enum.VolunteerActivityStatus.CANCELLED]: 6,
 } as const
 
 export const VOLUNTEER_ACTIVITY_STATUS_ORDER = [
