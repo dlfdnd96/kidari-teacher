@@ -370,7 +370,9 @@ const VolunteerActivityCard = memo(
 							<Clock className="h-4 w-4 text-muted-foreground shrink-0" />
 							<span className="text-muted-foreground">마감:</span>
 							<span className="font-medium">
-								{format(activity.applicationDeadline, 'M/d (E)')}
+								{format(activity.applicationDeadline, 'M/d (E)', {
+									locale: ko,
+								})}
 							</span>
 							{startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) >
 								startOfDay(activity.applicationDeadline) && (
