@@ -26,6 +26,11 @@ export function buildWhereCondition(
 	const advancedWhere = { ...baseWhere }
 
 	Object.entries(filter).forEach(([key, value]) => {
+		// 'search' 키는 별도로 처리
+		if (key === 'search') {
+			return advancedWhere
+		}
+
 		const searchText = SearchTextSchema.safeParse([key, value])
 		if (searchText.success) {
 			const [searchKey, searchValue] = searchText.data
