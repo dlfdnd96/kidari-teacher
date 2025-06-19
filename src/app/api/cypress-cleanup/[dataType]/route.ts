@@ -67,7 +67,9 @@ export async function DELETE(request: NextRequest) {
 			message: `Successfully cleaned up ${deletedCount} items`,
 		})
 	} catch (error) {
-		console.error('Cypress cleanup error:', error)
+		if (['development', 'test'].includes(process.env.NODE_ENV)) {
+			console.error('Cypress cleanup error:', error)
+		}
 
 		if (error instanceof z.ZodError) {
 			return NextResponse.json(

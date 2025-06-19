@@ -65,9 +65,9 @@ export const publicProcedure = procedure
 
 export const protectedProcedure = procedure
 	.use(enforceUserIsAuthed)
-	.use(transactionMiddleware)
+	.use<typeof procedure>(transactionMiddleware)
 
 export const adminProcedure = procedure
 	.use(enforceUserIsAuthed)
 	.use(enforceUserIsAdmin)
-	.use(transactionMiddleware)
+	.use<typeof procedure>(transactionMiddleware)

@@ -1,7 +1,7 @@
 import { ZodType } from '@/shared/types'
 import {
-	NoticeEntitySchema,
 	NoticeListEntitySchema,
+	NoticePickAuthorEntitySchema,
 } from '@/shared/schemas/notice'
 
 export interface NoticePageProps {
@@ -14,14 +14,14 @@ export interface NoticeModalProps {
 }
 
 export interface NoticeCardProps {
-	notice: ZodType<typeof NoticeEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
+	notice: ZodType<typeof NoticePickAuthorEntitySchema>
+	onViewDetail?: (notice: ZodType<typeof NoticePickAuthorEntitySchema>) => void
 }
 
 export interface NoticeDetailModalProps {
 	open: boolean
 	onClose: () => void
-	notice: ZodType<typeof NoticeEntitySchema> | null
+	notice: ZodType<typeof NoticePickAuthorEntitySchema> | null
 }
 
 export interface NoticeEditFormProps {
@@ -38,7 +38,7 @@ export interface NoticeFormProps {
 
 export interface NoticeListProps {
 	notices: ZodType<typeof NoticeListEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticeEntitySchema>) => void
+	onViewDetail?: (notice: ZodType<typeof NoticePickAuthorEntitySchema>) => void
 }
 
 export interface NoticePageClientProps {

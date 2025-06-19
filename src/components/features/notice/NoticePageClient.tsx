@@ -4,9 +4,9 @@ import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import NoticeList from '@/components/features/notice/NoticeList'
-import Pagination from '@/components/features/notice/Pagenation'
+import Pagination from '@/components/features/pagination/Pagination'
 import { ZodType } from '@/shared/types'
-import { NoticeEntitySchema } from '@/shared/schemas/notice'
+import { NoticePickAuthorEntitySchema } from '@/shared/schemas/notice'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
@@ -37,7 +37,7 @@ function NoticePageClientContent({
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedNotice, setSelectedNotice] = useState<ZodType<
-		typeof NoticeEntitySchema
+		typeof NoticePickAuthorEntitySchema
 	> | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 
@@ -65,7 +65,6 @@ function NoticePageClientContent({
 		data: noticeData,
 		isLoading,
 		isError,
-		error,
 		refetch,
 		isFetching,
 	} = trpc.notice.getNoticeList.useQuery(
@@ -108,7 +107,7 @@ function NoticePageClientContent({
 	}, [])
 
 	const handleViewDetail = useCallback(
-		(notice: ZodType<typeof NoticeEntitySchema>) => {
+		(notice: ZodType<typeof NoticePickAuthorEntitySchema>) => {
 			setSelectedNotice(notice)
 			setIsDetailOpen(true)
 		},
@@ -187,9 +186,6 @@ function NoticePageClientContent({
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
 					공지사항을 불러올 수 없습니다
 				</h3>
-				<p className="text-gray-500 dark:text-gray-400 mb-4">
-					{error?.message || '네트워크 오류가 발생했습니다.'}
-				</p>
 				<div className="flex justify-center">
 					<Button
 						onClick={() => refetch()}

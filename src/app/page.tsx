@@ -7,6 +7,7 @@ import {
 	FeedbackSection,
 } from '@/components/features/homepage'
 import { SITE_INFO } from '@/constants/homepage'
+import AuthRedirectHandler from '@/components/common/AuthRedirectHandler'
 
 const ActivitySection = dynamic(
 	() => import('@/components/features/homepage/ActivitySection'),
@@ -149,6 +150,9 @@ export default function HomePage() {
 					__html: JSON.stringify(structuredData),
 				}}
 			/>
+
+			{/* 인증 리다이렉트 핸들러 */}
+			<AuthRedirectHandler />
 
 			<div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-indigo-900 dark:to-purple-900 relative overflow-hidden pt-16">
 				{/* Background Pattern */}
