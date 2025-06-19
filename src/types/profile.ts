@@ -22,8 +22,3 @@ export interface ProfileStatsProps {
 	completedCount: number
 	memberSince: Date
 }
-
-export interface AccountSettingsProps {
-	user: ZodType<typeof UserEntitySchema>
-	onDeleteAccount?: () => void
-}

@@ -5,7 +5,6 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import ProfileCard from '@/components/features/profile/ProfileCard'
 import ProfileForm from '@/components/features/profile/ProfileForm'
 import ProfileStats from '@/components/features/profile/ProfileStats'
-import AccountSettings from '@/components/features/profile/AccountSettings'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, RefreshCw } from 'lucide-react'
@@ -142,9 +141,6 @@ export default function ProfilePageClient({
 					</AlertDescription>
 				</Alert>
 			)}
-
-			{/* 계정 설정 섹션 */}
-			<AccountSettings user={user} />
 		</div>
 	)
 }
