@@ -6,10 +6,14 @@ import {
 import { TRPCError } from '@trpc/server'
 import { TZDate } from '@date-fns/tz'
 import {
-	UpdateUserInputSchema,
-	GetCurrentUserResponseSchema,
-	UserProfileStatsSchema,
+	CreateUserProfileInputSchema,
 	DeleteAccountInputSchema,
+	GetCurrentUserResponseSchema,
+	GetUserProfileResponseSchema,
+	HasUserProfileResponseSchema,
+	UpdateUserInputSchema,
+	UpdateUserProfileInputSchema,
+	UserProfileStatsSchema,
 } from '@/shared/schemas/user'
 import { TIME_ZONE } from '@/constants/date'
 
@@ -131,7 +135,7 @@ export const userRouter = createTRPCRouter({
 				})
 			}
 
-			const updatedUser = await ctx.prisma.user.update({
+			return await ctx.prisma.user.update({
 				where: {
 					id: ctx.session.user.id,
 				},
@@ -141,8 +145,6 @@ export const userRouter = createTRPCRouter({
 					updatedAt: new TZDate(new Date(), TIME_ZONE.UTC),
 				},
 			})
-
-			return updatedUser
 		}),
 	deleteAccount: protectedProcedure
 		.input(DeleteAccountInputSchema)
@@ -198,5 +200,95 @@ export const userRouter = createTRPCRouter({
 			})
 
 			return { success: true }
+		}),
+
+	hasUserProfile: protectedProcedure
+		.output(HasUserProfileResponseSchema)
+		.query(async ({ ctx }) => {
+			const profile = await ctx.prisma.userProfile.findUnique({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+			})
+
+			return { hasProfile: !!profile }
+		}),
+	getUserProfile: protectedProcedure
+		.output(GetUserProfileResponseSchema)
+		.query(async ({ ctx }) => {
+			const profile = await ctx.prisma.userProfile.findUnique({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+			})
+
+			if (!profile) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: '프로필을 찾을 수 없습니다',
+				})
+			}
+
+			return profile
+		}),
+	createUserProfile: protectedProcedure
+		.input(CreateUserProfileInputSchema)
+		.output(GetUserProfileResponseSchema)
+		.mutation(async ({ ctx, input }) => {
+			const profile = await ctx.prisma.userProfile.findUnique({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+			})
+
+			if (profile) {
+				throw new TRPCError({
+					code: 'CONFLICT',
+					message: '이미 프로필이 존재합니다',
+				})
+			}
+
+			return await ctx.prisma.userProfile.create({
+				data: {
+					userId: ctx.session.user.id,
+					phone: input.phone,
+					birthDate: input.birthDate,
+					organization: input.organization,
+					address: input.address,
+				},
+			})
+		}),
+	updateUserProfile: protectedProcedure
+		.input(UpdateUserProfileInputSchema)
+		.output(GetUserProfileResponseSchema)
+		.mutation(async ({ ctx, input }) => {
+			const profile = await ctx.prisma.userProfile.findUnique({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+			})
+
+			if (!profile) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: '프로필을 찾을 수 없습니다',
+				})
+			}
+
+			return await ctx.prisma.userProfile.update({
+				where: {
+					id: profile.id,
+				},
+				data: {
+					phone: input.phone,
+					birthDate: input.birthDate,
+					organization: input.organization,
+					address: input.address,
+				},
+			})
 		}),
 })
