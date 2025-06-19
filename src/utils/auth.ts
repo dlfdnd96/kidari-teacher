@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { Enum } from '@/enums'
 
 export async function requireAuth(redirectTo: string = '/') {
 	const session = await getServerSession(authOptions)
@@ -15,7 +16,7 @@ export async function requireAuth(redirectTo: string = '/') {
 export async function requireAdmin(redirectTo: string = '/') {
 	const session = await requireAuth(redirectTo)
 
-	if (session.user.role !== 'ADMIN') {
+	if (session.user.role !== Enum.Role.ADMIN) {
 		redirect(`${redirectTo}?auth_trigger=admin_required`)
 	}
 

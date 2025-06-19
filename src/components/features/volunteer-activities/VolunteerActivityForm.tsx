@@ -2,6 +2,7 @@
 
 import React, { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
+import Script from 'next/script'
 import {
 	CalendarIcon,
 	FileText,
@@ -46,6 +47,7 @@ import { Enum } from '@/enums'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { useToast } from '@/contexts/ToastContext'
 
 const VolunteerActivityForm = memo(
 	({ onClose }: VolunteerActivityFormProps) => {
@@ -53,6 +55,7 @@ const VolunteerActivityForm = memo(
 		const { data: session } = useSession()
 		const router = useRouter()
 		const { showError } = useErrorModal()
+		const { showError: showErrorToast } = useToast()
 
 		const utils = trpc.useUtils()
 		const createVolunteerActivityMutation =
@@ -66,6 +69,25 @@ const VolunteerActivityForm = memo(
 					handleClientError(error, showError, '봉사활동 등록 오류')
 				},
 			})
+
+		const handleAddressSearch = useCallback(() => {
+			if (!window.daum) {
+				showErrorToast(
+					'검색 서비스 불러오기 오류',
+					'주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.',
+					{
+						position: 'top-center',
+					},
+				)
+				return
+			}
+
+			new window.daum.Postcode({
+				oncomplete: function (data) {
+					setValue('location', data.roadAddress || data.jibunAddress)
+				},
+			}).open()
+		}, [setValue, showErrorToast])
 
 		const onSubmit = useCallback(
 			async (data: unknown) => {
@@ -96,6 +118,12 @@ const VolunteerActivityForm = memo(
 
 		return (
 			<>
+				{/* Daum 우편번호 API 스크립트 로드 */}
+				<Script
+					src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+					strategy="lazyOnload"
+				/>
+
 				<div className="bg-transparent">
 					{/* 폼 */}
 					<form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8">
@@ -282,7 +310,7 @@ const VolunteerActivityForm = memo(
 								</div>
 							</div>
 
-							{/* 장소 */}
+							{/* 활동 장소 */}
 							<div>
 								<label
 									htmlFor="activity-location"
@@ -291,12 +319,15 @@ const VolunteerActivityForm = memo(
 									<MapPin className="w-4 h-4 mr-2" />
 									<span>활동 장소 *</span>
 								</label>
+
 								<Input
 									id="activity-location"
 									{...register('location', { required: true })}
-									placeholder="봉사활동이 진행될 장소를 입력하세요"
+									placeholder="클릭하여 주소를 검색하세요"
 									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
+									readOnly
+									onClick={handleAddressSearch}
+									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
 								/>
 							</div>
 

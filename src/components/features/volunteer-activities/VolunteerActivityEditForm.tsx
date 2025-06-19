@@ -47,6 +47,8 @@ import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { ZodEnum } from '@/enums'
 import { useSession } from 'next-auth/react'
+import Script from 'next/script'
+import { useToast } from '@/contexts/ToastContext'
 
 const VolunteerActivityEditForm = memo(
 	({
@@ -77,6 +79,7 @@ const VolunteerActivityEditForm = memo(
 		const router = useRouter()
 		const { data: session } = useSession()
 		const { showError } = useErrorModal()
+		const { showError: showErrorToast } = useToast()
 
 		const utils = trpc.useUtils()
 		const updateVolunteerActivityMutation =
@@ -90,6 +93,25 @@ const VolunteerActivityEditForm = memo(
 					handleClientError(error, showError, '봉사활동 수정 오류')
 				},
 			})
+
+		const handleAddressSearch = useCallback(() => {
+			if (!window.daum) {
+				showErrorToast(
+					'검색 서비스 불러오기 오류',
+					'주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.',
+					{
+						position: 'top-center',
+					},
+				)
+				return
+			}
+
+			new window.daum.Postcode({
+				oncomplete: function (data) {
+					setValue('location', data.roadAddress || data.jibunAddress)
+				},
+			}).open()
+		}, [setValue, showErrorToast])
 
 		const onSubmit = useCallback(
 			async (data: unknown) => {
@@ -123,6 +145,12 @@ const VolunteerActivityEditForm = memo(
 
 		return (
 			<>
+				{/* Daum 우편번호 API 스크립트 로드 */}
+				<Script
+					src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+					strategy="lazyOnload"
+				/>
+
 				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-4 sm:mb-6">
 					{/* 헤더 */}
 					<div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
@@ -333,9 +361,11 @@ const VolunteerActivityEditForm = memo(
 								<Input
 									id="edit-location"
 									{...register('location', { required: true })}
-									placeholder="봉사활동이 진행될 장소를 입력하세요"
+									placeholder="클릭하여 주소를 검색하세요"
 									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
+									readOnly
+									onClick={handleAddressSearch}
+									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 cursor-pointer"
 								/>
 							</div>
 
