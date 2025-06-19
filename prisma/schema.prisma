@@ -29,7 +29,6 @@ model User {
   notices             Notice[]
   volunteerActivities VolunteerActivity[]
   applications        Application[]
-  selections          Selection[]
 
   @@map("users")
 }
@@ -139,26 +138,8 @@ model Application {
 
   user              User              @relation(fields: [userId], references: [id])
   volunteerActivity VolunteerActivity @relation(fields: [volunteerActivityId], references: [id])
-  selection         Selection?
 
   @@map("applications")
-}
-
-model Selection {
-  id             String   @id @default(cuid()) @map("id")
-  applicationId  String   @unique @map("application_id")
-  isSelected     Boolean  @map("is_selected")
-  selectedById   String   @map("selected_by_id")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
-  selectionOrder Int?     @map("selection_order")
-  waitingOrder   Int?     @map("waiting_order")
-  notes          String?  @map("notes") @db.Text
-
-  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  selectedBy  User        @relation(fields: [selectedById], references: [id])
-
-  @@map("selections")
 }
 
 // ============================================================================
