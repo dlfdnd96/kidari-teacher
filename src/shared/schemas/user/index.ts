@@ -50,10 +50,10 @@ export const DeleteAccountInputSchema = z.object({
 })
 
 export const CreateUserProfileInputSchema = z.strictObject({
-	phone: z.optional(z.string().check(z.minLength(0), z.maxLength(11))),
-	birthDate: z.optional(z.date()),
-	organization: z.optional(z.string().check(z.minLength(0), z.maxLength(255))),
-	address: z.optional(z.string().check(z.minLength(0), z.maxLength(500))),
+	phone: z.nullable(z.string().check(z.minLength(0), z.maxLength(11))),
+	birthDate: z.nullable(z.date()),
+	organization: z.nullable(z.string().check(z.minLength(0), z.maxLength(255))),
+	address: z.nullable(z.string().check(z.minLength(0), z.maxLength(500))),
 })
 
 export const UpdateUserProfileInputSchema = CreateUserProfileInputSchema

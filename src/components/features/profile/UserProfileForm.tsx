@@ -3,12 +3,12 @@
 import React, { memo, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
+	Building,
+	CalendarIcon,
+	MapPin,
+	Phone,
 	Save,
 	User,
-	Phone,
-	Building,
-	MapPin,
-	CalendarIcon,
 	X,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -30,7 +30,7 @@ import { useRouter } from 'next/navigation'
 import { UserProfileFormProps } from '@/types/user-profile'
 import { formatPhoneNumber, removePhoneNumberFormat } from '@/utils/phone'
 import {
-	Calendar,
+	CalendarCustom,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -54,8 +54,7 @@ const UserProfileForm = memo(
 		const { register, handleSubmit, formState, setValue, watch } = useForm({
 			defaultValues: {
 				phone: initialData?.phone,
-				birthDate:
-					initialData?.birthDate ?? new TZDate(new Date(), TIME_ZONE.SEOUL),
+				birthDate: initialData?.birthDate,
 				organization: initialData?.organization,
 				address: initialData?.address,
 			},
@@ -203,32 +202,41 @@ const UserProfileForm = memo(
 									<Button
 										variant="outline"
 										className={cn(
-											'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
+											'w-full pl-4 pr-4 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base hover:bg-white/70 dark:hover:bg-gray-600/50 transition-all duration-200',
 											!watch('birthDate') && 'text-muted-foreground',
 										)}
 									>
 										{watch('birthDate') ? (
-											format(watch('birthDate'), 'yyyy년 M월 d일', {
-												locale: ko,
-											})
+											<span className="text-gray-900 dark:text-gray-100">
+												{format(watch('birthDate')!, 'yyyy년 M월 d일', {
+													locale: ko,
+												})}
+											</span>
 										) : (
-											<span>생일 선택</span>
+											<span className="text-gray-500">
+												생년월일을 선택하세요
+											</span>
 										)}
-										<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+										<CalendarIcon className="ml-auto h-5 w-5 opacity-50 shrink-0" />
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0" align="start">
-									<Calendar
+									<CalendarCustom
 										mode="single"
-										selected={watch('birthDate')}
+										selected={watch('birthDate') ?? undefined}
 										onSelect={(date) => {
-											const newDate = new TZDate(
-												date || new Date(),
-												TIME_ZONE.SEOUL,
-											)
+											if (!date) {
+												return
+											}
+
+											const newDate = new TZDate(date, TIME_ZONE.SEOUL)
 											newDate.setHours(23, 59, 59, 999)
 											setValue('birthDate', newDate)
 										}}
+										defaultMonth={initialData?.birthDate ?? undefined}
+										captionLayout="dropdown"
+										startMonth={new Date(1970, 0)}
+										locale={ko}
 									/>
 								</PopoverContent>
 							</Popover>
@@ -276,7 +284,7 @@ const UserProfileForm = memo(
 							<Button
 								type="submit"
 								disabled={isLoading || formState.isSubmitting}
-								className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+								className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
 							>
 								{isLoading ? (
 									<>
@@ -303,7 +311,7 @@ const UserProfileForm = memo(
 									onClick={onCancel}
 									disabled={isLoading}
 									variant="outline"
-									className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
 								>
 									<X className="w-4 h-4 mr-1.5" />
 									<span>취소</span>

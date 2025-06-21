@@ -19,18 +19,18 @@ import {
 	VolunteerActivityEditFormProps,
 } from '@/types/volunteer-activity'
 import {
+	CalendarIcon,
+	Clock,
 	FileText,
+	MapPin,
 	PenLine,
 	Save,
-	X,
-	MapPin,
-	Users,
-	Clock,
-	CalendarIcon,
 	Settings,
+	Users,
+	X,
 } from 'lucide-react'
 import {
-	Calendar,
+	CalendarCustom,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -232,7 +232,7 @@ const VolunteerActivityEditForm = memo(
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
+											<CalendarCustom
 												mode="single"
 												selected={watch('startAt')}
 												onSelect={(date) =>
@@ -245,6 +245,9 @@ const VolunteerActivityEditForm = memo(
 													startOfDay(date) <
 													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
+												captionLayout="dropdown-months"
+												startMonth={new Date()}
+												locale={ko}
 											/>
 											<div className="p-3 border-t">
 												<Input
@@ -303,7 +306,7 @@ const VolunteerActivityEditForm = memo(
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
+											<CalendarCustom
 												mode="single"
 												selected={watch('endAt')}
 												onSelect={(date) =>
@@ -316,6 +319,9 @@ const VolunteerActivityEditForm = memo(
 													startOfDay(date) <
 													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
+												captionLayout="dropdown-months"
+												startMonth={new Date()}
+												locale={ko}
 											/>
 											<div className="p-3 border-t">
 												<Input
@@ -439,7 +445,7 @@ const VolunteerActivityEditForm = memo(
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
+											<CalendarCustom
 												mode="single"
 												selected={watch('applicationDeadline')}
 												onSelect={(date) => {
@@ -454,6 +460,9 @@ const VolunteerActivityEditForm = memo(
 													startOfDay(date) <
 													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
+												captionLayout="dropdown-months"
+												startMonth={new Date()}
+												locale={ko}
 											/>
 										</PopoverContent>
 									</Popover>
