@@ -1,20 +1,20 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+import React, { useEffect, useState } from 'react'
 import {
+	Badge,
+	Button,
+	Input,
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select'
-import { Calendar, Clock, Search, X, Filter } from 'lucide-react'
+} from '@/components/ui'
+import { Calendar, Clock, Filter, Search, X } from 'lucide-react'
 import {
-	VolunteerActivityFilterTabProps,
 	VOLUNTEER_ACTIVITY_FILTER_OPTIONS,
+	VolunteerActivityFilterTabProps,
 } from '@/types/volunteer-activity'
 
 export default function ActivityFilterTab({

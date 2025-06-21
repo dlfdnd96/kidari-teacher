@@ -3,7 +3,7 @@ import '@/app/globals.css'
 import React from 'react'
 import { Inter } from 'next/font/google'
 import ClientLayout from '@/components/ClientLayout'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from '@/components/ui'
 import { ToastProvider } from '@/contexts/ToastContext'
 
 const inter = Inter({

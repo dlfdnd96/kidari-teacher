@@ -36,13 +36,12 @@ model User {
 model UserProfile {
   id           String    @id @default(cuid()) @map("id")
   userId       String    @unique @map("user_id")
-  phone        String?   @map("phone") @db.VarChar(20)
-  birthDate    DateTime? @map("birth_date") @db.Date
-  organization String?   @map("organization") @db.VarChar(255)
-  address      String?   @map("address") @db.Text
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
   deletedAt    DateTime? @map("deleted_at") @db.Timestamptz()
+  phone        String?   @map("phone") @db.VarChar(20)
+  birthDate    DateTime? @map("birth_date") @db.Date
+  organization String?   @map("organization") @db.VarChar(255)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

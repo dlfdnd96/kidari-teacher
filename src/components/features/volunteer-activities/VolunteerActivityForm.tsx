@@ -5,11 +5,11 @@ import { useForm } from 'react-hook-form'
 import Script from 'next/script'
 import {
 	CalendarIcon,
+	Clock,
 	FileText,
 	MapPin,
-	Users,
-	Clock,
 	Settings,
+	Users,
 } from 'lucide-react'
 import { format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Calendar } from '@/components/ui/calendar'
 import {
 	Popover,
 	PopoverContent,
@@ -37,6 +36,7 @@ import {
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import {
+	CalendarCustom,
 	Select,
 	SelectContent,
 	SelectItem,
@@ -193,7 +193,7 @@ const VolunteerActivityForm = memo(
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
+											<CalendarCustom
 												mode="single"
 												selected={watch('startAt')}
 												onSelect={(date) =>
@@ -206,6 +206,9 @@ const VolunteerActivityForm = memo(
 													startOfDay(date) <
 													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
+												captionLayout="dropdown-months"
+												startMonth={new Date()}
+												locale={ko}
 											/>
 											<div className="p-3 border-t">
 												<Input
@@ -264,7 +267,7 @@ const VolunteerActivityForm = memo(
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
+											<CalendarCustom
 												mode="single"
 												selected={watch('endAt')}
 												onSelect={(date) =>
@@ -277,6 +280,9 @@ const VolunteerActivityForm = memo(
 													startOfDay(date) <
 													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
+												captionLayout="dropdown-months"
+												startMonth={new Date()}
+												locale={ko}
 											/>
 											<div className="p-3 border-t">
 												<Input
@@ -393,7 +399,7 @@ const VolunteerActivityForm = memo(
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
+											<CalendarCustom
 												mode="single"
 												selected={watch('applicationDeadline')}
 												onSelect={(date) => {
@@ -408,6 +414,9 @@ const VolunteerActivityForm = memo(
 													startOfDay(date) <
 													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
 												}
+												captionLayout="dropdown-months"
+												startMonth={new Date()}
+												locale={ko}
 											/>
 										</PopoverContent>
 									</Popover>

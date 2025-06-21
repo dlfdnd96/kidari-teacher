@@ -5,7 +5,7 @@ import {
 	VOLUNTEER_ACTIVITY_STATUS_ORDER,
 	VolunteerActivityListProps,
 } from '@/types/volunteer-activity'
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '@/components/ui'
 
 export default function VolunteerActivityList({
 	activities,

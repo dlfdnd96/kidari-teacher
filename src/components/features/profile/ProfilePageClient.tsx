@@ -5,16 +5,17 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import ProfileCard from '@/components/features/profile/ProfileCard'
 import ProfileForm from '@/components/features/profile/ProfileForm'
 import ProfileStats from '@/components/features/profile/ProfileStats'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import UserProfileCard from '@/components/features/profile/UserProfileCard'
+import UserProfileForm from '@/components/features/profile/UserProfileForm'
+import { Alert, AlertDescription, Button, Skeleton } from '@/components/ui'
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import type { ProfilePageClientProps } from '@/types/profile'
 
 export default function ProfilePageClient({
 	initialUser,
 }: ProfilePageClientProps) {
 	const [isEditing, setIsEditing] = useState(false)
+	const [isEditingUserProfile, setIsEditingUserProfile] = useState(false)
 
 	const {
 		data: user,
@@ -35,6 +36,12 @@ export default function ProfilePageClient({
 		staleTime: 5 * 60 * 1000,
 	})
 
+	const { data: userProfile, refetch: refetchUserProfile } =
+		trpc.user.getUserProfile.useQuery(undefined, {
+			staleTime: 5 * 60 * 1000,
+			retry: false,
+		})
+
 	const handleEdit = useCallback(() => {
 		setIsEditing(true)
 	}, [])
@@ -46,7 +53,20 @@ export default function ProfilePageClient({
 	const handleRefresh = useCallback(() => {
 		refetchUser()
 		refetchStats()
-	}, [refetchUser, refetchStats])
+		refetchUserProfile()
+	}, [refetchUser, refetchStats, refetchUserProfile])
+
+	const handleEditUserProfile = useCallback(() => {
+		setIsEditingUserProfile(true)
+	}, [])
+
+	const handleCancelEditUserProfile = useCallback(() => {
+		setIsEditingUserProfile(false)
+	}, [])
+
+	const handleCreateUserProfile = useCallback(() => {
+		setIsEditingUserProfile(true)
+	}, [])
 
 	if (userLoading) {
 		return (
@@ -119,6 +139,24 @@ export default function ProfilePageClient({
 					<ProfileCard user={user} onEdit={handleEdit} canEdit={true} />
 				) : (
 					<ProfileForm onCancel={handleCancelEdit} refetchUser={refetchUser} />
+				)}
+			</div>
+
+			{/* 추가 프로필 정보 섹션 */}
+			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+				{isEditingUserProfile ? (
+					<UserProfileForm
+						onCancel={handleCancelEditUserProfile}
+						isSetup={false}
+						initialData={userProfile}
+					/>
+				) : (
+					<UserProfileCard
+						profile={userProfile ?? null}
+						onEdit={handleEditUserProfile}
+						onCreate={handleCreateUserProfile}
+						canEdit={true}
+					/>
 				)}
 			</div>
 
