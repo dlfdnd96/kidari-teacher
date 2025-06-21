@@ -2,7 +2,6 @@ import React from 'react'
 import { Metadata } from 'next'
 import ProfilePageClient from '@/components/features/profile/ProfilePageClient'
 import { User } from 'lucide-react'
-import { requireAuth } from '@/utils/auth'
 
 export const metadata: Metadata = {
 	title: '프로필 | 키다리 선생님',
@@ -22,8 +21,6 @@ export const metadata: Metadata = {
 }
 
 export default async function ProfilePage() {
-	await requireAuth('/')
-
 	return (
 		<main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
 			{/* 히어로 섹션 */}

@@ -78,8 +78,7 @@ export interface CreateVolunteerActivityModalProps {
 }
 
 export interface VolunteerActivityPageClientProps {
-	isAdmin: boolean
-	initialPage?: number
+	initialPage: number
 }
 
 export const VOLUNTEER_ACTIVITY_FILTER_OPTIONS = [

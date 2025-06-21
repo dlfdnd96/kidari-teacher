@@ -3,7 +3,6 @@ import { Metadata } from 'next'
 import MyApplicationPageClient from '@/components/features/applications/MyApplicationPageClient'
 import { FileText } from 'lucide-react'
 import { MyApplicationsPageProps } from '@/types/application'
-import { requireAuth } from '@/utils/auth'
 
 export async function generateMetadata({
 	searchParams,
@@ -42,8 +41,6 @@ export default async function MyApplicationsPage({
 	const resolvedSearchParams = await searchParams
 	const pageParam = resolvedSearchParams.page
 	const page = pageParam ? parseInt(pageParam, 10) : 1
-
-	await requireAuth('/')
 
 	return (
 		<main className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
