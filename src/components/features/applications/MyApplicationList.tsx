@@ -1,6 +1,6 @@
 import React from 'react'
 import MyApplicationCard from '@/components/features/applications/MyApplicationCard'
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '@/components/ui'
 import {
 	MY_APPLICATION_LIST_STATUS_LABELS,
 	MY_APPLICATION_STATUS_ORDER,

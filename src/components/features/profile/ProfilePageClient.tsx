@@ -7,10 +7,8 @@ import ProfileForm from '@/components/features/profile/ProfileForm'
 import ProfileStats from '@/components/features/profile/ProfileStats'
 import UserProfileCard from '@/components/features/profile/UserProfileCard'
 import UserProfileForm from '@/components/features/profile/UserProfileForm'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Alert, AlertDescription, Button, Skeleton } from '@/components/ui'
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import type { ProfilePageClientProps } from '@/types/profile'
 
 export default function ProfilePageClient({

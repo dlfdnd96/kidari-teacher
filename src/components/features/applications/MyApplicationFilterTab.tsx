@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Badge, Button } from '@/components/ui'
 import {
 	Select,
 	SelectContent,

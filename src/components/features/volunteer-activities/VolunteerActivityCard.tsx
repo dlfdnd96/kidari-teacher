@@ -29,8 +29,7 @@ import {
 } from '@/types/volunteer-activity'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+import { Badge, Progress } from '@/components/ui'
 
 const VolunteerActivityCard = memo(
 	({ activity, onViewDetail, onApply }: VolunteerActivityCardProps) => {
