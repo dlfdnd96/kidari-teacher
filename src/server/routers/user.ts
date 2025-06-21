@@ -254,10 +254,7 @@ export const userRouter = createTRPCRouter({
 			return await ctx.prisma.userProfile.create({
 				data: {
 					userId: ctx.session.user.id,
-					phone: input.phone,
-					birthDate: input.birthDate,
-					organization: input.organization,
-					address: input.address,
+					...input,
 				},
 			})
 		}),
@@ -283,12 +280,7 @@ export const userRouter = createTRPCRouter({
 				where: {
 					id: profile.id,
 				},
-				data: {
-					phone: input.phone,
-					birthDate: input.birthDate,
-					organization: input.organization,
-					address: input.address,
-				},
+				data: input,
 			})
 		}),
 })

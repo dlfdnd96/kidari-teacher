@@ -2,18 +2,9 @@
 
 import React, { memo, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-	Building,
-	CalendarIcon,
-	MapPin,
-	Phone,
-	Save,
-	User,
-	X,
-} from 'lucide-react'
+import { Building, CalendarIcon, Phone, Save, User, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import {
 	ERROR_MESSAGES,
@@ -56,7 +47,6 @@ const UserProfileForm = memo(
 				phone: initialData?.phone,
 				birthDate: initialData?.birthDate,
 				organization: initialData?.organization,
-				address: initialData?.address,
 			},
 		})
 		const [displayPhone, setDisplayPhone] = useState(
@@ -257,25 +247,6 @@ const UserProfileForm = memo(
 								placeholder="소속 기관을 입력하세요"
 								disabled={isLoading}
 								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
-							/>
-						</div>
-
-						{/* 주소 필드 */}
-						<div>
-							<label
-								htmlFor="profile-address"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<MapPin className="w-4 h-4 mr-2" />
-								<span>주소</span>
-							</label>
-							<Textarea
-								id="profile-address"
-								{...register('address')}
-								placeholder="주소를 입력하세요"
-								disabled={isLoading}
-								rows={3}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 resize-none"
 							/>
 						</div>
 

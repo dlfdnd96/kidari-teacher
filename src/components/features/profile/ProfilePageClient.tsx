@@ -144,18 +144,18 @@ export default function ProfilePageClient({
 
 			{/* 추가 프로필 정보 섹션 */}
 			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-				{!isEditingUserProfile ? (
-					<UserProfileCard
-						profile={userProfile || null}
-						onEdit={handleEditUserProfile}
-						onCreate={handleCreateUserProfile}
-						canEdit={true}
-					/>
-				) : (
+				{isEditingUserProfile ? (
 					<UserProfileForm
 						onCancel={handleCancelEditUserProfile}
 						isSetup={false}
 						initialData={userProfile}
+					/>
+				) : (
+					<UserProfileCard
+						profile={userProfile ?? null}
+						onEdit={handleEditUserProfile}
+						onCreate={handleCreateUserProfile}
+						canEdit={true}
 					/>
 				)}
 			</div>

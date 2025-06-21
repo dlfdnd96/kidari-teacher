@@ -42,7 +42,6 @@ model UserProfile {
   phone        String?   @map("phone") @db.VarChar(20)
   birthDate    DateTime? @map("birth_date") @db.Date
   organization String?   @map("organization") @db.VarChar(255)
-  address      String?   @map("address") @db.Text
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

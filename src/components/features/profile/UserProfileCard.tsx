@@ -1,15 +1,7 @@
 'use client'
 
 import React, { memo } from 'react'
-import {
-	Building,
-	Calendar,
-	Edit,
-	MapPin,
-	Phone,
-	Plus,
-	User,
-} from 'lucide-react'
+import { Building, Calendar, Edit, Phone, Plus, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { UserProfileCardProps } from '@/types/user-profile'
 import { formatPhoneNumber } from '@/utils/phone'
@@ -146,21 +138,6 @@ const UserProfileCard = memo(
 								</div>
 								<div className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
 									{profile.organization || '정보 없음'}
-								</div>
-							</div>
-						</div>
-
-						{/* 주소 */}
-						<div className="flex items-start gap-4">
-							<div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-								<MapPin className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-							</div>
-							<div className="flex-1 min-w-0">
-								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-									주소
-								</div>
-								<div className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-all leading-relaxed">
-									{profile.address || '정보 없음'}
 								</div>
 							</div>
 						</div>
