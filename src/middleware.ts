@@ -1,16 +1,17 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { withAuth } from 'next-auth/middleware'
 
-export function middleware(request: NextRequest) {
-	if (request.nextUrl.pathname === '/api/auth/error') {
-		const error = request.nextUrl.searchParams.get('error')
-		const origin = request.nextUrl.origin
-		return NextResponse.redirect(
-			`${origin}/auth/error${error ? `?error=${error}` : ''}`,
-		)
-	}
-	return NextResponse.next()
-}
+export default withAuth({
+	callbacks: {
+		authorized({ token }) {
+			return !!token
+		},
+	},
+	pages: {
+		signIn: '/?auth_trigger=login_required',
+		error: '/?auth_trigger=login_required',
+	},
+})
+
 export const config = {
-	matcher: ['/api/auth/error'],
+	matcher: ['/(volunteer-activities|my-applications|profile)'],
 }

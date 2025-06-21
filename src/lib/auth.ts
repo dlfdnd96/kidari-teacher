@@ -29,12 +29,29 @@ export const authOptions: NextAuthOptions = {
 			}
 			return true
 		},
-		async session({ session, user }) {
-			if (session.user && user) {
-				session.user.id = user.id
-				session.user.role = user.role
+
+		async jwt({ token, user }) {
+			if (user) {
+				token.userId = user.id
+				token.role = user.role
+			}
+			return token
+		},
+
+		async session({ session, token }) {
+			if (token.userId) {
+				session.user.id = token.userId
+				session.user.role = token.role
 			}
 			return session
 		},
+	},
+	jwt: {
+		maxAge: 30 * 24 * 60 * 60, // 30 days
+	},
+	session: {
+		strategy: 'jwt',
+		maxAge: 30 * 24 * 60 * 60, // 30 days
+		updateAge: 24 * 60 * 60, // 24 hours
 	},
 }

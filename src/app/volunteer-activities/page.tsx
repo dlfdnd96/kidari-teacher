@@ -1,10 +1,8 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { Enum } from '@/enums'
 import VolunteerActivityPageClient from '@/components/features/volunteer-activities/VolunteerActivityPageClient'
 import { Heart } from 'lucide-react'
 import { VolunteerActivitiesPageProps } from '@/types/volunteer-activity'
-import { requireAuth } from '@/utils/auth'
 
 export async function generateMetadata({
 	searchParams,
@@ -46,11 +44,6 @@ export default async function VolunteerActivitiesPage({
 	const pageParam = resolvedSearchParams.page
 	const page = pageParam ? parseInt(pageParam, 10) : 1
 
-	const session = await requireAuth('/')
-	const isAdmin = session.user.email
-		? session.user.role === Enum.Role.ADMIN
-		: false
-
 	return (
 		<main className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
 			{/* 히어로 섹션 */}
@@ -81,7 +74,7 @@ export default async function VolunteerActivitiesPage({
 
 			{/* 컨텐츠 섹션 */}
 			<section className="max-w-4xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">
-				<VolunteerActivityPageClient isAdmin={isAdmin} initialPage={page} />
+				<VolunteerActivityPageClient initialPage={page} />
 			</section>
 
 			{/* 장식적 배경 요소 */}

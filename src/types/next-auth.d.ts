@@ -22,3 +22,10 @@ declare module 'next-auth' {
 		email_verified?: boolean
 	}
 }
+
+declare module 'next-auth/jwt' {
+	interface JWT {
+		userId: string
+		role: Role
+	}
+}

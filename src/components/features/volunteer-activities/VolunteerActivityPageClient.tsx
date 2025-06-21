@@ -16,6 +16,7 @@ import { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
 import { Calendar, CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
 import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
+import { Enum } from '@/enums'
 
 const CreateVolunteerActivityModal = dynamic(
 	() =>
@@ -48,14 +49,13 @@ const ApplicationModal = dynamic(
 )
 
 function VolunteerActivityPageClientContent({
-	isAdmin,
 	initialPage = 1,
 }: VolunteerActivityPageClientProps) {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const { showError } = useErrorModal()
-
 	const { data: session } = useSession()
+
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedActivity, setSelectedActivity] = useState<ZodType<
 		typeof VolunteerActivityEntitySchema
@@ -74,6 +74,7 @@ function VolunteerActivityPageClientContent({
 	const urlUpdateTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
 	const pageSize = 10
+	const isAdmin = session?.user?.role === Enum.Role.ADMIN
 
 	useEffect(() => {
 		const statusFromUrl = searchParams?.get('status') || 'all'
@@ -485,15 +486,11 @@ function VolunteerActivityPageClientContent({
 }
 
 export default function VolunteerActivityPageClient({
-	isAdmin,
 	initialPage,
 }: VolunteerActivityPageClientProps) {
 	return (
 		<Suspense fallback={<div>로딩 중...</div>}>
-			<VolunteerActivityPageClientContent
-				isAdmin={isAdmin}
-				initialPage={initialPage}
-			/>
+			<VolunteerActivityPageClientContent initialPage={initialPage} />
 		</Suspense>
 	)
 }
