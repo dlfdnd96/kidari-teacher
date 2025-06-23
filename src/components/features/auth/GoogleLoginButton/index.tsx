@@ -10,7 +10,7 @@ const GoogleLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 		type="button"
 		aria-label="구글로 로그인"
 		className="w-full bg-white hover:bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer"
-		onClick={() => signIn('google')}
+		onClick={() => signIn('google', { callbackUrl: '/profile/check' })}
 		{...props}
 	>
 		<svg className="w-5 h-5" viewBox="0 0 24 24">

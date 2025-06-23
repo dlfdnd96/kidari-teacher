@@ -11,10 +11,7 @@ import {
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
-import {
-	CreateUserProfileInputSchema,
-	UpdateUserProfileInputSchema,
-} from '@/shared/schemas/user'
+import { UpdateUserProfileInputSchema } from '@/shared/schemas/user-profile'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -40,8 +37,6 @@ const UserProfileForm = memo(
 
 		const utils = trpc.useUtils()
 
-		const isEditing = !!initialData
-
 		const { register, handleSubmit, formState, setValue, watch } = useForm({
 			defaultValues: {
 				phone: initialData?.phone,
@@ -50,30 +45,20 @@ const UserProfileForm = memo(
 			},
 		})
 		const [displayPhone, setDisplayPhone] = useState(
-			initialData?.phone ? formatPhoneNumber(initialData.phone) : '',
+			formatPhoneNumber(initialData.phone),
 		)
 
-		const createProfileMutation = trpc.user.createUserProfile.useMutation({
-			onSuccess: async () => {
-				await utils.user.getUserProfile.invalidate()
-				router.refresh()
-				onCancel()
-			},
-			onError: (error) => {
-				handleClientError(error, showError, '프로필 생성 오류')
-			},
-		})
-
-		const updateProfileMutation = trpc.user.updateUserProfile.useMutation({
-			onSuccess: async () => {
-				await utils.user.getUserProfile.invalidate()
-				router.refresh()
-				onCancel()
-			},
-			onError: (error) => {
-				handleClientError(error, showError, '프로필 수정 오류')
-			},
-		})
+		const updateProfileMutation =
+			trpc.userProfile.updateUserProfile.useMutation({
+				onSuccess: async () => {
+					await utils.userProfile.getUserProfile.invalidate()
+					router.refresh()
+					onCancel()
+				},
+				onError: (error) => {
+					handleClientError(error, showError, '프로필 수정 오류')
+				},
+			})
 
 		const handlePhoneChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,36 +84,20 @@ const UserProfileForm = memo(
 				}
 
 				try {
-					if (isEditing) {
-						const validatedData = UpdateUserProfileInputSchema.parse(data)
-						await updateProfileMutation.mutateAsync(validatedData)
-					} else {
-						const validatedData = CreateUserProfileInputSchema.parse(data)
-						await createProfileMutation.mutateAsync(validatedData)
-					}
+					const validatedData = UpdateUserProfileInputSchema.parse(data)
+					await updateProfileMutation.mutateAsync(validatedData)
 				} catch (error: unknown) {
 					if (isValidationError(error)) {
 						handleClientError(error, showError, '입력 검증 오류')
 					} else {
-						handleClientError(
-							error,
-							showError,
-							isEditing ? '프로필 수정 오류' : '프로필 생성 오류',
-						)
+						handleClientError(error, showError, '프로필 수정 오류')
 					}
 				}
 			},
-			[
-				createProfileMutation,
-				updateProfileMutation,
-				session,
-				showError,
-				isEditing,
-			],
+			[updateProfileMutation, session, showError],
 		)
 
-		const isLoading =
-			createProfileMutation.isPending || updateProfileMutation.isPending
+		const isLoading = updateProfileMutation.isPending
 
 		return (
 			<div className="relative">
@@ -138,18 +107,12 @@ const UserProfileForm = memo(
 						<User className="w-7 h-7 text-white mr-3" />
 						<div>
 							<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-								{isSetup
-									? '프로필 설정'
-									: isEditing
-										? '프로필 수정'
-										: '추가 정보 입력'}
+								{isSetup ? '프로필 설정' : '프로필 수정'}
 							</h2>
 							<p className="text-blue-100 text-sm">
 								{isSetup
 									? '서비스 이용을 위해 추가 정보를 입력해주세요'
-									: isEditing
-										? '프로필 정보를 수정하세요'
-										: '추가 정보를 입력하여 프로필을 완성하세요'}
+									: '프로필 정보를 수정하세요'}
 							</p>
 						</div>
 					</div>
@@ -172,7 +135,7 @@ const UserProfileForm = memo(
 								type="tel"
 								value={displayPhone}
 								onChange={handlePhoneChange}
-								placeholder="예: 010-1234-5678"
+								placeholder="010-1234-5678"
 								disabled={isLoading}
 								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 							/>
@@ -265,13 +228,7 @@ const UserProfileForm = memo(
 								) : (
 									<>
 										<Save className="w-4 h-4 mr-1.5" />
-										<span>
-											{isSetup
-												? '프로필 생성'
-												: isEditing
-													? '수정 완료'
-													: '저장'}
-										</span>
+										<span>{isSetup ? '프로필 생성' : '수정 완료'}</span>
 									</>
 								)}
 							</Button>

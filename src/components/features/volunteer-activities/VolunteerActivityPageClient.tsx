@@ -13,7 +13,7 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
-import { Calendar, CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
+import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
 import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { Enum } from '@/enums'
@@ -360,19 +360,6 @@ function VolunteerActivityPageClientContent({
 
 	return (
 		<>
-			{/* 페이지 헤더 */}
-			<div className="mb-8">
-				<div className="flex items-center gap-3 mb-4">
-					<Calendar className="w-8 h-8 text-emerald-600" />
-					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
-						봉사활동
-					</h1>
-				</div>
-				<p className="text-gray-600 dark:text-gray-400">
-					다양한 봉사활동에 참여하여 의미있는 시간을 보내세요
-				</p>
-			</div>
-
 			{/* 검색 및 필터 */}
 			<div className="mb-8">
 				<VolunteerActivityFilterTab

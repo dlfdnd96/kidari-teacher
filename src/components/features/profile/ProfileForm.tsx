@@ -24,7 +24,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 
 	const { register, handleSubmit, formState } = useForm()
 
-	const updateProfileMutation = trpc.user.updateProfile.useMutation({
+	const updateProfileMutation = trpc.user.updateUser.useMutation({
 		onSuccess: async (updatedUser) => {
 			await updateSession({
 				user: {

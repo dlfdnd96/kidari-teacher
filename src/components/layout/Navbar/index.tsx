@@ -9,7 +9,7 @@ import React, {
 	useMemo,
 } from 'react'
 import { signOut, useSession } from 'next-auth/react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import LoginModal from '@/components/features/auth/LoginModal'
 import { SITE_INFO } from '@/constants/homepage'
@@ -24,6 +24,7 @@ import {
 	LogOut,
 } from 'lucide-react'
 import { NavLink } from '@/types/navbar'
+import { AUTH_PAGE_URL_PATTERN } from '@/constants/auth'
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,6 +34,7 @@ const Navbar = memo(() => {
 	const profileRef = useRef<HTMLDivElement>(null)
 	const { data: session, status } = useSession()
 	const pathname = usePathname()
+	const router = useRouter()
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true)
@@ -43,8 +45,12 @@ const Navbar = memo(() => {
 	}, [])
 
 	const handleLogout = useCallback(async () => {
-		await signOut()
-	}, [])
+		await signOut({ redirect: false })
+
+		if (AUTH_PAGE_URL_PATTERN.test(pathname)) {
+			router.push('/')
+		}
+	}, [pathname, router])
 
 	const handleMenuToggle = useCallback(() => {
 		setIsMenuOpen((prev) => !prev)
