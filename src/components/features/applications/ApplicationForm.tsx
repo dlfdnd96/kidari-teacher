@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback, useState } from 'react'
+import React, { memo, useCallback, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Phone, Send, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -33,6 +33,20 @@ const ApplicationForm = memo(
 
 		const { handleSubmit, formState, setValue } = useForm()
 		const [displayPhone, setDisplayPhone] = useState('')
+
+		const { data: userProfile, isLoading: isLoadingProfile } =
+			trpc.userProfile.getUserProfile.useQuery(undefined, {
+				retry: false,
+				staleTime: 5 * 60 * 1000,
+			})
+
+		useEffect(() => {
+			if (userProfile?.phone) {
+				const formatted = formatPhoneNumber(userProfile.phone)
+				setDisplayPhone(formatted)
+				setValue('emergencyContact', userProfile.phone)
+			}
+		}, [userProfile?.phone, setValue])
 
 		const createApplicationMutation =
 			trpc.application.createApplication.useMutation({
@@ -124,7 +138,7 @@ const ApplicationForm = memo(
 							value={displayPhone}
 							onChange={handlePhoneChange}
 							placeholder="010-1234-5678"
-							disabled={isLoading}
+							disabled={isLoading || isLoadingProfile}
 							className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 						/>
 						<p className="text-xs text-gray-500 dark:text-gray-400 mt-2">

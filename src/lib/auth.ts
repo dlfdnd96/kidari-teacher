@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
 			}
 
 			try {
-				const userProfile = await prisma.userProfile.findUnique({
+				const userProfile = await prisma.userProfile.findFirst({
 					where: {
 						userId: user.id,
 						deletedAt: null,
@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
 
 			try {
 				if (account) {
-					const userProfile = await prisma.userProfile.findUnique({
+					const userProfile = await prisma.userProfile.findFirst({
 						where: {
 							userId: token.userId,
 							deletedAt: null,
@@ -65,7 +65,6 @@ export const authOptions: NextAuthOptions = {
 						include: {
 							user: {
 								select: {
-									name: true,
 									email: true,
 								},
 							},
@@ -73,9 +72,7 @@ export const authOptions: NextAuthOptions = {
 					})
 
 					if (userProfile) {
-						token.name = userProfile.user.name
 						token.email = userProfile.user.email
-						token.phone = userProfile.phone
 					}
 				}
 			} catch (error) {
@@ -89,9 +86,7 @@ export const authOptions: NextAuthOptions = {
 			if (token) {
 				session.user.id = token.userId
 				session.user.role = token.role
-				session.user.name = token.name
 				session.user.email = token.email
-				session.user.phone = token.phone
 			}
 			return session
 		},
