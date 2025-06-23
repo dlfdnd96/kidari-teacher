@@ -25,7 +25,7 @@ model User {
 
   accounts            Account[]
   sessions            Session[]
-  profile             UserProfile?
+  profiles            UserProfile[]
   notices             Notice[]
   volunteerActivities VolunteerActivity[]
   applications        Application[]
@@ -35,7 +35,7 @@ model User {
 
 model UserProfile {
   id           String    @id @default(cuid()) @map("id")
-  userId       String    @unique @map("user_id")
+  userId       String    @map("user_id")
   phone        String    @map("phone") @db.VarChar(20)
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz()

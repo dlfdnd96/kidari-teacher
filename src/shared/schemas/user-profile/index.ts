@@ -34,7 +34,7 @@ export const InitialUserProfileInputSchema = z.strictObject({
 	),
 })
 
-export const UpdateUserProfileInputSchema = z.strictObject({
+export const CreateUserProfileInputSchema = z.strictObject({
 	phone: z.string().check(z.minLength(0), z.maxLength(11)),
 	birthDate: z.optional(z.nullable(z.date())),
 	organization: z.optional(
@@ -48,6 +48,8 @@ export const UpdateUserProfileInputSchema = z.strictObject({
 		),
 	),
 })
+
+export const UpdateUserProfileInputSchema = CreateUserProfileInputSchema
 
 export const GetUserProfileResponseSchema = UserProfileEntitySchema
 

@@ -1,6 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { TRPCError } from '@trpc/server'
 import {
+	CreateUserProfileInputSchema,
 	GetUserProfileResponseSchema,
 	HasUserProfileResponseSchema,
 	InitialUserProfileInputSchema,
@@ -12,7 +13,7 @@ export const userProfileRouter = createTRPCRouter({
 	getUserProfile: protectedProcedure
 		.output(GetUserProfileResponseSchema)
 		.query(async ({ ctx }) => {
-			const profile = await ctx.prisma.userProfile.findUnique({
+			const profile = await ctx.prisma.userProfile.findFirst({
 				where: {
 					userId: ctx.session.user.id,
 					deletedAt: null,
@@ -31,7 +32,7 @@ export const userProfileRouter = createTRPCRouter({
 	hasUserProfile: protectedProcedure
 		.output(HasUserProfileResponseSchema)
 		.query(async ({ ctx }) => {
-			const profile = await ctx.prisma.userProfile.findUnique({
+			const profile = await ctx.prisma.userProfile.findFirst({
 				where: {
 					userId: ctx.session.user.id,
 					deletedAt: null,
@@ -101,7 +102,7 @@ export const userProfileRouter = createTRPCRouter({
 		.input(InitialUserProfileInputSchema)
 		.output(GetUserProfileResponseSchema)
 		.mutation(async ({ ctx, input }) => {
-			const profile = await ctx.prisma.userProfile.findUnique({
+			const profile = await ctx.prisma.userProfile.findFirst({
 				where: {
 					userId: ctx.session.user.id,
 					deletedAt: null,
@@ -147,11 +148,36 @@ export const userProfileRouter = createTRPCRouter({
 				},
 			})
 		}),
+	createUserProfile: protectedProcedure
+		.input(CreateUserProfileInputSchema)
+		.output(GetUserProfileResponseSchema)
+		.mutation(async ({ ctx, input }) => {
+			const profile = await ctx.prisma.userProfile.findFirst({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+			})
+
+			if (profile) {
+				throw new TRPCError({
+					code: 'CONFLICT',
+					message: '이미 프로필이 존재합니다',
+				})
+			}
+
+			return await ctx.prisma.userProfile.create({
+				data: {
+					userId: ctx.session.user.id,
+					...input,
+				},
+			})
+		}),
 	updateUserProfile: protectedProcedure
 		.input(UpdateUserProfileInputSchema)
 		.output(GetUserProfileResponseSchema)
 		.mutation(async ({ ctx, input }) => {
-			const profile = await ctx.prisma.userProfile.findUnique({
+			const profile = await ctx.prisma.userProfile.findFirst({
 				where: {
 					userId: ctx.session.user.id,
 					deletedAt: null,

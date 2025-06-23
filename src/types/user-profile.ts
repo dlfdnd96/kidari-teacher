@@ -11,5 +11,5 @@ export interface UserProfileCardProps {
 export interface UserProfileFormProps {
 	onCancel: () => void
 	isSetup: boolean
-	initialData: ZodType<typeof UserProfileEntitySchema>
+	initialData: ZodType<typeof UserProfileEntitySchema> | undefined
 }
