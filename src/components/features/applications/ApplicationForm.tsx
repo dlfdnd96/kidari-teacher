@@ -123,7 +123,7 @@ const ApplicationForm = memo(
 							type="tel"
 							value={displayPhone}
 							onChange={handlePhoneChange}
-							placeholder="예: 010-1234-5678"
+							placeholder="010-1234-5678"
 							disabled={isLoading}
 							className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 						/>

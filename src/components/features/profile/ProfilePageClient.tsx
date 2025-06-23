@@ -22,7 +22,7 @@ export default function ProfilePageClient({
 		isLoading: userLoading,
 		isError: userError,
 		refetch: refetchUser,
-	} = trpc.user.getCurrentUser.useQuery(undefined, {
+	} = trpc.user.getUser.useQuery(undefined, {
 		initialData: initialUser,
 		staleTime: 5 * 60 * 1000,
 	})
@@ -32,12 +32,12 @@ export default function ProfilePageClient({
 		isError: statsError,
 		error: statsErrorMsg,
 		refetch: refetchStats,
-	} = trpc.user.getProfileStats.useQuery(undefined, {
+	} = trpc.userProfile.getProfileStats.useQuery(undefined, {
 		staleTime: 5 * 60 * 1000,
 	})
 
 	const { data: userProfile, refetch: refetchUserProfile } =
-		trpc.user.getUserProfile.useQuery(undefined, {
+		trpc.userProfile.getUserProfile.useQuery(undefined, {
 			staleTime: 5 * 60 * 1000,
 			retry: false,
 		})
@@ -144,7 +144,7 @@ export default function ProfilePageClient({
 
 			{/* 추가 프로필 정보 섹션 */}
 			<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-				{isEditingUserProfile ? (
+				{isEditingUserProfile && userProfile ? (
 					<UserProfileForm
 						onCancel={handleCancelEditUserProfile}
 						isSetup={false}
