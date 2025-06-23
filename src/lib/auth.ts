@@ -45,11 +45,17 @@ export const authOptions: NextAuthOptions = {
 			}
 		},
 
-		async jwt({ token, user, account }) {
+		async jwt({ token, user, account, trigger, session }) {
 			if (user) {
 				token.userId = user.id
 				token.role = user.role
 				token.isNewUser = user.isNewUser
+				token.name = user.name
+			}
+
+			if (trigger === 'update' && session?.user) {
+				token.name = session.user.name
+				token.email = session.user.email
 			}
 
 			try {
@@ -66,6 +72,7 @@ export const authOptions: NextAuthOptions = {
 							user: {
 								select: {
 									email: true,
+									name: true,
 								},
 							},
 						},
@@ -73,6 +80,7 @@ export const authOptions: NextAuthOptions = {
 
 					if (userProfile) {
 						token.email = userProfile.user.email
+						token.name = userProfile.user.name
 					}
 				}
 			} catch (error) {
@@ -87,6 +95,7 @@ export const authOptions: NextAuthOptions = {
 				session.user.id = token.userId
 				session.user.role = token.role
 				session.user.email = token.email
+				session.user.name = token.name
 			}
 			return session
 		},
