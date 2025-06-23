@@ -20,7 +20,6 @@ export const UpdateUserInputSchema = z.object({
 			z.minLength(1, '이름을 입력해주세요'),
 			z.maxLength(100, '이름은 100자 이내로 입력해주세요'),
 		),
-	email: z.string().check(z.email('올바른 이메일 형식이 아닙니다')),
 })
 
 export const GetUserResponseSchema = UserEntitySchema
