@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
 			}
 
 			try {
-				const userProfile = await prisma.userProfile.findUnique({
+				const userProfile = await prisma.userProfile.findFirst({
 					where: {
 						userId: user.id,
 						deletedAt: null,
@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
 
 			try {
 				if (account) {
-					const userProfile = await prisma.userProfile.findUnique({
+					const userProfile = await prisma.userProfile.findFirst({
 						where: {
 							userId: token.userId,
 							deletedAt: null,

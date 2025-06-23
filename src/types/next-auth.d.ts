@@ -7,6 +7,7 @@ declare module 'next-auth' {
 			id: string
 			role: Role
 			email: string | undefined | null
+			name: string | undefined | null
 		}
 	}
 
@@ -31,5 +32,6 @@ declare module 'next-auth/jwt' {
 		role: Role
 		isNewUser: boolean
 		email: string | undefined | null
+		name: string | undefined | null
 	}
 }
