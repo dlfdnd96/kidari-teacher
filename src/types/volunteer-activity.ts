@@ -83,11 +83,25 @@ export interface VolunteerActivityPageClientProps {
 
 export const VOLUNTEER_ACTIVITY_FILTER_OPTIONS = [
 	{
+		value: Enum.VolunteerActivityStatus.PLANNING,
+		label: '계획 중',
+		icon: Calendar,
+		color: 'bg-blue-500',
+		variant: 'secondary' as const,
+	},
+	{
 		value: Enum.VolunteerActivityStatus.RECRUITING,
 		label: '모집 중',
 		icon: Users,
 		color: 'bg-emerald-500',
 		variant: 'default' as const,
+	},
+	{
+		value: Enum.VolunteerActivityStatus.SELECTED,
+		label: '선발 완료',
+		icon: CheckCircle2,
+		color: 'bg-purple-500',
+		variant: 'secondary' as const,
 	},
 	{
 		value: Enum.VolunteerActivityStatus.IN_PROGRESS,
@@ -97,17 +111,24 @@ export const VOLUNTEER_ACTIVITY_FILTER_OPTIONS = [
 		variant: 'secondary' as const,
 	},
 	{
-		value: 'all',
-		label: '전체',
-		icon: Calendar,
-		color: 'bg-blue-500',
-		variant: 'outline' as const,
-	},
-	{
 		value: Enum.VolunteerActivityStatus.COMPLETED,
 		label: '완료',
 		icon: CheckCircle,
 		color: 'bg-gray-500',
+		variant: 'outline' as const,
+	},
+	{
+		value: Enum.VolunteerActivityStatus.CANCELLED,
+		label: '취소됨',
+		icon: X,
+		color: 'bg-red-500',
+		variant: 'outline' as const,
+	},
+	{
+		value: 'all',
+		label: '전체',
+		icon: Calendar,
+		color: 'bg-slate-500',
 		variant: 'outline' as const,
 	},
 ] as const
