@@ -10,7 +10,7 @@ const NaverLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 		type="button"
 		aria-label="네이버로 로그인"
 		className="w-full bg-[#03C75A] hover:bg-[#02B352] rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer"
-		onClick={() => signIn('naver')}
+		onClick={() => signIn('naver', { callbackUrl: '/profile/check' })}
 		{...props}
 	>
 		<svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">

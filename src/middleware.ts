@@ -11,10 +11,6 @@ export default withAuth(
 			return NextResponse.redirect(new URL('/', req.url))
 		}
 
-		if (token && !AUTH_PAGE_URL_PATTERN.test(pathname)) {
-			return NextResponse.next()
-		}
-
 		return NextResponse.next()
 	},
 	{
