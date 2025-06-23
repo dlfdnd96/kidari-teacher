@@ -2,9 +2,6 @@ import type { Metadata } from 'next'
 import '@/app/globals.css'
 import React from 'react'
 import { Inter } from 'next/font/google'
-import ClientLayout from '@/components/ClientLayout'
-import { Toaster } from '@/components/ui'
-import { ToastProvider } from '@/contexts/ToastContext'
 
 const inter = Inter({
 	subsets: ['latin'],
@@ -64,19 +61,14 @@ export const metadata: Metadata = {
 	verification: {},
 }
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode
 }>) {
 	return (
 		<html lang="ko" className={inter.variable}>
-			<body className="font-sans antialiased">
-				<ToastProvider>
-					<ClientLayout>{children}</ClientLayout>
-					<Toaster />
-				</ToastProvider>
-			</body>
+			<body className="font-sans antialiased">{children}</body>
 		</html>
 	)
 }
