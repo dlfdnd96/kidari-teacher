@@ -6,6 +6,7 @@ import { Phone, Send, X, Briefcase } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
+	FieldError,
 	Select,
 	SelectContent,
 	SelectItem,
@@ -27,6 +28,8 @@ import { formatPhoneNumber, removePhoneNumberFormat } from '@/utils/phone'
 import { ZodEnum } from '@/enums'
 import { ZodType } from '@/shared/types'
 import { PROFESSION_LABELS } from '@/constants/user-profile'
+import { commonValidators, validators } from '@/utils/validation'
+import { useFieldValidation } from '@/hooks/useFieldValidation'
 
 const ApplicationForm = memo(
 	({
@@ -47,6 +50,9 @@ const ApplicationForm = memo(
 		const [selectedProfession, setSelectedProfession] = useState<ZodType<
 			typeof ZodEnum.Profession
 		> | null>(null)
+
+		const validation = useFieldValidation()
+		const { errors, clearError, validateAll } = validation
 
 		const { data: userProfile, isLoading: isLoadingProfile } =
 			trpc.userProfile.getUserProfile.useQuery(undefined, {
@@ -98,12 +104,16 @@ const ApplicationForm = memo(
 
 				const numbersOnly = removePhoneNumberFormat(formatted)
 				setValue('emergencyContact', numbersOnly)
+
+				if (numbersOnly) {
+					clearError('emergencyContact')
+				}
 			},
-			[setValue],
+			[setValue, clearError],
 		)
 
 		const onSubmit = useCallback(
-			async (data: unknown) => {
+			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
 						ERROR_MESSAGES.AUTHENTICATION_ERROR,
@@ -113,14 +123,26 @@ const ApplicationForm = memo(
 					return
 				}
 
-				if (!selectedProfession) {
-					showError('신청할 직업을 선택해주세요.')
+				const validationRules = {
+					emergencyContact: commonValidators.requiredPhone(
+						data.emergencyContact,
+					),
+					profession: validators.required('직업을 선택해주세요'),
+				}
+
+				const validationData = {
+					...data,
+					profession: selectedProfession,
+				}
+
+				const hasErrors = validateAll(validationData, validationRules)
+				if (hasErrors) {
 					return
 				}
 
 				try {
 					const validatedData = ApplicationFormSchema.parse({
-						emergencyContact: (data as any).emergencyContact,
+						emergencyContact: data.emergencyContact,
 						profession: selectedProfession,
 					})
 					await createApplicationMutation.mutateAsync({
@@ -137,8 +159,9 @@ const ApplicationForm = memo(
 				}
 			},
 			[
+				validateAll,
 				createApplicationMutation,
-				session?.user,
+				session,
 				showError,
 				volunteerActivityId,
 				selectedProfession,
@@ -221,6 +244,7 @@ const ApplicationForm = memo(
 									))}
 								</SelectContent>
 							</Select>
+							<FieldError error={errors.profession} />
 							<p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
 								아직 신청되지 않은 직업만 선택할 수 있습니다. 한 봉사활동에는
 								같은 직업으로 중복 신청할 수 없습니다.
@@ -247,6 +271,7 @@ const ApplicationForm = memo(
 								disabled={isLoading || isLoadingProfile}
 								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 							/>
+							<FieldError error={errors.emergencyContact} />
 							<p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
 								활동 중 비상상황 발생 시 연락받을 번호를 입력해주세요. (숫자만
 								입력하세요)
