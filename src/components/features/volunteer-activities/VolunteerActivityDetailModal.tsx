@@ -57,6 +57,13 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 			filter: { volunteerActivityId: activity.id },
 		})
 
+	const { data: userProfileWithProfessions } =
+		trpc.userProfile.getUserProfileWithProfessions.useQuery(undefined, {
+			retry: false,
+			staleTime: 5 * 60 * 1000,
+			enabled: !!session?.user.id,
+		})
+
 	const updateApplicationStatusMutation =
 		trpc.application.updateApplicationStatus.useMutation({
 			onSuccess: async () => {
@@ -165,6 +172,19 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 	const isDeadlinePassed =
 		startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) >
 		startOfDay(activity.applicationDeadline)
+
+	const userProfessions = userProfileWithProfessions?.professions || []
+	const hasNoProfessions = userProfessions.length === 0
+
+	const usedProfessions =
+		applicationListResult?.applicationList.map((app) => app.profession) || []
+
+	const availableProfessions = userProfessions.filter(
+		(profession) => !usedProfessions.includes(profession),
+	)
+
+	const cannotApplyDueToProfession =
+		hasNoProfessions || availableProfessions.length === 0
 
 	return (
 		<div
@@ -576,15 +596,18 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 						{session?.user.id && (
 							<>
 								{/* 신청 가능한 경우 */}
-								{canApply && !isFullyBooked && !hasApplied && (
-									<button
-										type="button"
-										onClick={() => onApply?.(activity)}
-										className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
-									>
-										신청하기
-									</button>
-								)}
+								{canApply &&
+									!isFullyBooked &&
+									!hasApplied &&
+									!cannotApplyDueToProfession && (
+										<button
+											type="button"
+											onClick={() => onApply?.(activity)}
+											className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
+										>
+											신청하기
+										</button>
+									)}
 
 								{/* 이미 신청한 경우 */}
 								{hasApplied && (
@@ -597,8 +620,24 @@ const VolunteerActivityDetailModal: FC<VolunteerActivityDetailModalProps> = ({
 									</button>
 								)}
 
-								{/* 신청 불가능한 경우 (마감, 정원 초과 등) */}
-								{!canApply && !hasApplied && (
+								{/* 직업 관련 이유로 신청 불가능한 경우 */}
+								{cannotApplyDueToProfession && !hasApplied && (
+									<button
+										type="button"
+										disabled
+										className="bg-gray-400 text-white font-semibold px-6 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+										title={
+											hasNoProfessions
+												? '프로필에 직업을 1개 이상 등록해야 신청할 수 있습니다.'
+												: '신청 가능한 직업이 없습니다. 이미 모든 직업으로 신청이 완료되었습니다.'
+										}
+									>
+										{hasNoProfessions ? '직업 등록 필요' : '신청 불가'}
+									</button>
+								)}
+
+								{/* 기타 이유로 신청 불가능한 경우 (마감, 정원 초과 등) */}
+								{!canApply && !hasApplied && !cannotApplyDueToProfession && (
 									<button
 										type="button"
 										disabled

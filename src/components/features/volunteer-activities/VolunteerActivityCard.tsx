@@ -30,6 +30,7 @@ import {
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { Badge, Progress } from '@/components/ui'
+import { PROFESSION_LABELS } from '@/constants/user-profile'
 
 const VolunteerActivityCard = memo(
 	({ activity, onViewDetail, onApply }: VolunteerActivityCardProps) => {
@@ -41,6 +42,18 @@ const VolunteerActivityCard = memo(
 		const { showError } = useErrorModal()
 
 		const utils = trpc.useUtils()
+
+		const { data: userProfileWithProfessions } =
+			trpc.userProfile.getUserProfileWithProfessions.useQuery(undefined, {
+				retry: false,
+				staleTime: 5 * 60 * 1000,
+				enabled: !!session?.user.id,
+			})
+
+		const { data: applicationListResult } =
+			trpc.application.getApplicationList.useQuery({
+				filter: { volunteerActivityId: activity.id },
+			})
 
 		const deleteVolunteerActivityMutation =
 			trpc.volunteerActivity.deleteVolunteerActivity.useMutation({
@@ -84,6 +97,14 @@ const VolunteerActivityCard = memo(
 
 		const statusLabel =
 			VOLUNTEER_ACTIVITY_STATUS_LABELS[activity.status] || activity.status
+
+		const userProfessions = userProfileWithProfessions?.professions || []
+		const usedProfessions =
+			applicationListResult?.applicationList.map((app) => app.profession) || []
+		const availableProfessions = userProfessions.filter(
+			(profession) => !usedProfessions.includes(profession),
+		)
+		const hasAvailableProfessions = availableProfessions.length > 0
 
 		const handleViewDetail = useCallback(() => {
 			onViewDetail?.(activity)
@@ -152,8 +173,8 @@ const VolunteerActivityCard = memo(
 			<>
 				<div
 					className={`
-						group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8 
-						border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl 
+						group bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl p-6 sm:p-8
+						border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl
 						transition-all duration-300 hover:-translate-y-1 mb-4 sm:mb-6 cursor-pointer relative
 						border-l-4 ${statusConfig.color}
 					`}
@@ -389,6 +410,70 @@ const VolunteerActivityCard = memo(
 								{activity.manager?.name ?? '관리자'}
 							</span>
 						</div>
+
+						{/* 직업별 신청 가능 여부 - 로그인한 사용자에게만 표시 */}
+						{session?.user.id && (
+							<div className="space-y-2">
+								{userProfessions.length > 0 ? (
+									<>
+										{/* 신청 가능한 직업들 */}
+										{availableProfessions.length > 0 && (
+											<div className="flex items-start gap-2 text-sm">
+												<span className="text-muted-foreground shrink-0 mt-0.5">
+													신청 가능:
+												</span>
+												<div className="flex flex-wrap gap-1">
+													{availableProfessions.map((profession) => (
+														<Badge
+															key={profession}
+															variant="outline"
+															className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700"
+														>
+															{PROFESSION_LABELS[profession]}
+														</Badge>
+													))}
+												</div>
+											</div>
+										)}
+
+										{/* 이미 신청된 직업들 */}
+										{usedProfessions.length > 0 && (
+											<div className="flex items-start gap-2 text-sm">
+												<span className="text-muted-foreground shrink-0 mt-0.5">
+													신청 완료:
+												</span>
+												<div className="flex flex-wrap gap-1">
+													{usedProfessions.map((profession) => (
+														<Badge
+															key={profession}
+															variant="outline"
+															className="text-xs bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400 dark:border-gray-600"
+														>
+															{PROFESSION_LABELS[profession]}
+														</Badge>
+													))}
+												</div>
+											</div>
+										)}
+
+										{/* 신청 불가 안내 */}
+										{!hasAvailableProfessions && userProfessions.length > 0 && (
+											<div className="flex items-center gap-2 text-sm">
+												<span className="text-yellow-600 dark:text-yellow-400 text-xs font-medium">
+													⚠️ 신청 가능한 직업이 없습니다
+												</span>
+											</div>
+										)}
+									</>
+								) : (
+									<div className="flex items-center gap-2 text-sm">
+										<span className="text-red-600 dark:text-red-400 text-xs font-medium">
+											⚠️ 프로필에 직업을 등록해야 신청할 수 있습니다
+										</span>
+									</div>
+								)}
+							</div>
+						)}
 					</div>
 
 					{/* 푸터 */}
@@ -432,9 +517,28 @@ const VolunteerActivityCard = memo(
 									e.stopPropagation()
 									onApply?.(activity)
 								}}
-								disabled={hasApplied}
+								disabled={
+									hasApplied ||
+									!hasAvailableProfessions ||
+									userProfessions.length === 0
+								}
+								title={
+									hasApplied
+										? '이미 신청하셨습니다'
+										: userProfessions.length === 0
+											? '프로필에 직업을 등록해야 신청할 수 있습니다'
+											: !hasAvailableProfessions
+												? '신청 가능한 직업이 없습니다'
+												: '신청하기'
+								}
 							>
-								{hasApplied ? '신청 완료' : '신청하기'}
+								{hasApplied
+									? '신청 완료'
+									: userProfessions.length === 0
+										? '직업 등록 필요'
+										: !hasAvailableProfessions
+											? '신청 불가'
+											: '신청하기'}
 							</button>
 						)}
 					</div>
