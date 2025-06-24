@@ -20,36 +20,27 @@ export const authOptions: NextAuthOptions = {
 		GoogleProvider({
 			clientId: z.string().parse(process.env.GOOGLE_CLIENT_ID),
 			clientSecret: z.string().parse(process.env.GOOGLE_CLIENT_SECRET),
+			authorization: {
+				params: {
+					prompt: 'select_account',
+					access_type: 'offline',
+					response_type: 'code',
+				},
+			},
 		}),
 	],
 	callbacks: {
-		async signIn({ user, account, profile }) {
+		async signIn({ account, profile }) {
 			if (account?.provider === 'google' && !profile?.email_verified) {
 				return false
 			}
-
-			try {
-				const userProfile = await prisma.userProfile.findFirst({
-					where: {
-						userId: user.id,
-						deletedAt: null,
-					},
-				})
-
-				user.isNewUser = !userProfile
-
-				return true
-			} catch (error) {
-				console.error('Error in signIn callback:', error)
-				return false
-			}
+			return true
 		},
 
 		async jwt({ token, user, account, trigger, session }) {
 			if (user) {
 				token.userId = user.id
 				token.role = user.role
-				token.isNewUser = user.isNewUser
 				token.name = user.name
 			}
 

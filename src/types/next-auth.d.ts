@@ -14,7 +14,6 @@ declare module 'next-auth' {
 	interface User {
 		id: string
 		role: Role
-		isNewUser: boolean
 	}
 
 	interface NextAuthOptions {
@@ -30,7 +29,6 @@ declare module 'next-auth/jwt' {
 	interface JWT {
 		userId: string
 		role: Role
-		isNewUser: boolean
 		email: string | undefined | null
 		name: string | undefined | null
 	}
