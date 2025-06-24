@@ -4,12 +4,10 @@ import {
 	protectedProcedure,
 } from '@/server/api/trpc'
 import { TRPCError } from '@trpc/server'
-import { TZDate } from '@date-fns/tz'
 import {
 	GetUserResponseSchema,
 	UpdateUserInputSchema,
 } from '@/shared/schemas/user'
-import { TIME_ZONE } from '@/constants/date'
 
 export const userRouter = createTRPCRouter({
 	getUser: protectedProcedure
@@ -56,20 +54,17 @@ export const userRouter = createTRPCRouter({
 		.input(UpdateUserInputSchema)
 		.output(GetUserResponseSchema)
 		.mutation(async ({ ctx, input }) => {
-			const existingUser = await ctx.prisma.user.findFirst({
+			const user = await ctx.prisma.user.findUnique({
 				where: {
-					email: input.email,
-					id: {
-						not: ctx.session.user.id,
-					},
+					id: ctx.session.user.id,
 					deletedAt: null,
 				},
 			})
 
-			if (existingUser) {
+			if (!user) {
 				throw new TRPCError({
-					code: 'CONFLICT',
-					message: '이미 사용 중인 이메일입니다',
+					code: 'NOT_FOUND',
+					message: '사용자를 찾을 수 없습니다',
 				})
 			}
 
@@ -79,8 +74,6 @@ export const userRouter = createTRPCRouter({
 				},
 				data: {
 					name: input.name,
-					email: input.email,
-					updatedAt: new TZDate(new Date(), TIME_ZONE.UTC),
 				},
 			})
 		}),

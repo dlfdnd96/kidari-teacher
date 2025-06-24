@@ -37,6 +37,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 			await refetchUser()
 
 			router.refresh()
+			onCancel()
 		},
 		onError: (error) => {
 			handleClientError(error, showError, '프로필 업데이트 오류')
@@ -101,6 +102,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 							id="profile-name"
 							{...register('name', { required: true })}
 							placeholder="이름을 입력하세요"
+							defaultValue={session?.user?.name ?? ''}
 							disabled={isLoading}
 							className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 						/>

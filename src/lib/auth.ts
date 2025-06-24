@@ -20,36 +20,33 @@ export const authOptions: NextAuthOptions = {
 		GoogleProvider({
 			clientId: z.string().parse(process.env.GOOGLE_CLIENT_ID),
 			clientSecret: z.string().parse(process.env.GOOGLE_CLIENT_SECRET),
+			authorization: {
+				params: {
+					prompt: 'select_account',
+					access_type: 'offline',
+					response_type: 'code',
+				},
+			},
 		}),
 	],
 	callbacks: {
-		async signIn({ user, account, profile }) {
+		async signIn({ account, profile }) {
 			if (account?.provider === 'google' && !profile?.email_verified) {
 				return false
 			}
-
-			try {
-				const userProfile = await prisma.userProfile.findFirst({
-					where: {
-						userId: user.id,
-						deletedAt: null,
-					},
-				})
-
-				user.isNewUser = !userProfile
-
-				return true
-			} catch (error) {
-				console.error('Error in signIn callback:', error)
-				return false
-			}
+			return true
 		},
 
-		async jwt({ token, user, account }) {
+		async jwt({ token, user, account, trigger, session }) {
 			if (user) {
 				token.userId = user.id
 				token.role = user.role
-				token.isNewUser = user.isNewUser
+				token.name = user.name
+			}
+
+			if (trigger === 'update' && session?.user) {
+				token.name = session.user.name
+				token.email = session.user.email
 			}
 
 			try {
@@ -66,6 +63,7 @@ export const authOptions: NextAuthOptions = {
 							user: {
 								select: {
 									email: true,
+									name: true,
 								},
 							},
 						},
@@ -73,6 +71,7 @@ export const authOptions: NextAuthOptions = {
 
 					if (userProfile) {
 						token.email = userProfile.user.email
+						token.name = userProfile.user.name
 					}
 				}
 			} catch (error) {
@@ -87,6 +86,7 @@ export const authOptions: NextAuthOptions = {
 				session.user.id = token.userId
 				session.user.role = token.role
 				session.user.email = token.email
+				session.user.name = token.name
 			}
 			return session
 		},

@@ -13,28 +13,37 @@ export default function ProfileCheckPage() {
 	const {
 		data: profileCheck,
 		isLoading,
-		error,
+		error: trpcError,
 	} = trpc.userProfile.hasUserProfile.useQuery(undefined, {
 		enabled: !!session?.user?.id,
 		retry: false,
 	})
 
 	useEffect(() => {
+		const urlParams = new URLSearchParams(window.location.search)
+		const error = urlParams.get('error')
+		const returnTo = urlParams.get('returnTo')
+
+		if (error) {
+			router.push(`/auth/error?error=${error}`)
+			return
+		}
+
 		if (status === 'loading') {
 			return
-		} else if (status === 'unauthenticated' || error) {
+		} else if (status === 'unauthenticated' || trpcError) {
 			router.push('/')
 			return
 		}
 
 		if (profileCheck && !isLoading) {
 			if (profileCheck.hasProfile) {
-				router.back()
+				router.push(returnTo || '/')
 			} else {
 				router.push('/profile/setup')
 			}
 		}
-	}, [profileCheck, isLoading, status, error, router])
+	}, [profileCheck, isLoading, status, trpcError, router])
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50">
