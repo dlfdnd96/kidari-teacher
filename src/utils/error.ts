@@ -1,7 +1,6 @@
 import { formatISO } from 'date-fns'
 import { TIME_ZONE } from '@/constants/date'
 import { TZDate } from '@date-fns/tz'
-import z from 'zod/v4'
 
 export const ERROR_MESSAGES = {
 	NETWORK_ERROR: '네트워크 연결을 확인해주세요.',
@@ -67,12 +66,6 @@ const SENSITIVE_PATTERNS = [
 ]
 
 export function getErrorMessage(error: any): string {
-	if (process.env.NODE_ENV === 'development') {
-		if (error instanceof z.ZodError || error instanceof z.ZodRealError) {
-			return JSON.stringify(z.treeifyError(error))
-		}
-	}
-
 	if (
 		error?.code &&
 		TRPC_ERROR_MAPPING[error.code as keyof typeof TRPC_ERROR_MAPPING]
