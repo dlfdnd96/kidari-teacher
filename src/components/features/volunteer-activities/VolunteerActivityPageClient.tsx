@@ -123,7 +123,6 @@ function VolunteerActivityPageClientContent({
 		{
 			staleTime: 60 * 1000,
 			refetchOnWindowFocus: false,
-			refetchOnMount: false,
 			placeholderData: keepPreviousData,
 		},
 	)
