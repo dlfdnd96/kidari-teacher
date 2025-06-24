@@ -18,6 +18,7 @@ export const ApplicationEntitySchema = z.strictObject({
 		return z.optional(VolunteerActivityEntitySchema)
 	},
 	emergencyContact: z.string().check(z.minLength(1), z.maxLength(100)),
+	profession: ZodEnum.Profession,
 	status: ZodEnum.ApplicationStatus,
 	createdAt: z.date(),
 	updatedAt: z.date(),
@@ -40,6 +41,7 @@ export const CreateApplicationInputSchema = z.strictObject({
 			z.maxLength(11, '긴급연락처는 최대 11자리까지 가능합니다'),
 			z.regex(/^[0-9]+$/, '숫자만 입력 가능합니다'),
 		),
+	profession: ZodEnum.Profession,
 })
 
 export const UpdateApplicationStatusInputSchema = z.strictObject({
@@ -99,4 +101,5 @@ export const ApplicationFormSchema = z.strictObject({
 			z.maxLength(11, '긴급연락처는 최대 11자리까지 가능합니다'),
 			z.regex(/^[0-9]+$/, '숫자만 입력 가능합니다'),
 		),
+	profession: ZodEnum.Profession,
 })

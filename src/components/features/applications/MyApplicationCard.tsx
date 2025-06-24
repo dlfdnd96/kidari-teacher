@@ -9,6 +9,7 @@ import {
 	Phone,
 	X,
 	AlertTriangle,
+	Briefcase,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -27,6 +28,7 @@ import { Enum } from '@/enums'
 import { TIME_ZONE } from '@/constants/date'
 import { formatPhoneNumber } from '@/utils/phone'
 import { useSession } from 'next-auth/react'
+import { PROFESSION_LABELS } from '@/constants/user-profile'
 
 const MyApplicationCard = memo(({ application }: MyApplicationCardProps) => {
 	const [showCancelConfirm, setShowCancelConfirm] = useState(false)
@@ -225,6 +227,15 @@ const MyApplicationCard = memo(({ application }: MyApplicationCardProps) => {
 					<span className="text-muted-foreground">장소:</span>
 					<span className="font-medium line-clamp-1">
 						{application.volunteerActivity.location}
+					</span>
+				</div>
+
+				{/* 신청 직업 */}
+				<div className="flex items-center gap-2 text-sm">
+					<Briefcase className="h-4 w-4 text-muted-foreground shrink-0" />
+					<span className="text-muted-foreground">신청 직업:</span>
+					<span className="font-medium">
+						{PROFESSION_LABELS[application.profession]}
 					</span>
 				</div>
 

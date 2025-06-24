@@ -123,7 +123,6 @@ function VolunteerActivityPageClientContent({
 		{
 			staleTime: 60 * 1000,
 			refetchOnWindowFocus: false,
-			refetchOnMount: false,
 			placeholderData: keepPreviousData,
 		},
 	)
@@ -195,10 +194,19 @@ function VolunteerActivityPageClientContent({
 		[session?.user, showError],
 	)
 
+	const utils = trpc.useUtils()
+
 	const handleCloseApplicationModal = useCallback(() => {
 		setIsApplicationModalOpen(false)
 		setApplicationActivity(null)
 	}, [])
+
+	const handleApplicationSuccess = useCallback(async () => {
+		await Promise.all([
+			utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+			utils.application.getApplicationList.invalidate(),
+		])
+	}, [utils])
 
 	const handleApplyFromDetail = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
@@ -466,6 +474,7 @@ function VolunteerActivityPageClientContent({
 					onClose={handleCloseApplicationModal}
 					volunteerActivityId={applicationActivity.id}
 					volunteerActivityTitle={applicationActivity.title}
+					onSuccess={handleApplicationSuccess}
 				/>
 			)}
 		</>

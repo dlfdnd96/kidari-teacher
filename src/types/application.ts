@@ -21,6 +21,7 @@ export interface ApplicationFormProps {
 	volunteerActivityTitle: string
 	onCancel: () => void
 	onClose: () => void
+	onSuccess: () => void
 }
 
 export interface ApplicationModalProps {
@@ -28,6 +29,7 @@ export interface ApplicationModalProps {
 	onClose: () => void
 	volunteerActivityId: string
 	volunteerActivityTitle: string
+	onSuccess: () => void
 }
 
 export interface MyApplicationCardProps {

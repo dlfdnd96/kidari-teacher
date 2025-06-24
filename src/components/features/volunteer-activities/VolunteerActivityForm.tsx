@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback } from 'react'
+import React, { memo, useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import Script from 'next/script'
 import {
@@ -37,6 +37,7 @@ import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import {
 	CalendarCustom,
+	FieldError,
 	Select,
 	SelectContent,
 	SelectItem,
@@ -48,6 +49,8 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useToast } from '@/contexts/ToastContext'
+import { validators } from '@/utils/validation'
+import { useFieldValidation } from '@/hooks/useFieldValidation'
 
 const VolunteerActivityForm = memo(
 	({ onClose }: VolunteerActivityFormProps) => {
@@ -58,6 +61,46 @@ const VolunteerActivityForm = memo(
 		const { showError: showErrorToast } = useToast()
 
 		const utils = trpc.useUtils()
+
+		const validation = useFieldValidation()
+		const { errors, clearError, validateAll } = validation
+
+		const titleValue = watch('title')
+		const descriptionValue = watch('description')
+		const startAtValue = watch('startAt')
+		const endAtValue = watch('endAt')
+		const locationValue = watch('location')
+		const applicationDeadlineValue = watch('applicationDeadline')
+
+		useEffect(() => {
+			if (titleValue && titleValue.trim()) {
+				clearError('title')
+			}
+			if (descriptionValue && descriptionValue.trim()) {
+				clearError('description')
+			}
+			if (locationValue && locationValue.trim()) {
+				clearError('location')
+			}
+			if (startAtValue) {
+				clearError('startAt')
+			}
+			if (endAtValue) {
+				clearError('endAt')
+			}
+			if (applicationDeadlineValue) {
+				clearError('applicationDeadline')
+			}
+		}, [
+			applicationDeadlineValue,
+			clearError,
+			descriptionValue,
+			endAtValue,
+			locationValue,
+			startAtValue,
+			titleValue,
+		])
+
 		const createVolunteerActivityMutation =
 			trpc.volunteerActivity.createVolunteerActivity.useMutation({
 				onSuccess: async () => {
@@ -85,18 +128,33 @@ const VolunteerActivityForm = memo(
 			new window.daum.Postcode({
 				oncomplete: function (data) {
 					setValue('location', data.roadAddress || data.jibunAddress)
+					clearError('location')
 				},
 			}).open()
-		}, [setValue, showErrorToast])
+		}, [setValue, showErrorToast, clearError])
 
 		const onSubmit = useCallback(
-			async (data: unknown) => {
+			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
 						ERROR_MESSAGES.AUTHENTICATION_ERROR,
 						showError,
 						'인증 오류',
 					)
+					return
+				}
+
+				const validationRules = {
+					title: validators.required('제목을 입력해주세요'),
+					description: validators.required('활동 내용을 입력해주세요'),
+					startAt: validators.required('시작 날짜를 입력해주세요'),
+					endAt: validators.required('종료 날짜를 입력해주세요'),
+					location: validators.required('장소를 입력해주세요'),
+					applicationDeadline: validators.required('마감일자를 입력해주세요'),
+				}
+
+				const hasErrors = validateAll(data, validationRules)
+				if (hasErrors) {
 					return
 				}
 
@@ -111,7 +169,7 @@ const VolunteerActivityForm = memo(
 					}
 				}
 			},
-			[createVolunteerActivityMutation, session, showError],
+			[createVolunteerActivityMutation, session, validateAll, showError],
 		)
 
 		const loading = createVolunteerActivityMutation.isPending
@@ -139,11 +197,12 @@ const VolunteerActivityForm = memo(
 								</label>
 								<Input
 									id="activity-title"
-									{...register('title', { required: true })}
+									{...register('title')}
 									placeholder="봉사활동 제목을 입력하세요"
 									disabled={loading}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
 								/>
+								<FieldError error={errors.title} />
 							</div>
 
 							{/* 활동 설명 */}
@@ -157,12 +216,13 @@ const VolunteerActivityForm = memo(
 								</label>
 								<Textarea
 									id="activity-description"
-									{...register('description', { required: true })}
+									{...register('description')}
 									placeholder="봉사활동에 대한 상세한 설명을 입력하세요"
 									rows={6}
 									disabled={loading}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
 								/>
+								<FieldError error={errors.description} />
 							</div>
 
 							{/* 일시 */}
@@ -179,11 +239,11 @@ const VolunteerActivityForm = memo(
 												variant="outline"
 												className={cn(
 													'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
-													!watch('startAt') && 'text-muted-foreground',
+													!startAtValue && 'text-muted-foreground',
 												)}
 											>
-												{watch('startAt') ? (
-													format(watch('startAt'), 'yyyy년 M월 d일 HH:mm', {
+												{startAtValue ? (
+													format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
 														locale: ko,
 													})
 												) : (
@@ -195,7 +255,7 @@ const VolunteerActivityForm = memo(
 										<PopoverContent className="w-auto p-0" align="start">
 											<CalendarCustom
 												mode="single"
-												selected={watch('startAt')}
+												selected={startAtValue}
 												onSelect={(date) =>
 													setValue(
 														'startAt',
@@ -214,13 +274,11 @@ const VolunteerActivityForm = memo(
 												<Input
 													type="time"
 													value={
-														watch('startAt')
-															? format(watch('startAt'), 'HH:mm')
-															: ''
+														startAtValue ? format(startAtValue, 'HH:mm') : ''
 													}
 													onChange={(e) => {
 														const currentDate =
-															watch('startAt') ||
+															startAtValue ||
 															new TZDate(new Date(), TIME_ZONE.SEOUL)
 														if (e.target.value) {
 															const [hours, minutes] = e.target.value.split(':')
@@ -239,6 +297,7 @@ const VolunteerActivityForm = memo(
 											</div>
 										</PopoverContent>
 									</Popover>
+									<FieldError error={errors.startAt} />
 								</div>
 
 								{/* 종료 일시 */}
@@ -253,11 +312,11 @@ const VolunteerActivityForm = memo(
 												variant="outline"
 												className={cn(
 													'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
-													!watch('endAt') && 'text-muted-foreground',
+													!endAtValue && 'text-muted-foreground',
 												)}
 											>
-												{watch('endAt') ? (
-													format(watch('endAt'), 'yyyy년 M월 d일 HH:mm', {
+												{endAtValue ? (
+													format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
 														locale: ko,
 													})
 												) : (
@@ -269,7 +328,7 @@ const VolunteerActivityForm = memo(
 										<PopoverContent className="w-auto p-0" align="start">
 											<CalendarCustom
 												mode="single"
-												selected={watch('endAt')}
+												selected={endAtValue}
 												onSelect={(date) =>
 													setValue(
 														'endAt',
@@ -287,14 +346,10 @@ const VolunteerActivityForm = memo(
 											<div className="p-3 border-t">
 												<Input
 													type="time"
-													value={
-														watch('endAt')
-															? format(watch('endAt'), 'HH:mm')
-															: ''
-													}
+													value={endAtValue ? format(endAtValue, 'HH:mm') : ''}
 													onChange={(e) => {
 														const currentDate =
-															watch('endAt') ||
+															endAtValue ||
 															new TZDate(new Date(), TIME_ZONE.SEOUL)
 														if (e.target.value) {
 															const [hours, minutes] = e.target.value.split(':')
@@ -313,6 +368,7 @@ const VolunteerActivityForm = memo(
 											</div>
 										</PopoverContent>
 									</Popover>
+									<FieldError error={errors.endAt} />
 								</div>
 							</div>
 
@@ -328,13 +384,14 @@ const VolunteerActivityForm = memo(
 
 								<Input
 									id="activity-location"
-									{...register('location', { required: true })}
+									{...register('location')}
 									placeholder="클릭하여 주소를 검색하세요"
 									disabled={loading}
 									readOnly
 									onClick={handleAddressSearch}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
 								/>
+								<FieldError error={errors.location} />
 							</div>
 
 							{/* 상태 */}
@@ -344,7 +401,7 @@ const VolunteerActivityForm = memo(
 									<span>상태 *</span>
 								</label>
 								<input
-									{...register('status', { required: true })}
+									{...register('status')}
 									type="hidden"
 									value={
 										watch('status') || Enum.VolunteerActivityStatus.PLANNING
@@ -370,6 +427,7 @@ const VolunteerActivityForm = memo(
 										)}
 									</SelectContent>
 								</Select>
+								<FieldError error={errors.status} />
 							</div>
 
 							{/* 신청 마감일과 최대 참가자 수 */}
@@ -386,12 +444,11 @@ const VolunteerActivityForm = memo(
 												variant="outline"
 												className={cn(
 													'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
-													!watch('applicationDeadline') &&
-														'text-muted-foreground',
+													!applicationDeadlineValue && 'text-muted-foreground',
 												)}
 											>
-												{watch('applicationDeadline') ? (
-													format(watch('applicationDeadline'), 'yyyy년 M월 d일')
+												{applicationDeadlineValue ? (
+													format(applicationDeadlineValue, 'yyyy년 M월 d일')
 												) : (
 													<span>마감일 선택</span>
 												)}
@@ -401,7 +458,7 @@ const VolunteerActivityForm = memo(
 										<PopoverContent className="w-auto p-0" align="start">
 											<CalendarCustom
 												mode="single"
-												selected={watch('applicationDeadline')}
+												selected={applicationDeadlineValue}
 												onSelect={(date) => {
 													const newDate = new TZDate(
 														date || new Date(),
@@ -420,6 +477,7 @@ const VolunteerActivityForm = memo(
 											/>
 										</PopoverContent>
 									</Popover>
+									<FieldError error={errors.applicationDeadline} />
 								</div>
 
 								{/* 최대 참가자 수 */}
@@ -453,7 +511,7 @@ const VolunteerActivityForm = memo(
 								<Button
 									type="submit"
 									disabled={loading || formState.isSubmitting}
-									className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+									className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
 								>
 									{loading ? (
 										<>

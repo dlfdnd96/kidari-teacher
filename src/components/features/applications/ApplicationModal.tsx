@@ -10,6 +10,7 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 	onClose,
 	volunteerActivityId,
 	volunteerActivityTitle,
+	onSuccess,
 }) => {
 	const handleBackdropClick = useCallback(
 		(e: React.MouseEvent) => {
@@ -80,6 +81,7 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 						volunteerActivityTitle={volunteerActivityTitle}
 						onCancel={onClose}
 						onClose={onClose}
+						onSuccess={onSuccess}
 					/>
 				</div>
 			</div>

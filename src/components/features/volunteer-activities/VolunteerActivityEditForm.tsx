@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback } from 'react'
+import React, { memo, useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -31,6 +31,7 @@ import {
 } from 'lucide-react'
 import {
 	CalendarCustom,
+	FieldError,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -49,6 +50,8 @@ import { ZodEnum } from '@/enums'
 import { useSession } from 'next-auth/react'
 import Script from 'next/script'
 import { useToast } from '@/contexts/ToastContext'
+import { validators } from '@/utils/validation'
+import { useFieldValidation } from '@/hooks/useFieldValidation'
 
 const VolunteerActivityEditForm = memo(
 	({
@@ -81,6 +84,45 @@ const VolunteerActivityEditForm = memo(
 		const { showError } = useErrorModal()
 		const { showError: showErrorToast } = useToast()
 
+		const validation = useFieldValidation()
+		const { errors, clearError, validateAll } = validation
+
+		const titleValue = watch('title')
+		const descriptionValue = watch('description')
+		const startAtValue = watch('startAt')
+		const endAtValue = watch('endAt')
+		const locationValue = watch('location')
+		const applicationDeadlineValue = watch('applicationDeadline')
+
+		useEffect(() => {
+			if (titleValue && titleValue.trim()) {
+				clearError('title')
+			}
+			if (descriptionValue && descriptionValue.trim()) {
+				clearError('description')
+			}
+			if (locationValue && locationValue.trim()) {
+				clearError('location')
+			}
+			if (startAtValue) {
+				clearError('startAt')
+			}
+			if (endAtValue) {
+				clearError('endAt')
+			}
+			if (applicationDeadlineValue) {
+				clearError('applicationDeadline')
+			}
+		}, [
+			applicationDeadlineValue,
+			clearError,
+			descriptionValue,
+			endAtValue,
+			locationValue,
+			startAtValue,
+			titleValue,
+		])
+
 		const utils = trpc.useUtils()
 		const updateVolunteerActivityMutation =
 			trpc.volunteerActivity.updateVolunteerActivity.useMutation({
@@ -109,18 +151,33 @@ const VolunteerActivityEditForm = memo(
 			new window.daum.Postcode({
 				oncomplete: function (data) {
 					setValue('location', data.roadAddress || data.jibunAddress)
+					clearError('location')
 				},
 			}).open()
-		}, [setValue, showErrorToast])
+		}, [setValue, showErrorToast, clearError])
 
 		const onSubmit = useCallback(
-			async (data: unknown) => {
+			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
 						ERROR_MESSAGES.AUTHENTICATION_ERROR,
 						showError,
 						'인증 오류',
 					)
+					return
+				}
+
+				const validationRules = {
+					title: validators.required('제목을 입력해주세요'),
+					description: validators.required('활동 내용을 입력해주세요'),
+					startAt: validators.required('시작 날짜를 입력해주세요'),
+					endAt: validators.required('종료 날짜를 입력해주세요'),
+					location: validators.required('장소를 입력해주세요'),
+					applicationDeadline: validators.required('마감일자를 입력해주세요'),
+				}
+
+				const hasErrors = validateAll(data, validationRules)
+				if (hasErrors) {
 					return
 				}
 
@@ -138,7 +195,7 @@ const VolunteerActivityEditForm = memo(
 					}
 				}
 			},
-			[session?.user, showError, updateVolunteerActivityMutation, id],
+			[session, showError, validateAll, updateVolunteerActivityMutation, id],
 		)
 
 		const loading = updateVolunteerActivityMutation.isPending
@@ -183,6 +240,7 @@ const VolunteerActivityEditForm = memo(
 									disabled={loading}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
 								/>
+								<FieldError error={errors.title} />
 							</div>
 
 							{/* 활동 설명 */}
@@ -202,6 +260,7 @@ const VolunteerActivityEditForm = memo(
 									disabled={loading}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
 								/>
+								<FieldError error={errors.description} />
 							</div>
 
 							{/* 일시 */}
@@ -278,6 +337,7 @@ const VolunteerActivityEditForm = memo(
 											</div>
 										</PopoverContent>
 									</Popover>
+									<FieldError error={errors.startAt} />
 								</div>
 
 								{/* 종료 일시 */}
@@ -352,6 +412,7 @@ const VolunteerActivityEditForm = memo(
 											</div>
 										</PopoverContent>
 									</Popover>
+									<FieldError error={errors.endAt} />
 								</div>
 							</div>
 
@@ -373,6 +434,7 @@ const VolunteerActivityEditForm = memo(
 									onClick={handleAddressSearch}
 									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 cursor-pointer"
 								/>
+								<FieldError error={errors.location} />
 							</div>
 
 							{/* 상태 */}
@@ -410,6 +472,7 @@ const VolunteerActivityEditForm = memo(
 										)}
 									</SelectContent>
 								</Select>
+								<FieldError error={errors.status} />
 							</div>
 
 							{/* 신청 마감일과 최대 참가자 수 */}
@@ -466,6 +529,7 @@ const VolunteerActivityEditForm = memo(
 											/>
 										</PopoverContent>
 									</Popover>
+									<FieldError error={errors.applicationDeadline} />
 								</div>
 
 								{/* 최대 참가자 수 */}

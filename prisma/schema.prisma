@@ -145,6 +145,7 @@ model Application {
   userId              String            @map("user_id")
   volunteerActivityId String            @map("volunteer_activity_id")
   emergencyContact    String            @map("emergency_contact") @db.VarChar(100)
+  profession          Profession        @map("profession")
   status              ApplicationStatus @default(WAITING) @map("status")
   createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt           DateTime          @updatedAt @map("updated_at") @db.Timestamptz()

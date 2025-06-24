@@ -115,6 +115,34 @@ export const applicationRouter = createTRPCRouter({
 	createApplication: protectedProcedure
 		.input(CreateApplicationInputSchema)
 		.mutation(async ({ ctx, input }) => {
+			const userProfessions = await ctx.prisma.userProfession.findMany({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+				select: {
+					profession: true,
+				},
+			})
+
+			if (userProfessions.length === 0) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message:
+						'봉사활동 신청을 위해서는 프로필에 직업을 1개 이상 등록해야 합니다.',
+				})
+			}
+
+			const userProfessionList = userProfessions.map(
+				({ profession }) => profession,
+			)
+			if (!userProfessionList.includes(input.profession)) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: '등록되지 않은 직업으로는 신청할 수 없습니다.',
+				})
+			}
+
 			const volunteerActivity = await ctx.prisma.volunteerActivity.findFirst({
 				where: {
 					id: input.volunteerActivityId,
@@ -161,6 +189,22 @@ export const applicationRouter = createTRPCRouter({
 				})
 			}
 
+			const existingApplicationWithSameProfession =
+				await ctx.prisma.application.findFirst({
+					where: {
+						volunteerActivityId: input.volunteerActivityId,
+						profession: input.profession,
+						deletedAt: null,
+					},
+				})
+
+			if (existingApplicationWithSameProfession) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: '이미 해당 직업으로 신청한 사람이 있습니다.',
+				})
+			}
+
 			if (volunteerActivity.maxParticipants) {
 				const currentApplicationCount = volunteerActivity.applications.length
 				if (currentApplicationCount >= volunteerActivity.maxParticipants) {
@@ -176,6 +220,7 @@ export const applicationRouter = createTRPCRouter({
 					userId: ctx.session.user.id,
 					volunteerActivityId: input.volunteerActivityId,
 					emergencyContact: input.emergencyContact,
+					profession: input.profession,
 					status: Enum.ApplicationStatus.WAITING,
 				},
 			})

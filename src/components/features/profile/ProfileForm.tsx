@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback } from 'react'
+import React, { memo, useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Save, User, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -16,13 +16,27 @@ import type { ProfileFormProps } from '@/types/profile'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { FieldError } from '@/components/ui'
+import { commonValidators } from '@/utils/validation'
+import { useFieldValidation } from '@/hooks/useFieldValidation'
 
 const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 	const { data: session, update: updateSession } = useSession()
 	const router = useRouter()
 	const { showError } = useErrorModal()
 
-	const { register, handleSubmit, formState } = useForm()
+	const { register, handleSubmit, formState, watch } = useForm()
+
+	const validation = useFieldValidation()
+	const { errors, clearError, validateAll } = validation
+
+	const nameValue = watch('name')
+
+	useEffect(() => {
+		if (nameValue && nameValue.trim()) {
+			clearError('name')
+		}
+	}, [nameValue, clearError])
 
 	const updateProfileMutation = trpc.user.updateUser.useMutation({
 		onSuccess: async (updatedUser) => {
@@ -45,13 +59,22 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 	})
 
 	const onSubmit = useCallback(
-		async (data: unknown) => {
+		async (data: Record<string, unknown>) => {
 			if (!session?.user) {
 				handleClientError(
 					ERROR_MESSAGES.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)
+				return
+			}
+
+			const validationRules = {
+				name: commonValidators.requiredName(data.name),
+			}
+
+			const hasErrors = validateAll(data, validationRules)
+			if (hasErrors) {
 				return
 			}
 
@@ -66,7 +89,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 				}
 			}
 		},
-		[updateProfileMutation, session, showError],
+		[updateProfileMutation, session, validateAll, showError],
 	)
 
 	const isLoading = updateProfileMutation.isPending
@@ -100,12 +123,13 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 						</label>
 						<Input
 							id="profile-name"
-							{...register('name', { required: true })}
+							{...register('name')}
 							placeholder="이름을 입력하세요"
 							defaultValue={session?.user?.name ?? ''}
 							disabled={isLoading}
 							className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 						/>
+						<FieldError error={errors.name} />
 					</div>
 					{/* 버튼들 */}
 					<div className="flex flex-col sm:flex-row gap-3 pt-6">

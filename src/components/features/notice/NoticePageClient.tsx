@@ -83,7 +83,6 @@ function NoticePageClientContent({
 		{
 			staleTime: 60 * 1000,
 			refetchOnWindowFocus: false,
-			refetchOnMount: false,
 			placeholderData: keepPreviousData,
 		},
 	)
