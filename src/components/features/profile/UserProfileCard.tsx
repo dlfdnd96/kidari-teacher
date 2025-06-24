@@ -1,14 +1,24 @@
 'use client'
 
 import React, { memo } from 'react'
-import { Building, Calendar, Edit, Phone, Plus, User } from 'lucide-react'
+import {
+	Building,
+	Calendar,
+	Edit,
+	Phone,
+	Plus,
+	User,
+	Briefcase,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { UserProfileCardProps } from '@/types/user-profile'
 import { formatPhoneNumber } from '@/utils/phone'
 import { format } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { ko } from 'date-fns/locale'
+import { PROFESSION_LABELS } from '@/constants/user-profile'
 
 const UserProfileCard = memo(
 	({ profile, onEdit, onCreate, canEdit = false }: UserProfileCardProps) => {
@@ -40,8 +50,8 @@ const UserProfileCard = memo(
 								추가 정보가 없습니다
 							</h3>
 							<p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
-								휴대폰 번호, 생년월일, 소속 기관 등의 정보를 추가하여 프로필을
-								완성하세요
+								휴대폰 번호, 생년월일, 소속 기관, 직업 등의 정보를 추가하여
+								프로필을 완성하세요
 							</p>
 							{canEdit && onCreate && (
 								<Button
@@ -108,6 +118,50 @@ const UserProfileCard = memo(
 							</div>
 						</div>
 
+						{/* 직업 */}
+						<div className="flex items-start gap-4">
+							<div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+								<Briefcase className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+							</div>
+							<div className="flex-1 min-w-0">
+								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+									직업
+								</div>
+								{profile.professions && profile.professions.length > 0 ? (
+									<div className="flex flex-wrap gap-2">
+										{profile.professions.map((profession) => (
+											<Badge
+												key={profession}
+												variant="secondary"
+												className="bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800"
+											>
+												{PROFESSION_LABELS[profession]}
+											</Badge>
+										))}
+									</div>
+								) : (
+									<div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+										정보 없음
+									</div>
+								)}
+							</div>
+						</div>
+
+						{/* 소속 기관 */}
+						<div className="flex items-center gap-4">
+							<div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+								<Building className="w-6 h-6 text-green-600 dark:text-green-400" />
+							</div>
+							<div className="flex-1 min-w-0">
+								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+									소속 기관
+								</div>
+								<div className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
+									{profile.organization || '정보 없음'}
+								</div>
+							</div>
+						</div>
+
 						{/* 생년월일 */}
 						<div className="flex items-center gap-4">
 							<div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -123,21 +177,6 @@ const UserProfileCard = memo(
 												locale: ko,
 											})
 										: '정보 없음'}
-								</div>
-							</div>
-						</div>
-
-						{/* 소속 기관 */}
-						<div className="flex items-center gap-4">
-							<div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-								<Building className="w-6 h-6 text-green-600 dark:text-green-400" />
-							</div>
-							<div className="flex-1 min-w-0">
-								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-									소속 기관
-								</div>
-								<div className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-all">
-									{profile.organization || '정보 없음'}
 								</div>
 							</div>
 						</div>

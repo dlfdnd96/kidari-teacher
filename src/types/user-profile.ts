@@ -1,8 +1,11 @@
 import { ZodType } from '@/shared/types'
-import { UserProfileEntitySchema } from '@/shared/schemas/user-profile'
+import {
+	GetUserProfileWithProfessionsResponseSchema,
+	UserProfileEntitySchema,
+} from '@/shared/schemas/user-profile'
 
 export interface UserProfileCardProps {
-	profile: ZodType<typeof UserProfileEntitySchema> | null
+	profile: ZodType<typeof GetUserProfileWithProfessionsResponseSchema> | null
 	onEdit?: () => void
 	onCreate?: () => void
 	canEdit?: boolean

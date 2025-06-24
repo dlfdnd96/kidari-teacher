@@ -37,7 +37,7 @@ export default function ProfilePageClient({
 	})
 
 	const { data: userProfile, refetch: refetchUserProfile } =
-		trpc.userProfile.getUserProfile.useQuery(undefined, {
+		trpc.userProfile.getUserProfileWithProfessions.useQuery(undefined, {
 			staleTime: 5 * 60 * 1000,
 			retry: false,
 		})

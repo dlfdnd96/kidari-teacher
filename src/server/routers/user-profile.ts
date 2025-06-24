@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server'
 import {
 	CreateUserProfileInputSchema,
 	GetUserProfileResponseSchema,
+	GetUserProfileWithProfessionsResponseSchema,
 	HasUserProfileResponseSchema,
 	InitialUserProfileInputSchema,
 	UpdateUserProfileInputSchema,
@@ -28,6 +29,38 @@ export const userProfileRouter = createTRPCRouter({
 			}
 
 			return profile
+		}),
+	getUserProfileWithProfessions: protectedProcedure
+		.output(GetUserProfileWithProfessionsResponseSchema)
+		.query(async ({ ctx }) => {
+			const profile = await ctx.prisma.userProfile.findFirst({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+			})
+
+			if (!profile) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: '프로필을 찾을 수 없습니다',
+				})
+			}
+
+			const professions = await ctx.prisma.userProfession.findMany({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+				select: {
+					profession: true,
+				},
+			})
+
+			return {
+				...profile,
+				professions: professions.map(({ profession }) => profession),
+			}
 		}),
 	hasUserProfile: protectedProcedure
 		.output(HasUserProfileResponseSchema)
@@ -140,13 +173,22 @@ export const userProfileRouter = createTRPCRouter({
 				},
 			})
 
-			return await ctx.prisma.userProfile.create({
+			const newProfile = await ctx.prisma.userProfile.create({
 				data: {
 					userId: ctx.session.user.id,
 					phone: input.phone,
 					organization: input.organization,
 				},
 			})
+
+			await ctx.prisma.userProfession.createMany({
+				data: input.professions.map((profession) => ({
+					userId: ctx.session.user.id,
+					profession,
+				})),
+			})
+
+			return newProfile
 		}),
 	createUserProfile: protectedProcedure
 		.input(CreateUserProfileInputSchema)
@@ -166,12 +208,23 @@ export const userProfileRouter = createTRPCRouter({
 				})
 			}
 
-			return await ctx.prisma.userProfile.create({
+			const newProfile = await ctx.prisma.userProfile.create({
 				data: {
 					userId: ctx.session.user.id,
-					...input,
+					phone: input.phone,
+					birthDate: input.birthDate,
+					organization: input.organization,
 				},
 			})
+
+			await ctx.prisma.userProfession.createMany({
+				data: input.professions.map((profession) => ({
+					userId: ctx.session.user.id,
+					profession,
+				})),
+			})
+
+			return newProfile
 		}),
 	updateUserProfile: protectedProcedure
 		.input(UpdateUserProfileInputSchema)
@@ -191,11 +244,34 @@ export const userProfileRouter = createTRPCRouter({
 				})
 			}
 
-			return await ctx.prisma.userProfile.update({
+			const updatedProfile = await ctx.prisma.userProfile.update({
 				where: {
 					id: profile.id,
 				},
-				data: input,
+				data: {
+					phone: input.phone,
+					birthDate: input.birthDate,
+					organization: input.organization,
+				},
 			})
+
+			await ctx.prisma.userProfession.updateMany({
+				where: {
+					userId: ctx.session.user.id,
+					deletedAt: null,
+				},
+				data: {
+					deletedAt: new Date(),
+				},
+			})
+
+			await ctx.prisma.userProfession.createMany({
+				data: input.professions.map((profession) => ({
+					userId: ctx.session.user.id,
+					profession,
+				})),
+			})
+
+			return updatedProfile
 		}),
 })

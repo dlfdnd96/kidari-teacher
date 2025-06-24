@@ -26,6 +26,7 @@ model User {
   accounts            Account[]
   sessions            Session[]
   profiles            UserProfile[]
+  professions         UserProfession[]
   notices             Notice[]
   volunteerActivities VolunteerActivity[]
   applications        Application[]
@@ -45,7 +46,22 @@ model UserProfile {
 
   user User @relation(fields: [userId], references: [id])
 
+  @@index([userId])
   @@map("user_profiles")
+}
+
+model UserProfession {
+  id         String     @id @default(cuid()) @map("id")
+  userId     String     @map("user_id")
+  profession Profession @map("profession")
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt  DateTime?  @map("deleted_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, profession])
+  @@map("user_professions")
 }
 
 // ============================================================================
@@ -120,6 +136,7 @@ model VolunteerActivity {
   manager      User          @relation(fields: [managerId], references: [id])
   applications Application[]
 
+  @@index([startAt, deletedAt])
   @@map("volunteer_activities")
 }
 
@@ -181,4 +198,26 @@ enum ApplicationStatus {
   WAITING  @map("WAITING") // 대기자
   SELECTED @map("SELECTED") // 선발됨
   REJECTED @map("REJECTED") // 탈락
+}
+
+enum Profession {
+  KOREAN_MEDICINE_DOCTOR     @map("KOREAN_MEDICINE_DOCTOR") // 한의사
+  DENTIST                    @map("DENTIST") // 치과의사
+  MEDICAL_DOCTOR             @map("MEDICAL_DOCTOR") // 의사
+  ACCOUNTANT                 @map("ACCOUNTANT") // 회계사
+  LAWYER                     @map("LAWYER") // 변호사
+  TAX_ACCOUNTANT             @map("TAX_ACCOUNTANT") // 세무사
+  LEGAL_AFFAIRS_SPECIALIST   @map("LEGAL_AFFAIRS_SPECIALIST") // 법무사
+  ADMINISTRATIVE_SPECIALIST  @map("ADMINISTRATIVE_SPECIALIST") // 행정사
+  PROPERTY_APPRAISER         @map("PROPERTY_APPRAISER") // 감정평가사
+  IT_DEVELOPER               @map("IT_DEVELOPER") // IT개발자
+  IT_ENGINEER                @map("IT_ENGINEER") // IT엔지니어
+  BIOTECHNOLOGY_PHD          @map("BIOTECHNOLOGY_PHD") // 생명공학 박사
+  MEDICAL_RESEARCHER         @map("MEDICAL_RESEARCHER") // 의학 연구원
+  ACTUARY                    @map("ACTUARY") // 보험계리사
+  CIVIL_SERVANT              @map("CIVIL_SERVANT") // 사무관
+  PHARMACIST                 @map("PHARMACIST") // 약사
+  PATENT_ATTORNEY            @map("PATENT_ATTORNEY") // 변리사
+  MECHANICAL_ENGINEERING_PHD @map("MECHANICAL_ENGINEERING_PHD") // 기계공학 박사
+  INDUSTRIAL_ENGINEERING_PHD @map("INDUSTRIAL_ENGINEERING_PHD") // 산업공학 박사
 }

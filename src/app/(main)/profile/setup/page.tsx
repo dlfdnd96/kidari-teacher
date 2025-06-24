@@ -1,16 +1,25 @@
 'use client'
 
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Building, Phone, User } from 'lucide-react'
 import { trpc } from '@/components/providers/TrpcProvider'
-import { handleClientError, isValidationError } from '@/utils/error'
+import {
+	ERROR_MESSAGES,
+	handleClientError,
+	isValidationError,
+} from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { InitialUserProfileInputSchema } from '@/shared/schemas/user-profile'
 import { Input } from '@/components/ui/input'
+import { FieldError, ProfessionSelector } from '@/components/ui'
 import { formatPhoneNumber, removePhoneNumberFormat } from '@/utils/phone'
+import { ZodEnum } from '@/enums'
+import { ZodType } from '@/shared/types'
+import { useFieldValidation } from '@/hooks/useFieldValidation'
+import { commonValidators } from '@/utils/validation'
 
 export default function ProfileSetupPage() {
 	const { data: session, status } = useSession()
@@ -18,8 +27,14 @@ export default function ProfileSetupPage() {
 	const { showError } = useErrorModal()
 
 	const [displayPhone, setDisplayPhone] = useState('')
+	const [selectedProfessions, setSelectedProfessions] = useState<
+		ZodType<typeof ZodEnum.Profession>[]
+	>([])
 
-	const { register, handleSubmit, formState, setValue } = useForm({
+	const validation = useFieldValidation()
+	const { errors, clearError, validateAll } = validation
+
+	const { register, handleSubmit, setValue, watch } = useForm({
 		defaultValues: {
 			name: '',
 			email: '',
@@ -28,12 +43,20 @@ export default function ProfileSetupPage() {
 		},
 	})
 
+	const nameValue = watch('name')
+
 	useEffect(() => {
 		if (status === 'authenticated' && session?.user) {
 			setValue('name', session.user.name ?? '')
 			setValue('email', session.user.email ?? '')
 		}
 	}, [session, status, setValue])
+
+	useEffect(() => {
+		if (nameValue && nameValue.trim()) {
+			clearError('name')
+		}
+	}, [nameValue, clearError])
 
 	const initializeUserProfileMutation =
 		trpc.userProfile.initializeUserProfile.useMutation({
@@ -50,17 +73,64 @@ export default function ProfileSetupPage() {
 
 			const numbersOnly = removePhoneNumberFormat(formatted)
 			setValue('phone', numbersOnly)
+
+			if (numbersOnly) {
+				clearError('phone')
+			}
 		},
-		[setValue],
+		[setValue, clearError],
+	)
+
+	const handleProfessionsChange = useCallback(
+		(professions: ZodType<typeof ZodEnum.Profession>[]) => {
+			setSelectedProfessions(professions)
+			if (professions.length > 0) {
+				clearError('professions')
+			}
+		},
+		[clearError],
 	)
 
 	const onSubmit = useCallback(
-		async (data: unknown) => {
+		async (data: Record<string, unknown>) => {
+			if (!session?.user) {
+				handleClientError(
+					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					showError,
+					'인증 오류',
+				)
+				return
+			}
+
+			const validationRules = {
+				name: commonValidators.requiredName(data.name),
+				phone: commonValidators.requiredPhone(data.phone),
+				professions: commonValidators.requiredProfessions,
+			}
+
+			const validationData = {
+				...data,
+				professions: selectedProfessions,
+			}
+
+			const hasErrors = validateAll(validationData, validationRules)
+			if (hasErrors) {
+				return
+			}
+
 			try {
-				const validateData = InitialUserProfileInputSchema.parse(data)
-				await initializeUserProfileMutation.mutateAsync(validateData)
-				router.push('/')
-			} catch (error) {
+				const formData = {
+					...data,
+					professions: selectedProfessions,
+				}
+				const validatedData = InitialUserProfileInputSchema.parse(formData)
+				const result =
+					await initializeUserProfileMutation.mutateAsync(validatedData)
+
+				if (result) {
+					router.push('/')
+				}
+			} catch (error: unknown) {
 				if (isValidationError(error)) {
 					handleClientError(error, showError, '입력 검증 오류')
 				} else {
@@ -68,25 +138,25 @@ export default function ProfileSetupPage() {
 				}
 			}
 		},
-		[initializeUserProfileMutation, router, showError],
+		[
+			session,
+			initializeUserProfileMutation,
+			router,
+			showError,
+			selectedProfessions,
+			validateAll,
+		],
 	)
 
-	const isLoading =
-		initializeUserProfileMutation.isPending || formState.isSubmitting
+	const isLoading = initializeUserProfileMutation.isPending
 
 	if (status === 'loading') {
-		return (
-			<main className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
-				<div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-					<div className="text-center">
-						<div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4" />
-						<p className="text-gray-600 dark:text-gray-300">
-							프로필 정보를 불러오는 중...
-						</p>
-					</div>
-				</div>
-			</main>
-		)
+		return <div>로딩 중...</div>
+	}
+
+	if (status === 'unauthenticated') {
+		router.push('/')
+		return null
 	}
 
 	return (
@@ -136,9 +206,9 @@ export default function ProfileSetupPage() {
 								{...register('name')}
 								placeholder="이름을 입력하세요"
 								disabled={isLoading}
-								required={true}
 								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
 							/>
+							<FieldError error={errors.name} />
 						</div>
 
 						{/* 이메일 */}
@@ -156,7 +226,6 @@ export default function ProfileSetupPage() {
 								placeholder="이메일을 입력하세요"
 								disabled={true}
 								readOnly
-								required={true}
 								className="bg-gray-100/80 dark:bg-gray-600/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base cursor-not-allowed opacity-75"
 							/>
 						</div>
@@ -177,9 +246,19 @@ export default function ProfileSetupPage() {
 								value={displayPhone}
 								onChange={handlePhoneChange}
 								disabled={isLoading}
-								required={true}
 								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
 							/>
+							<FieldError error={errors.phone} />
+						</div>
+
+						{/* 직업 선택 */}
+						<div>
+							<ProfessionSelector
+								selectedProfessions={selectedProfessions}
+								onProfessionsChange={handleProfessionsChange}
+								disabled={isLoading}
+							/>
+							<FieldError error={errors.professions} />
 						</div>
 
 						{/* 소속 기관 */}
@@ -210,10 +289,10 @@ export default function ProfileSetupPage() {
 								{isLoading ? (
 									<>
 										<div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-										<span>저장 중...</span>
+										<span>프로필 생성 중...</span>
 									</>
 								) : (
-									<span>프로필 설정 완료</span>
+									<span>프로필 생성하기</span>
 								)}
 							</button>
 						</div>

@@ -1,13 +1,13 @@
 import type {
-	StatCardProps,
-	ProfessionGroupProps,
-	FeedbackProps,
 	ActivityRecordProps,
-	TimeSlotProps,
-	ImpactStatProps,
 	ContactMethodProps,
-	ProcessStepProps,
+	FeedbackProps,
+	ImpactStatProps,
 	PhotoGalleryItemProps,
+	ProcessStepProps,
+	ProfessionGroupProps,
+	StatCardProps,
+	TimeSlotProps,
 } from '@/types/homepage'
 
 export const HERO_STATS: StatCardProps[] = [

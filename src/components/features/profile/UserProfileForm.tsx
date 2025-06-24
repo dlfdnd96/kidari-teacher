@@ -1,10 +1,18 @@
 'use client'
 
-import React, { memo, useCallback, useState } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Building, CalendarIcon, Phone, Save, User, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import {
+	CalendarCustom,
+	FieldError,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+	ProfessionSelector,
+} from '@/components/ui'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import {
 	ERROR_MESSAGES,
@@ -20,17 +28,15 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { UserProfileFormProps } from '@/types/user-profile'
 import { formatPhoneNumber, removePhoneNumberFormat } from '@/utils/phone'
-import {
-	CalendarCustom,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
+import { ZodEnum } from '@/enums'
+import { ZodType } from '@/shared/types'
+import { useFieldValidation } from '@/hooks/useFieldValidation'
+import { commonValidators } from '@/utils/validation'
 
 const UserProfileForm = memo(
 	({ onCancel, isSetup = false, initialData }: UserProfileFormProps) => {
@@ -51,11 +57,30 @@ const UserProfileForm = memo(
 		const [displayPhone, setDisplayPhone] = useState(
 			initialData?.phone ? formatPhoneNumber(initialData.phone) : '',
 		)
+		const [selectedProfessions, setSelectedProfessions] = useState<
+			ZodType<typeof ZodEnum.Profession>[]
+		>([])
+
+		const validation = useFieldValidation()
+		const { errors, clearError, validateAll } = validation
+
+		const { data: profileWithProfessions } =
+			trpc.userProfile.getUserProfileWithProfessions.useQuery(undefined, {
+				enabled: isEditing,
+				retry: false,
+			})
+
+		useEffect(() => {
+			if (profileWithProfessions?.professions) {
+				setSelectedProfessions(profileWithProfessions.professions)
+			}
+		}, [profileWithProfessions])
 
 		const createProfileMutation =
 			trpc.userProfile.createUserProfile.useMutation({
 				onSuccess: async () => {
 					await utils.userProfile.getUserProfile.invalidate()
+					await utils.userProfile.getUserProfileWithProfessions.invalidate()
 					router.refresh()
 					onCancel()
 				},
@@ -68,6 +93,7 @@ const UserProfileForm = memo(
 			trpc.userProfile.updateUserProfile.useMutation({
 				onSuccess: async () => {
 					await utils.userProfile.getUserProfile.invalidate()
+					await utils.userProfile.getUserProfileWithProfessions.invalidate()
 					router.refresh()
 					onCancel()
 				},
@@ -84,12 +110,26 @@ const UserProfileForm = memo(
 
 				const numbersOnly = removePhoneNumberFormat(formatted)
 				setValue('phone', numbersOnly)
+
+				if (numbersOnly) {
+					clearError('phone')
+				}
 			},
-			[setValue],
+			[setValue, clearError],
+		)
+
+		const handleProfessionsChange = useCallback(
+			(professions: ZodType<typeof ZodEnum.Profession>[]) => {
+				setSelectedProfessions(professions)
+				if (professions.length > 0) {
+					clearError('professions')
+				}
+			},
+			[clearError],
 		)
 
 		const onSubmit = useCallback(
-			async (data: unknown) => {
+			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
 						ERROR_MESSAGES.AUTHENTICATION_ERROR,
@@ -99,12 +139,32 @@ const UserProfileForm = memo(
 					return
 				}
 
+				const validationRules = {
+					phone: commonValidators.requiredPhone(data.phone),
+					professions: commonValidators.requiredProfessions,
+				}
+
+				const validationData = {
+					...data,
+					professions: selectedProfessions,
+				}
+
+				const hasErrors = validateAll(validationData, validationRules)
+				if (hasErrors) {
+					return
+				}
+
 				try {
+					const formData = {
+						...data,
+						professions: selectedProfessions,
+					}
+
 					if (isEditing) {
-						const validatedData = UpdateUserProfileInputSchema.parse(data)
+						const validatedData = UpdateUserProfileInputSchema.parse(formData)
 						await updateProfileMutation.mutateAsync(validatedData)
 					} else {
-						const validatedData = CreateUserProfileInputSchema.parse(data)
+						const validatedData = CreateUserProfileInputSchema.parse(formData)
 						await createProfileMutation.mutateAsync(validatedData)
 					}
 				} catch (error: unknown) {
@@ -120,11 +180,13 @@ const UserProfileForm = memo(
 				}
 			},
 			[
+				validateAll,
 				createProfileMutation,
 				updateProfileMutation,
 				session,
 				showError,
 				isEditing,
+				selectedProfessions,
 			],
 		)
 
@@ -166,7 +228,7 @@ const UserProfileForm = memo(
 								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
 							>
 								<Phone className="w-4 h-4 mr-2" />
-								<span>휴대폰 번호</span>
+								<span>휴대폰 번호 *</span>
 							</label>
 							<Input
 								id="profile-phone"
@@ -174,6 +236,35 @@ const UserProfileForm = memo(
 								value={displayPhone}
 								onChange={handlePhoneChange}
 								placeholder="010-1234-5678"
+								disabled={isLoading}
+								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
+							/>
+							<FieldError error={errors.phone} />
+						</div>
+
+						{/* 직업 선택 필드 */}
+						<div>
+							<ProfessionSelector
+								selectedProfessions={selectedProfessions}
+								onProfessionsChange={handleProfessionsChange}
+								disabled={isLoading}
+							/>
+							<FieldError error={errors.professions} />
+						</div>
+
+						{/* 소속 기관 필드 */}
+						<div>
+							<label
+								htmlFor="profile-organization"
+								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+							>
+								<Building className="w-4 h-4 mr-2" />
+								<span>소속 기관</span>
+							</label>
+							<Input
+								id="profile-organization"
+								{...register('organization')}
+								placeholder="소속 기관을 입력하세요"
 								disabled={isLoading}
 								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
 							/>
@@ -231,24 +322,6 @@ const UserProfileForm = memo(
 									/>
 								</PopoverContent>
 							</Popover>
-						</div>
-
-						{/* 소속 기관 필드 */}
-						<div>
-							<label
-								htmlFor="profile-organization"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<Building className="w-4 h-4 mr-2" />
-								<span>소속 기관</span>
-							</label>
-							<Input
-								id="profile-organization"
-								{...register('organization')}
-								placeholder="소속 기관을 입력하세요"
-								disabled={isLoading}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
-							/>
 						</div>
 
 						{/* 버튼들 */}
