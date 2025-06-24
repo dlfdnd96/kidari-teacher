@@ -1,4 +1,5 @@
 import { z } from 'zod/v4-mini'
+import { ZodEnum } from '@/enums'
 
 export const UserProfileEntitySchema = z.strictObject({
 	id: z.string().check(z.cuid()),
@@ -22,6 +23,7 @@ export const InitialUserProfileInputSchema = z.strictObject({
 	name: z.string(),
 	email: z.string().check(z.email()),
 	phone: z.string().check(z.minLength(1), z.maxLength(11)),
+	professions: z.array(ZodEnum.Profession),
 	organization: z.optional(
 		z.nullable(
 			z.pipe(
@@ -36,7 +38,7 @@ export const InitialUserProfileInputSchema = z.strictObject({
 
 export const CreateUserProfileInputSchema = z.strictObject({
 	phone: z.string().check(z.minLength(0), z.maxLength(11)),
-	birthDate: z.optional(z.nullable(z.date())),
+	professions: z.array(ZodEnum.Profession),
 	organization: z.optional(
 		z.nullable(
 			z.pipe(
@@ -47,11 +49,17 @@ export const CreateUserProfileInputSchema = z.strictObject({
 			),
 		),
 	),
+	birthDate: z.optional(z.nullable(z.date())),
 })
 
 export const UpdateUserProfileInputSchema = CreateUserProfileInputSchema
 
 export const GetUserProfileResponseSchema = UserProfileEntitySchema
+
+export const GetUserProfileWithProfessionsResponseSchema = z.strictObject({
+	...UserProfileEntitySchema.def.shape,
+	professions: z.array(ZodEnum.Profession),
+})
 
 export const HasUserProfileResponseSchema = z.strictObject({
 	hasProfile: z.boolean(),
