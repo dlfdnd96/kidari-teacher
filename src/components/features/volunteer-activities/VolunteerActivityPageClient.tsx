@@ -18,28 +18,6 @@ import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { Enum } from '@/enums'
 
-const CreateVolunteerActivityModal = dynamic(
-	() =>
-		import(
-			'@/components/features/volunteer-activities/CreateVolunteerActivityModal'
-		),
-	{
-		ssr: false,
-		loading: () => null,
-	},
-)
-
-const VolunteerActivityDetailModal = dynamic(
-	() =>
-		import(
-			'@/components/features/volunteer-activities/VolunteerActivityDetailModal'
-		),
-	{
-		ssr: false,
-		loading: () => null,
-	},
-)
-
 const ApplicationModal = dynamic(
 	() => import('@/components/features/applications/ApplicationModal'),
 	{
@@ -56,11 +34,6 @@ function VolunteerActivityPageClientContent({
 	const { showError } = useErrorModal()
 	const { data: session } = useSession()
 
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [selectedActivity, setSelectedActivity] = useState<ZodType<
-		typeof VolunteerActivityEntitySchema
-	> | null>(null)
-	const [isDetailOpen, setIsDetailOpen] = useState(false)
 	const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false)
 	const [applicationActivity, setApplicationActivity] = useState<ZodType<
 		typeof VolunteerActivityEntitySchema
@@ -73,12 +46,12 @@ function VolunteerActivityPageClientContent({
 
 	const urlUpdateTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-	const pageSize = 10
+	const pageSize = 12
 	const isAdmin = session?.user?.role === Enum.Role.ADMIN
 
 	useEffect(() => {
 		const statusFromUrl = searchParams?.get('status') || 'all'
-		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 10)
+		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 12)
 		const searchFromUrl = searchParams?.get('search') || ''
 
 		setSelectedStatus(statusFromUrl)
@@ -155,26 +128,38 @@ function VolunteerActivityPageClientContent({
 		}
 	}, [isLoading, totalPages, currentPage])
 
-	const handleOpenModal = useCallback(() => {
-		setIsModalOpen(true)
-	}, [])
-
-	const handleCloseModal = useCallback(() => {
-		setIsModalOpen(false)
-	}, [])
+	const handleCreateActivity = useCallback(() => {
+		if (typeof window !== 'undefined') {
+			const currentFilters = {
+				status: selectedStatus !== 'all' ? selectedStatus : undefined,
+				search: searchQuery.trim() || undefined,
+				page: currentPage > 1 ? currentPage : undefined,
+			}
+			sessionStorage.setItem(
+				'volunteer-activities-filters',
+				JSON.stringify(currentFilters),
+			)
+		}
+		router.push('/volunteer-activities/create')
+	}, [router, selectedStatus, searchQuery, currentPage])
 
 	const handleViewDetail = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
-			setSelectedActivity(activity)
-			setIsDetailOpen(true)
+			if (typeof window !== 'undefined') {
+				const currentFilters = {
+					status: selectedStatus !== 'all' ? selectedStatus : undefined,
+					search: searchQuery.trim() || undefined,
+					page: currentPage > 1 ? currentPage : undefined,
+				}
+				sessionStorage.setItem(
+					'volunteer-activities-filters',
+					JSON.stringify(currentFilters),
+				)
+			}
+			router.push(`/volunteer-activities/${activity.id}`)
 		},
-		[],
+		[router, selectedStatus, searchQuery, currentPage],
 	)
-
-	const handleCloseDetail = useCallback(() => {
-		setIsDetailOpen(false)
-		setSelectedActivity(null)
-	}, [])
 
 	const handleApply = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
@@ -189,7 +174,6 @@ function VolunteerActivityPageClientContent({
 
 			setApplicationActivity(activity)
 			setIsApplicationModalOpen(true)
-			setIsDetailOpen(false)
 		},
 		[session?.user, showError],
 	)
@@ -207,13 +191,6 @@ function VolunteerActivityPageClientContent({
 			utils.application.getApplicationList.invalidate(),
 		])
 	}, [utils])
-
-	const handleApplyFromDetail = useCallback(
-		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
-			handleApply(activity)
-		},
-		[handleApply],
-	)
 
 	const updateURL = useCallback(
 		(params: { status?: string; page?: number; search?: string }) => {
@@ -368,12 +345,25 @@ function VolunteerActivityPageClientContent({
 
 	return (
 		<>
-			{/* 검색 및 필터 */}
+			{/* 헤더 영역 - 생성 버튼과 검색/필터 */}
 			<div className="mb-8">
+				{/* 우측 상단 생성 버튼 */}
+				{isAdmin && (
+					<div className="flex justify-end mb-4">
+						<button
+							onClick={handleCreateActivity}
+							className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer flex items-center gap-2"
+						>
+							<Plus className="w-5 h-5" />
+							<span>봉사활동 생성</span>
+						</button>
+					</div>
+				)}
+
+				{/* 검색/필터 영역 */}
 				<VolunteerActivityFilterTab
 					selectedStatus={selectedStatus}
 					statusChangeAction={handleStatusChange}
-					allStatusCount={totalCount}
 					searchQuery={searchQuery}
 					searchChangeAction={handleSearchChange}
 				/>
@@ -439,32 +429,6 @@ function VolunteerActivityPageClientContent({
 									: '다른 상태의 봉사활동을 확인해보세요.'}
 					</p>
 				</div>
-			)}
-
-			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
-			{isAdmin && !isDetailOpen && !isApplicationModalOpen && (
-				<button
-					onClick={handleOpenModal}
-					aria-label="봉사활동 생성"
-					className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 cursor-pointer"
-				>
-					<Plus className="w-8 h-8" />
-				</button>
-			)}
-
-			{/* 동적으로 로드되는 모달들 */}
-			<CreateVolunteerActivityModal
-				open={isModalOpen}
-				onClose={handleCloseModal}
-			/>
-
-			{selectedActivity && (
-				<VolunteerActivityDetailModal
-					open={isDetailOpen}
-					onClose={handleCloseDetail}
-					activity={selectedActivity}
-					onApply={handleApplyFromDetail}
-				/>
 			)}
 
 			{/* 신청 모달 */}

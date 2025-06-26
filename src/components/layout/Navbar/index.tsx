@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { NavLink } from '@/types/navbar'
 import { AUTH_PAGE_URL_PATTERN } from '@/constants/auth'
+import { Enum } from '@/enums'
 
 const Navbar = memo(() => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -68,7 +69,7 @@ const Navbar = memo(() => {
 					requireAuth: false,
 				},
 				{
-					href: '/volunteer-activities',
+					href: `/volunteer-activities?status=${Enum.VolunteerActivityStatus.RECRUITING}`,
 					label: '봉사활동',
 					isActive:
 						pathname === '/volunteer-activities' ||
@@ -145,7 +146,7 @@ const Navbar = memo(() => {
 
 	return (
 		<>
-			<nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100/50 fixed top-0 left-0 z-40">
+			<nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100/50">
 				{/* 왼쪽 - 햄버거 메뉴 + 네비게이션 링크들 */}
 				<div className="flex items-center gap-3 flex-1" ref={menuRef}>
 					<button
