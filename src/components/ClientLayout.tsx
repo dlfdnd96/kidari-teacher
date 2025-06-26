@@ -33,12 +33,14 @@ export default function ClientLayout({
 				<ErrorModalProvider>
 					<div className="flex flex-col min-h-screen">
 						<Suspense
-							fallback={<div className="h-16 bg-white dark:bg-gray-900" />}
+							fallback={
+								<div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 z-[999]" />
+							}
 						>
 							<Navbar />
 						</Suspense>
 
-						<main className="flex-1">
+						<main className="flex-1 pt-16">
 							<Suspense fallback={<PageLoading />}>{children}</Suspense>
 						</main>
 

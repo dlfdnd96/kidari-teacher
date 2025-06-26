@@ -146,7 +146,7 @@ const Navbar = memo(() => {
 
 	return (
 		<>
-			<nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100/50">
+			<nav className="fixed top-0 left-0 right-0 w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100/50 z-[999]">
 				{/* 왼쪽 - 햄버거 메뉴 + 네비게이션 링크들 */}
 				<div className="flex items-center gap-3 flex-1" ref={menuRef}>
 					<button
@@ -174,7 +174,7 @@ const Navbar = memo(() => {
 
 					{/* 드롭다운 메뉴 */}
 					{isMenuOpen && (
-						<div className="absolute left-4 top-14 z-50 min-w-[180px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
+						<div className="absolute left-4 top-14 z-[9999] min-w-[180px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
 							{navLinks.map((link) => {
 								const IconComponent = link.icon
 
@@ -226,7 +226,7 @@ const Navbar = memo(() => {
 								<CircleUserRound size={20} className="text-gray-600" />
 							</button>
 							{isProfileOpen && (
-								<div className="absolute right-0 top-12 z-50 min-w-[160px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
+								<div className="absolute right-0 top-12 z-[9999] min-w-[160px] bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl py-2 animate-fade-in">
 									{/* 사용자 정보 */}
 									<div className="px-4 py-2 border-b border-gray-100">
 										<div className="text-sm font-medium text-gray-900 truncate">
