@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ArrowLeft } from 'lucide-react'
@@ -27,45 +27,6 @@ const VolunteerActivityEditPageClient: FC<
 			},
 		)
 
-	useEffect(() => {
-		if (!isActivityLoading && !activity) {
-			handleClientError(
-				CLIENT_ERROR_KEY_MAPPING.NOT_FOUND_ERROR,
-				showError,
-				'봉사활동 불러오기 오류',
-			)
-			router.push('/volunteer-activities')
-		}
-	}, [activity, isActivityLoading, router, showError])
-
-	useEffect(() => {
-		if (!session?.user) {
-			handleClientError(
-				CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
-				showError,
-				'인증 오류',
-			)
-			router.push('/volunteer-activities')
-			return
-		}
-
-		if (activity) {
-			const canEdit =
-				session.user.id === activity.managerId ||
-				session.user.role === Enum.Role.ADMIN
-
-			if (!canEdit) {
-				handleClientError(
-					CLIENT_ERROR_KEY_MAPPING.AUTHORIZATION_ERROR,
-					showError,
-					'권한 오류',
-				)
-				router.push(`/volunteer-activities/${id}`)
-				return
-			}
-		}
-	}, [session, activity, id, router, showError])
-
 	const handleCancel = () => {
 		if (typeof window !== 'undefined') {
 			const detailId = sessionStorage.getItem('volunteer-activity-detail-id')
@@ -90,7 +51,13 @@ const VolunteerActivityEditPageClient: FC<
 	}
 
 	if (!activity) {
-		return null
+		handleClientError(
+			CLIENT_ERROR_KEY_MAPPING.NOT_FOUND_ERROR,
+			showError,
+			'봉사활동 불러오기 오류',
+		)
+		router.push(`/volunteer-activities/${id}`)
+		return
 	}
 
 	const canEdit =
@@ -98,7 +65,13 @@ const VolunteerActivityEditPageClient: FC<
 		session?.user.role === Enum.Role.ADMIN
 
 	if (!canEdit) {
-		return null
+		handleClientError(
+			CLIENT_ERROR_KEY_MAPPING.AUTHORIZATION_ERROR,
+			showError,
+			'권한 오류',
+		)
+		router.push(`/volunteer-activities/${id}`)
+		return
 	}
 
 	return (

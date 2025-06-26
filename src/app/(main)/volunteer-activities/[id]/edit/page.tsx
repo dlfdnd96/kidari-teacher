@@ -13,7 +13,7 @@ export async function generateMetadata({
 		title: `봉사활동 수정 | 키다리 선생님`,
 		description: '봉사활동 정보를 수정합니다.',
 		keywords: ['봉사활동', '수정', '편집', '키다리선생님', '교육봉사'],
-		robots: 'noindex, nofollow', // 수정 페이지는 검색엔진에 노출하지 않음
+		robots: 'noindex, nofollow',
 		alternates: {
 			canonical: `/volunteer-activities/${id}/edit`,
 		},

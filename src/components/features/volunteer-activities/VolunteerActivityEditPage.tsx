@@ -181,13 +181,7 @@ const VolunteerActivityEditPage = memo(
 				}
 
 				try {
-					console.log('--------------------')
-					console.log('입장', data)
-					console.log('--------------------')
 					const validatedData = VolunteerActivityEditFormSchema.parse(data)
-					console.log('--------------------')
-					console.log(validatedData)
-					console.log('--------------------')
 					await updateVolunteerActivityMutation.mutateAsync({
 						id,
 						...validatedData,
