@@ -2,26 +2,26 @@
 
 import React, { memo, useCallback, useState } from 'react'
 import {
-	Calendar,
-	MapPin,
-	Clock,
-	User,
-	Phone,
-	X,
 	AlertTriangle,
 	Briefcase,
+	Calendar,
+	Clock,
+	MapPin,
+	Phone,
+	User,
+	X,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
+import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { trpc } from '@/components/providers/TrpcProvider'
 import type { MyApplicationCardProps } from '@/types/application'
 import {
-	APPLICATION_STATUS_LABELS,
 	APPLICATION_STATUS_COLORS,
 	APPLICATION_STATUS_DESCRIPTIONS,
+	APPLICATION_STATUS_LABELS,
 } from '@/types/application'
 import { TZDate } from '@date-fns/tz'
 import { Enum } from '@/enums'
@@ -67,7 +67,7 @@ const MyApplicationCard = memo(({ application }: MyApplicationCardProps) => {
 	const handleCancel = useCallback(async () => {
 		if (!session?.user) {
 			handleClientError(
-				ERROR_MESSAGES.AUTHENTICATION_ERROR,
+				CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 				showError,
 				'인증 오류',
 			)

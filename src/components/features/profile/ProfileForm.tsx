@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -62,7 +62,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 		async (data: Record<string, unknown>) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)

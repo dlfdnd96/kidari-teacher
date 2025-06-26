@@ -1,8 +1,8 @@
 'use client'
 
-import React, { memo, useCallback, useState, useEffect } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Phone, Send, X, Briefcase } from 'lucide-react'
+import { Briefcase, Phone, Send, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -116,7 +116,7 @@ const ApplicationForm = memo(
 			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
-						ERROR_MESSAGES.AUTHENTICATION_ERROR,
+						CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 						showError,
 						'인증 오류',
 					)

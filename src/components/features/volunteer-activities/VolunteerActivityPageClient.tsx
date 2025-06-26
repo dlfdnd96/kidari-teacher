@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
 import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
-import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
+import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { Enum } from '@/enums'
 
@@ -165,7 +165,7 @@ function VolunteerActivityPageClientContent({
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)

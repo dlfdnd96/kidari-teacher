@@ -15,7 +15,7 @@ import {
 } from '@/components/ui'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -132,7 +132,7 @@ const UserProfileForm = memo(
 			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
-						ERROR_MESSAGES.AUTHENTICATION_ERROR,
+						CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 						showError,
 						'인증 오류',
 					)

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { Building, Phone, User } from 'lucide-react'
 import { trpc } from '@/components/providers/TrpcProvider'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -95,7 +95,7 @@ export default function ProfileSetupPage() {
 		async (data: Record<string, unknown>) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)

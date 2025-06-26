@@ -34,11 +34,7 @@ import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import {
-	CLIENT_ERROR_KEY_MAPPING,
-	ERROR_MESSAGES,
-	handleClientError,
-} from '@/utils/error'
+import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { formatPhoneNumber } from '@/utils/phone'
 import { useSession } from 'next-auth/react'
 import {
@@ -131,7 +127,7 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 		async (applicationId: string, newStatus: string) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)
@@ -156,7 +152,7 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 		async (targetStatus: string, newStatus: string) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)
@@ -195,7 +191,7 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 	const handleApply = useCallback(() => {
 		if (!session?.user) {
 			handleClientError(
-				ERROR_MESSAGES.AUTHENTICATION_ERROR,
+				CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 				showError,
 				'인증 오류',
 			)

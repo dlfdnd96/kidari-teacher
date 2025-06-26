@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Enum } from '@/enums'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
+import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { NoticeCardProps } from '@/types/notice'
 import { Calendar, PenLine, Trash, X } from 'lucide-react'
@@ -71,7 +71,7 @@ const NoticeCard = memo(({ notice, onViewDetail }: NoticeCardProps) => {
 	const handleDelete = useCallback(async () => {
 		if (!session?.user) {
 			handleClientError(
-				ERROR_MESSAGES.AUTHENTICATION_ERROR,
+				CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 				showError,
 				'인증 오류',
 			)

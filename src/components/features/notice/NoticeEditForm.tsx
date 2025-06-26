@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -44,7 +44,7 @@ const NoticeEditForm = memo(
 			async (data: unknown) => {
 				if (!session?.user) {
 					handleClientError(
-						ERROR_MESSAGES.AUTHENTICATION_ERROR,
+						CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 						showError,
 						'인증 오류',
 					)
