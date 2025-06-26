@@ -348,15 +348,16 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 	return (
 		<div className="min-h-screen bg-white dark:bg-gray-900">
 			{/* 상단 네비게이션 */}
-			<div>
+			<div className="pt-4">
 				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
 							<button
 								onClick={handleGoBack}
-								className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
 							>
-								<ArrowLeft className="w-5 h-5 cursor-pointer" />
+								<ArrowLeft className="w-4 h-4" />
+								<span className="text-sm font-medium">뒤로가기</span>
 							</button>
 						</div>
 
