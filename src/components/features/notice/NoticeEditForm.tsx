@@ -16,7 +16,7 @@ import {
 
 import { NoticeEditFormSchema } from '@/shared/schemas/notice'
 import { NoticeEditFormProps } from '@/types/notice'
-import { FileText, PenLine, Save, X } from 'lucide-react'
+import { ArrowLeft, Save, Type, FileText } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 
 const NoticeEditForm = memo(
@@ -73,102 +73,122 @@ const NoticeEditForm = memo(
 
 		return (
 			<>
-				<div
-					className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-4 sm:mb-6"
-					data-testid="notice-edit-form"
-				>
-					{/* 헤더 */}
-					<div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
-						<div className="flex items-center">
-							<PenLine className="w-7 h-7 text-white mr-3" />
-							<div>
-								<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-									공지사항 수정
-								</h2>
-							</div>
+				{/* 상단 네비게이션 */}
+				<div>
+					<div className="flex items-center justify-between h-14">
+						<div className="py-4">
+							<button
+								onClick={() => router.back()}
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+							>
+								<ArrowLeft className="w-4 h-4" />
+								<span className="text-sm font-medium">뒤로가기</span>
+							</button>
 						</div>
 					</div>
+				</div>
 
-					{/* 폼 */}
-					<form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8">
-						<div className="space-y-6">
-							{/* 제목 입력 */}
-							<div>
-								<label
-									htmlFor="edit-title"
-									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-								>
-									<PenLine className="w-4 h-4 mr-2" />
-									<span>제목</span>
-								</label>
-								<div className="relative">
-									<Input
-										id="edit-title"
-										{...register('title', { required: true })}
-										placeholder="공지사항 제목을 입력하세요"
-										disabled={loading}
-										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
-										data-testid="edit-notice-title-input"
-									/>
+				{/* 메인 컨텐츠 */}
+				<div className="py-8">
+					<div className="p-6 sm:p-8">
+						{/* 헤더 */}
+						<div className="mb-8">
+							<div className="flex items-start justify-between mb-4">
+								<div className="flex-1 min-w-0">
+									<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3">
+										공지사항 수정
+									</h1>
 								</div>
 							</div>
-
-							{/* 내용 입력 */}
-							<div>
-								<label
-									htmlFor="edit-content"
-									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-								>
-									<FileText className="w-4 h-4 mr-2" />
-									<span>내용</span>
-								</label>
-								<div className="relative">
-									<Textarea
-										id="edit-content"
-										{...register('content', { required: true })}
-										placeholder="공지사항 내용을 자세히 작성해주세요"
-										rows={6}
-										disabled={loading}
-										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
-										data-testid="edit-notice-content-input"
-									/>
-								</div>
-							</div>
-
-							{/* 버튼들 */}
-							<div className="flex flex-col sm:flex-row gap-3 pt-4">
-								<Button
-									type="submit"
-									disabled={loading || formState.isSubmitting}
-									className="flex-1 flex items-center justify-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-									data-testid="edit-notice-submit-button"
-								>
-									{loading ? (
-										<>
-											<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-											<span>수정 중...</span>
-										</>
-									) : (
-										<>
-											<Save className="w-4 h-4 mr-1.5" />
-											<span>수정</span>
-										</>
-									)}
-								</Button>
-
-								<Button
-									type="button"
-									onClick={onCancel}
-									disabled={loading}
-									variant="outline"
-									className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-								>
-									<X className="w-4 h-4 mr-1.5" />
-									<span>취소</span>
-								</Button>
-							</div>
+							<div className="border-b border-gray-200 dark:border-gray-700"></div>
 						</div>
-					</form>
+
+						{/* 폼 */}
+						<form
+							onSubmit={handleSubmit(onSubmit)}
+							className="space-y-8"
+							data-testid="notice-edit-form"
+						>
+							{/* 기본 정보 섹션 */}
+							<div className="space-y-6">
+								{/* 제목 입력 */}
+								<div className="flex items-start gap-3">
+									<Type className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+									<div className="flex-1">
+										<label
+											htmlFor="edit-title"
+											className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+										>
+											제목 *
+										</label>
+										<Input
+											id="edit-title"
+											{...register('title', { required: true })}
+											placeholder="공지사항 제목을 입력하세요"
+											disabled={loading}
+											className="w-full h-12"
+											data-testid="edit-notice-title-input"
+										/>
+									</div>
+								</div>
+
+								{/* 내용 입력 */}
+								<div className="flex items-start gap-3">
+									<FileText className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+									<div className="flex-1">
+										<label
+											htmlFor="edit-content"
+											className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+										>
+											내용 *
+										</label>
+										<Textarea
+											id="edit-content"
+											{...register('content', { required: true })}
+											placeholder="공지사항 내용을 작성하세요..."
+											rows={12}
+											disabled={loading}
+											className="w-full resize-none"
+											data-testid="edit-notice-content-input"
+										/>
+									</div>
+								</div>
+							</div>
+
+							{/* 제출 버튼 영역 */}
+							<div className="pt-8 border-t border-gray-200 dark:border-gray-700">
+								<div className="flex justify-center gap-4">
+									<Button
+										type="button"
+										onClick={onCancel}
+										disabled={loading}
+										variant="outline"
+										className="px-8 py-3 h-12 cursor-pointer"
+									>
+										취소
+									</Button>
+									<button
+										type="submit"
+										disabled={loading || formState.isSubmitting}
+										className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+										data-testid="edit-notice-submit-button"
+									>
+										{loading ? (
+											<>
+												<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+												<span>수정 중...</span>
+											</>
+										) : (
+											<>
+												<Save className="w-4 h-4" />
+												<span>수정하기</span>
+											</>
+										)}
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
 				</div>
 			</>
 		)

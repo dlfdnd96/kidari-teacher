@@ -7,8 +7,10 @@ import { TZDate } from '@date-fns/tz'
 import {
 	CreateNoticeInputSchema,
 	DeleteNoticeInputSchema,
+	getNoticeInputSchema,
 	NoticeListFilterInputSchema,
 	NoticeListResponseSchema,
+	NoticePickAuthorEntitySchema,
 	UpdateNoticeInputSchema,
 } from '@/shared/schemas/notice'
 import { TRPCError } from '@trpc/server'
@@ -16,6 +18,24 @@ import { createDomainQueryBuilder } from '@/lib/query-builder'
 import { TIME_ZONE } from '@/constants/date'
 
 export const noticeRouter = createTRPCRouter({
+	getNotice: publicProcedure
+		.input(getNoticeInputSchema)
+		.output(NoticePickAuthorEntitySchema)
+		.query(async ({ ctx, input }) => {
+			const notice = await ctx.prisma.notice.findUnique({
+				where: { id: input.id, deletedAt: null },
+				include: { author: { select: { name: true } } },
+			})
+
+			if (!notice) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: '존재하지 않는 공지사항입니다.',
+				})
+			}
+
+			return notice
+		}),
 	getNoticeList: publicProcedure
 		.input(NoticeListFilterInputSchema)
 		.output(NoticeListResponseSchema)
