@@ -855,7 +855,7 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 							<div className="space-y-4">
 								{/* 메인 질문 */}
 								<div className="text-gray-900 dark:text-gray-100 font-medium text-base">
-									정말로 이 봉사활동을 삭제하시겠습니까?
+									봉사활동을 삭제하시겠습니까?
 								</div>
 
 								{/* 상세 설명 */}
