@@ -44,29 +44,6 @@ export default async function MyApplicationsPage({
 
 	return (
 		<main className="min-h-screen pt-16">
-			{/* 히어로 섹션 */}
-			<section className="relative max-w-5xl mx-auto pt-8 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-8">
-				<div className="text-center">
-					{/* 메인 아이콘 */}
-					<div className="inline-flex items-center justify-center w-20 sm:w-24 h-20 sm:h-24 bg-linear-to-r from-blue-500 to-purple-600 rounded-full mb-6 sm:mb-8 shadow-2xl">
-						<FileText className="w-10 sm:w-12 h-10 sm:h-12 text-white" />
-					</div>
-
-					{/* 제목 */}
-					<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-						내 신청 내역
-					</h1>
-
-					{/* 구분선 */}
-					<div className="w-20 h-1 bg-linear-to-r from-blue-500 to-purple-600 mx-auto rounded-full mb-4 sm:mb-6" />
-
-					{/* 설명 */}
-					<p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
-						나의 봉사활동 신청 현황과 결과를 한눈에 확인하세요
-					</p>
-				</div>
-			</section>
-
 			{/* 사용자 안내 섹션 */}
 			<section className="max-w-4xl mx-auto px-4 sm:px-8 mb-8">
 				<div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6 border border-blue-200/50 dark:border-blue-700/50">
