@@ -154,12 +154,9 @@ export default function HomePage() {
 			{/* 인증 리다이렉트 핸들러 */}
 			<AuthRedirectHandler />
 
-			<div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-indigo-900 dark:to-purple-900 relative overflow-hidden">
-				{/* Background Pattern */}
-				<div className="absolute inset-0 bg-grid-white/10 bg-size-[20px_20px] opacity-5" />
-
+			<div className="min-h-screen">
 				{/* Smooth transition area */}
-				<div className="relative h-4 bg-linear-to-b from-white/20 to-transparent dark:from-gray-900/20 pointer-events-none" />
+				<div className="relative h-4 pointer-events-none" />
 
 				{/* Main Content */}
 				<main>
