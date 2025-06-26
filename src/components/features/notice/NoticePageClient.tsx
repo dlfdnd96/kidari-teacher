@@ -151,7 +151,7 @@ function NoticePageClientContent({
 				<div className="flex justify-center">
 					<Button
 						onClick={() => refetch()}
-						className="flex items-center bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+						className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
 					>
 						<RefreshCw className="w-4 h-4 mr-1.5" />
 						<span>다시 시도</span>
@@ -170,7 +170,7 @@ function NoticePageClientContent({
 					<div className="flex justify-end mb-4">
 						<button
 							onClick={handleCreateNotice}
-							className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+							className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
 						>
 							<Plus className="w-5 h-5" />
 							<span>공지사항 작성</span>
@@ -182,9 +182,9 @@ function NoticePageClientContent({
 			{/* 로딩 인디케이터 (검색 중일 때만 작은 표시) */}
 			{isFetching && (
 				<div className="flex justify-center mb-4">
-					<div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-full">
-						<RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
-						<span className="text-sm text-blue-600 dark:text-blue-400">
+					<div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
+						<RefreshCw className="w-4 h-4 text-emerald-600 animate-spin" />
+						<span className="text-sm text-emerald-600 dark:text-emerald-400">
 							불러오는 중...
 						</span>
 					</div>

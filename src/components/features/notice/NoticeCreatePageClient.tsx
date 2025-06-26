@@ -110,7 +110,7 @@ const NoticeCreatePageClient = memo(() => {
 						<div className="space-y-6">
 							{/* 제목 입력 */}
 							<div className="flex items-start gap-3">
-								<Type className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+								<Type className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
 								<div className="flex-1">
 									<label
 										htmlFor="notice-title"
@@ -131,7 +131,7 @@ const NoticeCreatePageClient = memo(() => {
 
 							{/* 내용 입력 */}
 							<div className="flex items-start gap-3">
-								<FileText className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+								<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
 								<div className="flex-1">
 									<label
 										htmlFor="notice-content"
@@ -167,7 +167,7 @@ const NoticeCreatePageClient = memo(() => {
 								<button
 									type="submit"
 									disabled={loading || formState.isSubmitting || !session?.user}
-									className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+									className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 									data-testid="create-submit-notice-button"
 								>
 									{loading ? (

@@ -26,7 +26,7 @@ const NoticeTable = memo(({ notices }: NoticeTableProps) => {
 						{/* 카드 헤더 */}
 						<div className="mb-4">
 							{/* 제목 */}
-							<h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+							<h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
 								{notice.title}
 							</h3>
 

@@ -101,7 +101,7 @@ export default function NoticeDetailPageClient({
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
 					<p className="text-gray-600 dark:text-gray-400">로딩 중...</p>
 				</div>
 			</div>
@@ -133,7 +133,7 @@ export default function NoticeDetailPageClient({
 							<div className="py-4 flex items-center gap-2">
 								<button
 									onClick={handleEdit}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 text-sm font-medium cursor-pointer"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer"
 								>
 									<Edit className="w-4 h-4" />
 									<span>수정</span>

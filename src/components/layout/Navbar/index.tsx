@@ -63,54 +63,26 @@ const Navbar = memo(() => {
 				{
 					href: '/notice',
 					label: '공지사항',
-					isActive: pathname === '/notice' || pathname.startsWith('/notice/'),
-					color: 'blue' as const,
 					icon: Bell,
 					requireAuth: false,
 				},
 				{
 					href: `/volunteer-activities?status=${Enum.VolunteerActivityStatus.RECRUITING}`,
 					label: '봉사활동',
-					isActive:
-						pathname === '/volunteer-activities' ||
-						pathname.startsWith('/volunteer-activities/'),
-					color: 'emerald' as const,
 					icon: Heart,
 					requireAuth: true,
 				},
 			].filter((link) => !link.requireAuth || session),
-		[pathname, session],
+		[session],
 	)
 
-	const getColorClasses = useCallback(
-		(color: 'blue' | 'emerald', isActive: boolean) => {
-			if (color === 'blue') {
-				return isActive
-					? 'text-blue-600 bg-blue-50 font-semibold'
-					: 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
-			} else {
-				return isActive
-					? 'text-emerald-600 bg-emerald-50 font-semibold'
-					: 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'
-			}
-		},
-		[],
-	)
+	const getColorClasses = useCallback(() => {
+		return 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'
+	}, [])
 
-	const getDropdownColorClasses = useCallback(
-		(color: 'blue' | 'emerald', isActive: boolean) => {
-			if (color === 'blue') {
-				return isActive
-					? 'text-blue-600 bg-gradient-to-r from-blue-50 to-blue-50 font-semibold shadow-sm'
-					: 'text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-50 hover:shadow-sm'
-			} else {
-				return isActive
-					? 'text-emerald-600 bg-gradient-to-r from-emerald-50 to-emerald-50 font-semibold shadow-sm'
-					: 'text-gray-700 hover:text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-emerald-50 hover:shadow-sm'
-			}
-		},
-		[],
-	)
+	const getDropdownColorClasses = useCallback(() => {
+		return 'text-gray-700 hover:text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-emerald-50 hover:shadow-sm'
+	}, [])
 
 	useEffect(() => {
 		if (!isMenuOpen) return
@@ -151,7 +123,7 @@ const Navbar = memo(() => {
 				<div className="flex items-center gap-3 flex-1" ref={menuRef}>
 					<button
 						onClick={handleMenuToggle}
-						className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 hover:bg-gray-100"
+						className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100"
 						aria-label="메뉴"
 						type="button"
 					>
@@ -164,7 +136,7 @@ const Navbar = memo(() => {
 							<Link
 								key={link.href}
 								href={link.href}
-								className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${getColorClasses(link.color, link.isActive)}`}
+								className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${getColorClasses()}`}
 								aria-label={link.label}
 							>
 								{link.label}
@@ -182,7 +154,7 @@ const Navbar = memo(() => {
 									<Link
 										key={link.href}
 										href={link.href}
-										className={`group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all duration-200 ${getDropdownColorClasses(link.color, link.isActive)}`}
+										className={`group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all duration-200 ${getDropdownColorClasses()}`}
 										aria-label={link.label}
 										onClick={() => setIsMenuOpen(false)}
 									>
@@ -190,11 +162,6 @@ const Navbar = memo(() => {
 										<span className="group-hover:font-semibold transition-all duration-200">
 											{link.label}
 										</span>
-										{link.isActive && (
-											<div
-												className={`ml-auto w-2 h-2 rounded-full ${link.color === 'blue' ? 'bg-blue-600' : 'bg-emerald-600'}`}
-											></div>
-										)}
 									</Link>
 								)
 							})}
@@ -205,7 +172,7 @@ const Navbar = memo(() => {
 				{/* 가운데 - 타이틀 */}
 				<div className="flex-1 flex items-center justify-center">
 					<Link href="/" className="flex items-center">
-						<span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
+						<span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent whitespace-nowrap">
 							{SITE_INFO.title}
 						</span>
 					</Link>
@@ -219,7 +186,7 @@ const Navbar = memo(() => {
 						<div className="flex items-center relative" ref={profileRef}>
 							<button
 								onClick={() => setIsProfileOpen((prev) => !prev)}
-								className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 hover:bg-gray-100"
+								className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100"
 								aria-label="프로필"
 								type="button"
 							>
@@ -240,7 +207,7 @@ const Navbar = memo(() => {
 									{/* 프로필 메뉴들 */}
 									<Link
 										href="/my-applications"
-										className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+										className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
 										onClick={() => setIsProfileOpen(false)}
 									>
 										<FileText size={16} />내 신청 내역
@@ -248,7 +215,7 @@ const Navbar = memo(() => {
 
 									<Link
 										href="/profile"
-										className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+										className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
 										onClick={() => setIsProfileOpen(false)}
 									>
 										<User size={16} />
@@ -261,7 +228,7 @@ const Navbar = memo(() => {
 												handleLogout()
 												setIsProfileOpen(false)
 											}}
-											className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+											className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
 										>
 											<LogOut size={16} />
 											로그아웃
@@ -275,7 +242,7 @@ const Navbar = memo(() => {
 							{/* 모바일 로그인 아이콘 */}
 							<button
 								onClick={handleOpenModal}
-								className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 hover:bg-gray-100 sm:hidden"
+								className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100 sm:hidden"
 								aria-label="로그인"
 								type="button"
 							>
@@ -285,7 +252,7 @@ const Navbar = memo(() => {
 							{/* 데스크탑 로그인 버튼 */}
 							<button
 								onClick={handleOpenModal}
-								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
 								aria-label="로그인"
 								type="button"
 							>
