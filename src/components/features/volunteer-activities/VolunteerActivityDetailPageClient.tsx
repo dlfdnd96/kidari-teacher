@@ -116,7 +116,10 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 	const deleteVolunteerActivityMutation =
 		trpc.volunteerActivity.deleteVolunteerActivity.useMutation({
 			onSuccess: async () => {
-				await utils.volunteerActivity.getVolunteerActivityList.invalidate()
+				await Promise.all([
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getMyApplicationList.invalidate(),
+				])
 				router.push('/volunteer-activities')
 			},
 			onError: (error) => {

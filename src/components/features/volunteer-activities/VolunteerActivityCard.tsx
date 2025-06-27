@@ -2,7 +2,7 @@
 
 import React, { memo, useCallback } from 'react'
 import { Calendar, Clock, Heart, MapPin, User, Users } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useSession } from 'next-auth/react'
 import { Enum } from '@/enums'
@@ -21,6 +21,15 @@ const VolunteerActivityCard = memo(
 
 		const applicationCount = activity.applications?.length || 0
 		const maxParticipants = activity.maxParticipants || 0
+		const hasApplied = activity.applications?.some(
+			(app) => app.user?.id === session?.user.id,
+		)
+		const canApply =
+			session?.user.id &&
+			activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
+			startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)) <=
+				startOfDay(activity.applicationDeadline) &&
+			!hasApplied
 
 		const statusColor =
 			VOLUNTEER_ACTIVITY_STATUS_COLORS[activity.status] ||
@@ -130,18 +139,14 @@ const VolunteerActivityCard = memo(
 						{/* 액션 버튼들 */}
 						<div className="flex items-center gap-2 min-h-[24px]">
 							{/* 신청 버튼 (조건부) */}
-							{session?.user.id &&
-								activity.status === Enum.VolunteerActivityStatus.RECRUITING &&
-								!activity.applications?.some(
-									(app) => app.user?.id === session?.user.id,
-								) && (
-									<Button
-										onClick={handleApply}
-										className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer border-0 h-auto"
-									>
-										<span>신청</span>
-									</Button>
-								)}
+							{canApply && (
+								<Button
+									onClick={handleApply}
+									className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer border-0 h-auto"
+								>
+									<span>신청</span>
+								</Button>
+							)}
 						</div>
 					</div>
 				</div>
