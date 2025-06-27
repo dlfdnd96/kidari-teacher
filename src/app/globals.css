@@ -212,6 +212,7 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		@apply !min-w-full;
 		/* 기본 폰트 패밀리 적용 */
 		font-family: var(--font-geist-sans);
 	}
@@ -257,6 +258,7 @@
 
 	/* 스크롤 동작 최적화 */
 	html {
+		@apply overflow-x-hidden;
 		scroll-behavior: smooth;
 	}
 
