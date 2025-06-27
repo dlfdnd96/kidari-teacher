@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Calendar, Eye } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { NoticeTableProps } from '@/types/notice'
@@ -30,6 +30,13 @@ const NoticeTable = memo(({ notices }: NoticeTableProps) => {
 								{notice.title}
 							</h3>
 
+							{/* 내용 미리보기 */}
+							{notice.content && (
+								<p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 leading-relaxed">
+									{notice.content.replace(/<[^>]*>/g, '').trim()}
+								</p>
+							)}
+
 							{/* 기본 정보 */}
 							<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-gray-500 dark:text-gray-400">
 								{/* 작성자 */}
@@ -50,25 +57,11 @@ const NoticeTable = memo(({ notices }: NoticeTableProps) => {
 									</span>
 								</div>
 
-								{/* 조회수 (임시) */}
-								<div className="flex items-center gap-1">
-									<Eye className="w-3 h-3" />
-									<span>0</span>
-								</div>
-							</div>
-						</div>
-
-						{/* 카드 푸터 */}
-						<div className="pt-3 border-t border-gray-200 dark:border-gray-600">
-							<div className="flex items-center justify-between min-h-[24px]">
 								{/* 생성일 */}
-								<span className="text-xs text-gray-500 dark:text-gray-400">
-									{format(notice.createdAt, 'yyyy.MM.dd')}
-								</span>
-
-								{/* 액션 버튼들 */}
-								<div className="flex items-center gap-2 min-h-[24px]">
-									{/* 여기에 필요한 액션 버튼들 추가 가능 */}
+								<div className="flex items-center gap-1">
+									<span className="text-xs text-gray-500 dark:text-gray-400">
+										{format(notice.createdAt, 'yyyy.MM.dd')}
+									</span>
 								</div>
 							</div>
 						</div>
