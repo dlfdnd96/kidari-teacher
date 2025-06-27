@@ -172,7 +172,7 @@ const Navbar = memo(() => {
 				{/* 가운데 - 타이틀 */}
 				<div className="flex-1 flex items-center justify-center">
 					<Link href="/" className="flex items-center">
-						<span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent whitespace-nowrap">
+						<span className="text-lg sm:text-xl font-bold bg-gradient-to-r whitespace-nowrap">
 							{SITE_INFO.title}
 						</span>
 					</Link>
