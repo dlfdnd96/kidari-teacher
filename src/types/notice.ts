@@ -1,11 +1,38 @@
 import { ZodType } from '@/shared/types'
-import {
-	NoticeListEntitySchema,
-	NoticePickAuthorEntitySchema,
-} from '@/shared/schemas/notice'
+import { NoticePickAuthorEntitySchema } from '@/shared/schemas/notice'
 
 export interface NoticePageProps {
 	searchParams: Promise<{ page?: string }>
+}
+
+export interface NoticePageClientProps {
+	isAdmin: boolean
+	initialPage: number
+}
+
+export interface PaginationProps {
+	currentPage: number
+	totalPages: number
+	basePath: string
+	className?: string
+	extraParams?: Record<string, string>
+}
+
+export interface NoticeListProps {
+	notices: ZodType<typeof NoticePickAuthorEntitySchema>[]
+}
+
+export interface NoticeDetailPageProps {
+	params: Promise<{ id: string }>
+}
+
+export interface NoticeDetailPageClientProps {
+	noticeId: string
+	isAdmin: boolean
+}
+
+export interface NoticeEditPageClientProps {
+	noticeId: string
 }
 
 export interface NoticeModalProps {
@@ -29,27 +56,4 @@ export interface NoticeEditFormProps {
 	initialTitle: string
 	initialContent: string
 	onCancel: () => void
-}
-
-export interface NoticeFormProps {
-	onSuccess?: () => void
-	isModal?: boolean
-}
-
-export interface NoticeListProps {
-	notices: ZodType<typeof NoticeListEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticePickAuthorEntitySchema>) => void
-}
-
-export interface NoticePageClientProps {
-	isAdmin: boolean
-	initialPage?: number
-}
-
-export interface PaginationProps {
-	currentPage: number
-	totalPages: number
-	basePath: string
-	className?: string
-	extraParams?: Record<string, string>
 }

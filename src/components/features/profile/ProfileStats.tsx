@@ -20,20 +20,10 @@ const ProfileStats = memo(
 
 		return (
 			<div className="space-y-6">
-				{/* 섹션 제목 */}
-				<div className="text-center">
-					<h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-						활동 통계
-					</h2>
-					<p className="text-gray-600 dark:text-gray-400">
-						지금까지의 봉사활동 참여 현황을 확인하세요
-					</p>
-				</div>
-
 				{/* 통계 카드들 */}
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
 					{/* 총 신청 수 */}
-					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-blue-200/50 dark:border-blue-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-blue-200/50 dark:border-blue-700/50 p-6 group">
 						<div className="flex items-center justify-between mb-4">
 							<div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
 								<FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -58,7 +48,7 @@ const ProfileStats = memo(
 					</div>
 
 					{/* 완료한 수 */}
-					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-purple-200/50 dark:border-purple-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-purple-200/50 dark:border-purple-700/50 p-6 group">
 						<div className="flex items-center justify-between mb-4">
 							<div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
 								<Trophy className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -90,7 +80,7 @@ const ProfileStats = memo(
 					</div>
 
 					{/* 가입 기간 */}
-					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-indigo-200/50 dark:border-indigo-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group sm:col-span-2 lg:col-span-1">
+					<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-indigo-200/50 dark:border-indigo-700/50 p-6 group sm:col-span-2 lg:col-span-1">
 						<div className="flex items-center justify-between mb-4">
 							<div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
 								<Calendar className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
@@ -123,27 +113,6 @@ const ProfileStats = memo(
 						</div>
 					</div>
 				</div>
-
-				{/* 빈 상태 메시지 */}
-				{applicationCount === 0 && (
-					<div className="text-center py-12">
-						<div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-							<FileText className="w-8 h-8 text-gray-400" />
-						</div>
-						<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-							아직 신청한 봉사활동이 없습니다
-						</h3>
-						<p className="text-gray-600 dark:text-gray-400 mb-6">
-							첫 번째 봉사활동에 참여해보세요!
-						</p>
-						<a
-							href="/volunteer-activities"
-							className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-						>
-							봉사활동 둘러보기
-						</a>
-					</div>
-				)}
 			</div>
 		)
 	},

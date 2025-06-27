@@ -4,10 +4,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { Building, Phone, User } from 'lucide-react'
+import { Building, Phone, User, Briefcase, Save } from 'lucide-react'
 import { trpc } from '@/components/providers/TrpcProvider'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -95,7 +95,7 @@ export default function ProfileSetupPage() {
 		async (data: Record<string, unknown>) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)
@@ -160,154 +160,160 @@ export default function ProfileSetupPage() {
 	}
 
 	return (
-		<main className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
-			{/* 히어로 섹션 */}
-			<section className="relative max-w-5xl mx-auto pt-8 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-8">
-				{/* 배경 장식 */}
-				<div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl -z-10" />
-
-				<div className="text-center">
-					{/* 메인 아이콘 */}
-					<div className="inline-flex items-center justify-center w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mb-6 sm:mb-8 shadow-2xl">
-						<User className="w-10 sm:w-12 h-10 sm:h-12 text-white" />
+		<div className="min-h-screen">
+			{/* 메인 컨텐츠 */}
+			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
+				<div className="p-6 sm:p-8">
+					{/* 헤더 */}
+					<div className="mb-8">
+						<div className="flex items-start justify-between mb-4">
+							<div className="flex-1 min-w-0">
+								<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3">
+									프로필 설정
+								</h1>
+								<p className="text-gray-600 dark:text-gray-400">
+									서비스 이용을 위해 추가 정보를 입력해주세요
+								</p>
+							</div>
+						</div>
+						<div className="border-b border-gray-200 dark:border-gray-700"></div>
 					</div>
 
-					{/* 제목 */}
-					<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
-						프로필 설정
-					</h1>
+					{/* 폼 */}
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+						{/* 기본 정보 섹션 */}
+						<div className="space-y-6">
+							{/* 이름 */}
+							<div className="flex items-start gap-3">
+								<User className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label
+										htmlFor="user-name"
+										className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+									>
+										이름 *
+									</label>
+									<Input
+										id="user-name"
+										{...register('name')}
+										placeholder="이름을 입력하세요"
+										disabled={isLoading}
+										className="w-full h-12"
+									/>
+									<FieldError error={errors.name} />
+								</div>
+							</div>
 
-					{/* 구분선 */}
-					<div className="w-20 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto rounded-full mb-4 sm:mb-6" />
+							{/* 이메일 */}
+							<div className="flex items-start gap-3">
+								<User className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label
+										htmlFor="user-email"
+										className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+									>
+										이메일 *
+									</label>
+									<Input
+										id="user-email"
+										{...register('email')}
+										placeholder="이메일을 입력하세요"
+										disabled={true}
+										readOnly
+										className="w-full h-12 bg-gray-50 cursor-not-allowed"
+									/>
+								</div>
+							</div>
 
-					{/* 설명 */}
-					<p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
-						서비스 이용을 위해 추가 정보를 입력해주세요
-					</p>
-				</div>
-			</section>
+							{/* 연락처 */}
+							<div className="flex items-start gap-3">
+								<Phone className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label
+										htmlFor="user-phone"
+										className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+									>
+										연락처 *
+									</label>
+									<Input
+										id="user-phone"
+										type="tel"
+										placeholder="010-1234-5678"
+										value={displayPhone}
+										onChange={handlePhoneChange}
+										disabled={isLoading}
+										className="w-full h-12"
+									/>
+									<FieldError error={errors.phone} />
+								</div>
+							</div>
 
-			{/* 컨텐츠 섹션 */}
-			<section className="max-w-2xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">
-				{/* 폼 카드 */}
-				<div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/20 dark:border-gray-700/20 rounded-2xl shadow-xl p-8">
-					<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-						{/* 이름 */}
-						<div>
-							<label
-								htmlFor="user-name"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<User className="w-4 h-4 mr-2" />
-								<span>이름 *</span>
-							</label>
-							<Input
-								id="user-name"
-								{...register('name')}
-								placeholder="이름을 입력하세요"
-								disabled={isLoading}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
-							/>
-							<FieldError error={errors.name} />
+							{/* 직업 선택 */}
+							<div className="flex items-start gap-3">
+								<Briefcase className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<ProfessionSelector
+										selectedProfessions={selectedProfessions}
+										onProfessionsChange={handleProfessionsChange}
+										disabled={isLoading}
+									/>
+									<FieldError error={errors.professions} />
+								</div>
+							</div>
+
+							{/* 소속 기관 */}
+							<div className="flex items-start gap-3">
+								<Building className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label
+										htmlFor="user-organization"
+										className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+									>
+										소속 기관
+									</label>
+									<Input
+										id="user-organization"
+										{...register('organization')}
+										placeholder="소속 기관을 입력하세요"
+										disabled={isLoading}
+										className="w-full h-12"
+									/>
+								</div>
+							</div>
 						</div>
 
-						{/* 이메일 */}
-						<div>
-							<label
-								htmlFor="user-email"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<User className="w-4 h-4 mr-2" />
-								<span>이메일 *</span>
-							</label>
-							<Input
-								id="user-email"
-								{...register('email')}
-								placeholder="이메일을 입력하세요"
-								disabled={true}
-								readOnly
-								className="bg-gray-100/80 dark:bg-gray-600/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base cursor-not-allowed opacity-75"
-							/>
-						</div>
-
-						{/* 연락처 */}
-						<div>
-							<label
-								htmlFor="user-phone"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<Phone className="w-4 h-4 mr-2" />
-								<span>연락처 *</span>
-							</label>
-							<Input
-								id="user-phone"
-								type="tel"
-								placeholder="010-1234-5678"
-								value={displayPhone}
-								onChange={handlePhoneChange}
-								disabled={isLoading}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
-							/>
-							<FieldError error={errors.phone} />
-						</div>
-
-						{/* 직업 선택 */}
-						<div>
-							<ProfessionSelector
-								selectedProfessions={selectedProfessions}
-								onProfessionsChange={handleProfessionsChange}
-								disabled={isLoading}
-							/>
-							<FieldError error={errors.professions} />
-						</div>
-
-						{/* 소속 기관 */}
-						<div>
-							<label
-								htmlFor="user-organization"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<Building className="w-4 h-4 mr-2" />
-								<span>소속 기관</span>
-							</label>
-							<Input
-								id="user-organization"
-								{...register('organization')}
-								placeholder="회사명 또는 학교명"
-								disabled={isLoading}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
-							/>
-						</div>
-
-						{/* 제출 버튼 */}
-						<div className="pt-4">
-							<button
-								type="submit"
-								disabled={isLoading}
-								className="w-full flex items-center justify-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-							>
-								{isLoading ? (
-									<>
-										<div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-										<span>프로필 생성 중...</span>
-									</>
-								) : (
-									<span>프로필 생성하기</span>
-								)}
-							</button>
+						{/* 제출 버튼 영역 */}
+						<div className="pt-8 border-t border-gray-200 dark:border-gray-700">
+							<div className="flex justify-center gap-4">
+								<button
+									type="submit"
+									disabled={isLoading}
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+								>
+									{isLoading ? (
+										<>
+											<div className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-400 rounded-full animate-spin" />
+											<span>프로필 생성 중...</span>
+										</>
+									) : (
+										<>
+											<Save className="w-4 h-4" />
+											<span>프로필 생성하기</span>
+										</>
+									)}
+								</button>
+							</div>
 						</div>
 					</form>
+
+					{/* 푸터 텍스트 */}
+					<div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+						<p className="text-center text-sm text-gray-500 dark:text-gray-400">
+							언제든지 프로필 설정에서 정보를 수정할 수 있습니다.
+						</p>
+					</div>
 				</div>
-
-				{/* 푸터 텍스트 */}
-				<p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-					언제든지 프로필 설정에서 정보를 수정할 수 있습니다.
-				</p>
-			</section>
-
-			{/* 장식적 배경 요소 */}
-			<div className="fixed top-1/4 right-10 w-32 h-32 bg-gradient-to-r from-emerald-400/10 to-teal-400/10 rounded-full blur-2xl -z-10" />
-			<div className="fixed bottom-1/4 left-10 w-40 h-40 bg-gradient-to-r from-blue-400/10 to-emerald-400/10 rounded-full blur-2xl -z-10" />
-		</main>
+			</div>
+		</div>
 	)
 }

@@ -5,9 +5,12 @@ import NaverLoginButton from '@/components/features/auth/NaverLoginButton'
 import KakaoLoginButton from '@/components/features/auth/KakaoLoginButton'
 import GoogleLoginButton from '@/components/features/auth/GoogleLoginButton'
 import { LoginModalProps } from '@/types/login'
+import { Button } from '@/components/ui'
 
 const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
-	if (!open) return null
+	if (!open) {
+		return null
+	}
 
 	return (
 		<div
@@ -17,10 +20,12 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 			tabIndex={-1}
 		>
 			<div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 w-full max-w-sm relative border border-gray-100/50 transform transition-all duration-300">
-				<button
+				<Button
 					onClick={onClose}
+					variant="ghost"
+					size="icon"
 					aria-label="닫기"
-					className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-all duration-200"
+					className="absolute top-4 right-4 w-8 h-8 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-all duration-200 cursor-pointer"
 				>
 					<svg
 						className="w-5 h-5"
@@ -35,7 +40,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 							d="M6 18L18 6M6 6l12 12"
 						/>
 					</svg>
-				</button>
+				</Button>
 
 				<div className="text-center mb-8">
 					<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">

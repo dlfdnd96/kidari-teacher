@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
 import {
-	ERROR_MESSAGES,
+	CLIENT_ERROR_KEY_MAPPING,
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
@@ -23,11 +23,10 @@ import {
 	Clock,
 	FileText,
 	MapPin,
-	PenLine,
-	Save,
 	Settings,
 	Users,
 	X,
+	Save,
 } from 'lucide-react'
 import {
 	CalendarCustom,
@@ -66,7 +65,7 @@ const VolunteerActivityEditForm = memo(
 		initialMaxParticipants,
 		onCancel,
 	}: VolunteerActivityEditFormProps) => {
-		const { register, handleSubmit, watch, setValue, formState } = useForm({
+		const { register, handleSubmit, watch, setValue } = useForm({
 			defaultValues: {
 				title: initialTitle,
 				description: initialDescription,
@@ -75,7 +74,7 @@ const VolunteerActivityEditForm = memo(
 				location: initialLocation,
 				status: initialStatus,
 				applicationDeadline: initialApplicationDeadline,
-				maxParticipants: initialMaxParticipants,
+				maxParticipants: initialMaxParticipants ?? '',
 			},
 		})
 
@@ -127,9 +126,11 @@ const VolunteerActivityEditForm = memo(
 		const updateVolunteerActivityMutation =
 			trpc.volunteerActivity.updateVolunteerActivity.useMutation({
 				onSuccess: async () => {
-					await utils.volunteerActivity.getVolunteerActivityList.invalidate()
-					router.refresh()
-					onCancel()
+					await Promise.all([
+						utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+						utils.volunteerActivity.getVolunteerActivity.invalidate({ id }),
+					])
+					router.push(`/volunteer-activities/${id}`)
 				},
 				onError: (error) => {
 					handleClientError(error, showError, '봉사활동 수정 오류')
@@ -160,7 +161,7 @@ const VolunteerActivityEditForm = memo(
 			async (data: Record<string, unknown>) => {
 				if (!session?.user) {
 					handleClientError(
-						ERROR_MESSAGES.AUTHENTICATION_ERROR,
+						CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 						showError,
 						'인증 오류',
 					)
@@ -208,80 +209,106 @@ const VolunteerActivityEditForm = memo(
 					strategy="lazyOnload"
 				/>
 
-				<div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-4 sm:mb-6">
-					{/* 헤더 */}
-					<div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 sm:p-8">
-						<div className="flex items-center">
-							<PenLine className="w-7 h-7 text-white mr-3" />
-							<div>
-								<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-									봉사활동 수정
-								</h2>
+				{/* 폼 */}
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+					{/* 기본 정보 섹션 */}
+					<div className="space-y-6">
+						{/* 활동명 */}
+						<div className="flex items-start gap-3">
+							<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+							<div className="flex-1">
+								<label
+									htmlFor="edit-title"
+									className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+								>
+									활동명 *
+								</label>
+								<Input
+									id="edit-title"
+									{...register('title')}
+									placeholder="봉사활동명을 입력해주세요"
+									className="w-full h-12"
+									disabled={loading}
+								/>
+								<FieldError error={errors.title} />
+							</div>
+						</div>
+
+						{/* 활동 내용 */}
+						<div className="flex items-start gap-3">
+							<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+							<div className="flex-1">
+								<label
+									htmlFor="edit-description"
+									className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+								>
+									활동 내용 *
+								</label>
+								<Textarea
+									id="edit-description"
+									{...register('description')}
+									placeholder="봉사활동에 대한 자세한 설명을 입력해주세요"
+									rows={6}
+									className="w-full resize-none"
+									disabled={loading}
+								/>
+								<FieldError error={errors.description} />
+							</div>
+						</div>
+
+						{/* 활동 장소 */}
+						<div className="flex items-start gap-3">
+							<MapPin className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+							<div className="flex-1">
+								<label
+									htmlFor="edit-location"
+									className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+								>
+									활동 장소 *
+								</label>
+								<Input
+									id="edit-location"
+									{...register('location')}
+									placeholder="클릭하여 주소를 검색하세요"
+									disabled={loading}
+									readOnly
+									onClick={handleAddressSearch}
+									className="w-full h-12 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
+								/>
+								<FieldError error={errors.location} />
 							</div>
 						</div>
 					</div>
 
-					{/* 폼 */}
-					<form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8">
-						<div className="space-y-6">
-							{/* 활동명 */}
-							<div>
-								<label
-									htmlFor="edit-title"
-									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-								>
-									<FileText className="w-4 h-4 mr-2" />
-									<span>활동명</span>
-								</label>
-								<Input
-									id="edit-title"
-									{...register('title', { required: true })}
-									placeholder="봉사활동 제목을 입력하세요"
-									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
-								/>
-								<FieldError error={errors.title} />
-							</div>
+					{/* 구분선 */}
+					<div className="border-t border-gray-200 dark:border-gray-700"></div>
 
-							{/* 활동 설명 */}
-							<div>
-								<label
-									htmlFor="edit-description"
-									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-								>
-									<FileText className="w-4 h-4 mr-2" />
-									<span>활동 설명</span>
-								</label>
-								<Textarea
-									id="edit-description"
-									{...register('description', { required: true })}
-									placeholder="봉사활동에 대한 상세한 설명을 입력하세요"
-									rows={6}
-									disabled={loading}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 resize-none"
-								/>
-								<FieldError error={errors.description} />
-							</div>
+					{/* 일정 정보 섹션 */}
+					<div className="space-y-6">
+						<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+							일정 정보
+						</h3>
 
-							{/* 일시 */}
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{/* 시작 일시 */}
-								<div>
-									<label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-										<Clock className="w-4 h-4 mr-2" />
-										<span>시작 일시 *</span>
+						<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+							{/* 시작 일시 */}
+							<div className="flex items-start gap-3">
+								<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+										시작 일시 *
 									</label>
 									<Popover>
 										<PopoverTrigger asChild>
 											<Button
 												variant="outline"
 												className={cn(
-													'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
-													!watch('startAt') && 'text-muted-foreground',
+													'w-full pl-4 text-left font-normal h-12',
+													!startAtValue && 'text-muted-foreground',
 												)}
+												disabled={loading}
 											>
-												{watch('startAt') ? (
-													format(watch('startAt'), 'yyyy년 M월 d일 HH:mm', {
+												{startAtValue ? (
+													format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
 														locale: ko,
 													})
 												) : (
@@ -293,7 +320,7 @@ const VolunteerActivityEditForm = memo(
 										<PopoverContent className="w-auto p-0" align="start">
 											<CalendarCustom
 												mode="single"
-												selected={watch('startAt')}
+												selected={startAtValue}
 												onSelect={(date) =>
 													setValue(
 														'startAt',
@@ -312,13 +339,11 @@ const VolunteerActivityEditForm = memo(
 												<Input
 													type="time"
 													value={
-														watch('startAt')
-															? format(watch('startAt'), 'HH:mm')
-															: ''
+														startAtValue ? format(startAtValue, 'HH:mm') : ''
 													}
 													onChange={(e) => {
 														const currentDate =
-															watch('startAt') ||
+															startAtValue ||
 															new TZDate(new Date(), TIME_ZONE.SEOUL)
 														if (e.target.value) {
 															const [hours, minutes] = e.target.value.split(':')
@@ -339,24 +364,27 @@ const VolunteerActivityEditForm = memo(
 									</Popover>
 									<FieldError error={errors.startAt} />
 								</div>
+							</div>
 
-								{/* 종료 일시 */}
-								<div>
-									<label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-										<Clock className="w-4 h-4 mr-2" />
-										<span>종료 일시 *</span>
+							{/* 종료 일시 */}
+							<div className="flex items-start gap-3">
+								<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+										종료 일시 *
 									</label>
 									<Popover>
 										<PopoverTrigger asChild>
 											<Button
 												variant="outline"
 												className={cn(
-													'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
-													!watch('endAt') && 'text-muted-foreground',
+													'w-full pl-4 text-left font-normal h-12',
+													!endAtValue && 'text-muted-foreground',
 												)}
+												disabled={loading}
 											>
-												{watch('endAt') ? (
-													format(watch('endAt'), 'yyyy년 M월 d일 HH:mm', {
+												{endAtValue ? (
+													format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
 														locale: ko,
 													})
 												) : (
@@ -368,7 +396,7 @@ const VolunteerActivityEditForm = memo(
 										<PopoverContent className="w-auto p-0" align="start">
 											<CalendarCustom
 												mode="single"
-												selected={watch('endAt')}
+												selected={endAtValue}
 												onSelect={(date) =>
 													setValue(
 														'endAt',
@@ -386,14 +414,10 @@ const VolunteerActivityEditForm = memo(
 											<div className="p-3 border-t">
 												<Input
 													type="time"
-													value={
-														watch('endAt')
-															? format(watch('endAt'), 'HH:mm')
-															: ''
-													}
+													value={endAtValue ? format(endAtValue, 'HH:mm') : ''}
 													onChange={(e) => {
 														const currentDate =
-															watch('endAt') ||
+															endAtValue ||
 															new TZDate(new Date(), TIME_ZONE.SEOUL)
 														if (e.target.value) {
 															const [hours, minutes] = e.target.value.split(':')
@@ -415,183 +439,191 @@ const VolunteerActivityEditForm = memo(
 									<FieldError error={errors.endAt} />
 								</div>
 							</div>
+						</div>
 
-							{/* 장소 */}
-							<div>
-								<label
-									htmlFor="edit-location"
-									className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-								>
-									<MapPin className="w-4 h-4 mr-2" />
-									<span>활동 장소</span>
+						{/* 신청 마감일 */}
+						<div className="flex items-start gap-3">
+							<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+							<div className="flex-1">
+								<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+									신청 마감일 *
 								</label>
-								<Input
-									id="edit-location"
-									{...register('location', { required: true })}
-									placeholder="클릭하여 주소를 검색하세요"
-									disabled={loading}
-									readOnly
-									onClick={handleAddressSearch}
-									className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200 cursor-pointer"
-								/>
-								<FieldError error={errors.location} />
-							</div>
-
-							{/* 상태 */}
-							<div>
-								<label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-									<Settings className="w-4 h-4 mr-2" />
-									<span>상태 *</span>
-								</label>
-								<input
-									{...register('status', { required: true })}
-									type="hidden"
-									value={watch('status')}
-								/>
-								<Select
-									value={watch('status')}
-									defaultValue={initialStatus}
-									disabled={loading}
-									onValueChange={(value) =>
-										setValue(
-											'status',
-											ZodEnum.VolunteerActivityStatus.parse(value),
-										)
-									}
-								>
-									<SelectTrigger className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200">
-										<SelectValue placeholder="상태를 선택하세요" />
-									</SelectTrigger>
-									<SelectContent>
-										{Object.entries(VOLUNTEER_ACTIVITY_STATUS_LABELS).map(
-											([value, label]) => (
-												<SelectItem key={value} value={value}>
-													{label}
-												</SelectItem>
-											),
-										)}
-									</SelectContent>
-								</Select>
-								<FieldError error={errors.status} />
-							</div>
-
-							{/* 신청 마감일과 최대 참가자 수 */}
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{/* 신청 마감일 */}
-								<div>
-									<label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-										<CalendarIcon className="w-4 h-4 mr-2" />
-										<span>신청 마감일 *</span>
-									</label>
-									<Popover>
-										<PopoverTrigger asChild>
-											<Button
-												variant="outline"
-												className={cn(
-													'w-full pl-3 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12',
-													!watch('applicationDeadline') &&
-														'text-muted-foreground',
-												)}
-											>
-												{watch('applicationDeadline') ? (
-													format(
-														watch('applicationDeadline'),
-														'yyyy년 M월 d일',
-														{
-															locale: ko,
-														},
-													)
-												) : (
-													<span>마감일 선택</span>
-												)}
-												<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-											</Button>
-										</PopoverTrigger>
-										<PopoverContent className="w-auto p-0" align="start">
-											<CalendarCustom
-												mode="single"
-												selected={watch('applicationDeadline')}
-												onSelect={(date) => {
-													const newDate = new TZDate(
-														date || new Date(),
-														TIME_ZONE.SEOUL,
-													)
-													newDate.setHours(23, 59, 59, 999)
-													setValue('applicationDeadline', newDate)
-												}}
-												disabled={(date) =>
-													startOfDay(date) <
-													startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button
+											variant="outline"
+											className={cn(
+												'w-full pl-4 text-left font-normal h-12',
+												!applicationDeadlineValue && 'text-muted-foreground',
+											)}
+											disabled={loading}
+										>
+											{applicationDeadlineValue ? (
+												format(
+													applicationDeadlineValue,
+													'yyyy년 M월 d일 HH:mm',
+													{
+														locale: ko,
+													},
+												)
+											) : (
+												<span>신청 마감일 선택</span>
+											)}
+											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="w-auto p-0" align="start">
+										<CalendarCustom
+											mode="single"
+											selected={applicationDeadlineValue}
+											onSelect={(date) =>
+												setValue(
+													'applicationDeadline',
+													date || new TZDate(new Date(), TIME_ZONE.SEOUL),
+												)
+											}
+											disabled={(date) =>
+												startOfDay(date) <
+												startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
+											}
+											captionLayout="dropdown-months"
+											startMonth={new Date()}
+											locale={ko}
+										/>
+										<div className="p-3 border-t">
+											<Input
+												type="time"
+												value={
+													applicationDeadlineValue
+														? format(applicationDeadlineValue, 'HH:mm')
+														: ''
 												}
-												captionLayout="dropdown-months"
-												startMonth={new Date()}
-												locale={ko}
+												onChange={(e) => {
+													const currentDate =
+														applicationDeadlineValue ||
+														new TZDate(new Date(), TIME_ZONE.SEOUL)
+													if (e.target.value) {
+														const [hours, minutes] = e.target.value.split(':')
+														const newDate = new TZDate(
+															currentDate,
+															TIME_ZONE.SEOUL,
+														)
+														newDate.setHours(parseInt(hours), parseInt(minutes))
+														setValue('applicationDeadline', newDate)
+													}
+												}}
 											/>
-										</PopoverContent>
-									</Popover>
-									<FieldError error={errors.applicationDeadline} />
-								</div>
+										</div>
+									</PopoverContent>
+								</Popover>
+								<FieldError error={errors.applicationDeadline} />
+							</div>
+						</div>
+					</div>
 
-								{/* 최대 참가자 수 */}
-								<div>
+					{/* 구분선 */}
+					<div className="border-t border-gray-200 dark:border-gray-700"></div>
+
+					{/* 추가 설정 섹션 */}
+					<div className="space-y-6">
+						<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+							추가 설정
+						</h3>
+
+						<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+							{/* 모집 인원 */}
+							<div className="flex items-start gap-3">
+								<Users className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
 									<label
 										htmlFor="edit-max-participants"
-										className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+										className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
 									>
-										<Users className="w-4 h-4 mr-2" />
-										<span>최대 참가자 수</span>
+										최대 모집 인원
 									</label>
 									<Input
 										id="edit-max-participants"
 										type="number"
-										{...register('maxParticipants', {
-											setValueAs: (value) =>
-												value === '' ? undefined : parseInt(value),
-										})}
-										placeholder="제한 없음"
+										{...register('maxParticipants')}
+										placeholder="최대 모집 인원을 입력해주세요"
+										className="w-full h-12"
 										disabled={loading}
-										className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-200"
 									/>
-									<p className="text-xs text-gray-500 mt-1">
-										비워두면 인원 제한이 없습니다.
+									<p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+										비워두면 인원 제한이 없습니다
 									</p>
 								</div>
 							</div>
 
-							{/* 버튼들 */}
-							<div className="flex flex-col sm:flex-row gap-3 pt-6">
-								<Button
-									type="submit"
-									disabled={loading || formState.isSubmitting}
-									className="flex-1 flex items-center justify-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
-								>
-									{loading ? (
-										<>
-											<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-											<span>수정 중...</span>
-										</>
-									) : (
-										<>
-											<Save className="w-4 h-4 mr-1.5" />
-											<span>수정</span>
-										</>
-									)}
-								</Button>
-
-								<Button
-									type="button"
-									onClick={onCancel}
-									disabled={loading}
-									variant="outline"
-									className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
-								>
-									<X className="w-4 h-4 mr-1.5" />
-									<span>취소</span>
-								</Button>
+							{/* 상태 */}
+							<div className="flex items-start gap-3">
+								<Settings className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+								<div className="flex-1">
+									<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+										상태
+									</label>
+									<Select
+										value={watch('status')}
+										onValueChange={(value) =>
+											setValue(
+												'status',
+												ZodEnum.VolunteerActivityStatus.parse(value),
+											)
+										}
+									>
+										<SelectTrigger className="w-full h-12">
+											<SelectValue placeholder="상태를 선택해주세요" />
+										</SelectTrigger>
+										<SelectContent>
+											{Object.entries(VOLUNTEER_ACTIVITY_STATUS_LABELS).map(
+												([key, label]) => (
+													<SelectItem key={key} value={key}>
+														{label}
+													</SelectItem>
+												),
+											)}
+										</SelectContent>
+									</Select>
+									<FieldError error={errors.status} />
+								</div>
 							</div>
 						</div>
-					</form>
-				</div>
+					</div>
+
+					{/* 제출 버튼 영역 */}
+					<div className="pt-8 border-t border-gray-200 dark:border-gray-700">
+						<div className="flex justify-center gap-4">
+							<Button
+								type="submit"
+								disabled={loading}
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+							>
+								{loading ? (
+									<>
+										<div className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-400 rounded-full animate-spin" />
+										<span>수정 중...</span>
+									</>
+								) : (
+									<>
+										<Save className="w-4 h-4" />
+										<span>수정 완료</span>
+									</>
+								)}
+							</Button>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={onCancel}
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
+								disabled={loading}
+							>
+								<X className="w-4 h-4" />
+								<span>취소</span>
+							</Button>
+						</div>
+					</div>
+				</form>
 			</>
 		)
 	},

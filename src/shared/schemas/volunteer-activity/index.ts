@@ -111,13 +111,12 @@ export const CreateVolunteerActivityInputSchema = z
 				),
 			),
 		maxParticipants: z.optional(
-			z
-				.number()
-				.check(
-					z.positive(),
-					z.minimum(1, '최대 참가자 수는 1명 이상이어야 합니다'),
-					z.maximum(1000, '최대 참가자 수는 1000명 이하여야 합니다'),
+			z.nullable(
+				z.pipe(
+					z.coerce.number(),
+					z.transform((count) => (count === 0 ? null : count)),
 				),
+			),
 		),
 	})
 	.check(
@@ -189,13 +188,12 @@ export const UpdateVolunteerActivityInputSchema = z.strictObject({
 			),
 		),
 	maxParticipants: z.optional(
-		z
-			.number()
-			.check(
-				z.positive(),
-				z.minimum(1, '최대 참가자 수는 1명 이상이어야 합니다'),
-				z.maximum(1000, '최대 참가자 수는 1000명 이하여야 합니다'),
+		z.nullable(
+			z.pipe(
+				z.coerce.number(),
+				z.transform((count) => (count === 0 ? null : count)),
 			),
+		),
 	),
 })
 

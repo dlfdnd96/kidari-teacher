@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import type { FC, ButtonHTMLAttributes } from 'react'
+import { Button } from '@/components/ui'
 
 const GoogleLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 	props,
@@ -10,10 +11,11 @@ const GoogleLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 	const pathname = usePathname()
 
 	return (
-		<button
+		<Button
 			type="button"
+			variant="outline"
 			aria-label="구글로 로그인"
-			className="w-full bg-white hover:bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer"
+			className="w-full bg-white hover:bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 h-auto flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer"
 			onClick={() =>
 				signIn('google', {
 					callbackUrl: `/profile/check?returnTo=${encodeURIComponent(pathname)}`,
@@ -42,7 +44,7 @@ const GoogleLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 			<span className="text-gray-700 font-medium text-[15px]">
 				구글로 로그인
 			</span>
-		</button>
+		</Button>
 	)
 }
 

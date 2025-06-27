@@ -5,4 +5,3 @@ export { default as ActivitySection } from '@/components/features/homepage/Activ
 export { default as ImpactSection } from '@/components/features/homepage/ImpactSection'
 export { default as ContactSection } from '@/components/features/homepage/ContactSection'
 export { default as GallerySection } from '@/components/features/homepage/GallerySection'
-export { default as CTASection } from '@/components/features/homepage/CTASection'

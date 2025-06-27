@@ -28,6 +28,22 @@ export const volunteerActivityRouter = createTRPCRouter({
 					id: input.id,
 					deletedAt: null,
 				},
+				include: {
+					manager: true,
+					applications: {
+						where: {
+							deletedAt: null,
+							user: {
+								is: {
+									deletedAt: null,
+								},
+							},
+						},
+						include: {
+							user: true,
+						},
+					},
+				},
 			})
 
 			if (!activity) {
@@ -77,6 +93,7 @@ export const volunteerActivityRouter = createTRPCRouter({
 								user: true,
 							},
 						},
+						manager: true,
 					},
 				}),
 				ctx.prisma.volunteerActivity.count({
@@ -122,7 +139,7 @@ export const volunteerActivityRouter = createTRPCRouter({
 			) {
 				throw new TRPCError({
 					code: 'FORBIDDEN',
-					message: '관리자만 봉사활동을 수정할 수 있습니다',
+					message: '관리자 또는 작성자만 봉사활동을 수정할 수 있습니다',
 				})
 			}
 

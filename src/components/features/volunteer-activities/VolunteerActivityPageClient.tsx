@@ -14,31 +14,9 @@ import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
 import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
-import { ERROR_MESSAGES, handleClientError } from '@/utils/error'
+import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { Enum } from '@/enums'
-
-const CreateVolunteerActivityModal = dynamic(
-	() =>
-		import(
-			'@/components/features/volunteer-activities/CreateVolunteerActivityModal'
-		),
-	{
-		ssr: false,
-		loading: () => null,
-	},
-)
-
-const VolunteerActivityDetailModal = dynamic(
-	() =>
-		import(
-			'@/components/features/volunteer-activities/VolunteerActivityDetailModal'
-		),
-	{
-		ssr: false,
-		loading: () => null,
-	},
-)
 
 const ApplicationModal = dynamic(
 	() => import('@/components/features/applications/ApplicationModal'),
@@ -56,11 +34,6 @@ function VolunteerActivityPageClientContent({
 	const { showError } = useErrorModal()
 	const { data: session } = useSession()
 
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [selectedActivity, setSelectedActivity] = useState<ZodType<
-		typeof VolunteerActivityEntitySchema
-	> | null>(null)
-	const [isDetailOpen, setIsDetailOpen] = useState(false)
 	const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false)
 	const [applicationActivity, setApplicationActivity] = useState<ZodType<
 		typeof VolunteerActivityEntitySchema
@@ -73,12 +46,12 @@ function VolunteerActivityPageClientContent({
 
 	const urlUpdateTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-	const pageSize = 10
+	const pageSize = 12
 	const isAdmin = session?.user?.role === Enum.Role.ADMIN
 
 	useEffect(() => {
 		const statusFromUrl = searchParams?.get('status') || 'all'
-		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 10)
+		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 12)
 		const searchFromUrl = searchParams?.get('search') || ''
 
 		setSelectedStatus(statusFromUrl)
@@ -155,32 +128,44 @@ function VolunteerActivityPageClientContent({
 		}
 	}, [isLoading, totalPages, currentPage])
 
-	const handleOpenModal = useCallback(() => {
-		setIsModalOpen(true)
-	}, [])
-
-	const handleCloseModal = useCallback(() => {
-		setIsModalOpen(false)
-	}, [])
+	const handleCreateActivity = useCallback(() => {
+		if (typeof window !== 'undefined') {
+			const currentFilters = {
+				status: selectedStatus !== 'all' ? selectedStatus : undefined,
+				search: searchQuery.trim() || undefined,
+				page: currentPage > 1 ? currentPage : undefined,
+			}
+			sessionStorage.setItem(
+				'volunteer-activities-filters',
+				JSON.stringify(currentFilters),
+			)
+		}
+		router.push('/volunteer-activities/create')
+	}, [router, selectedStatus, searchQuery, currentPage])
 
 	const handleViewDetail = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
-			setSelectedActivity(activity)
-			setIsDetailOpen(true)
+			if (typeof window !== 'undefined') {
+				const currentFilters = {
+					status: selectedStatus !== 'all' ? selectedStatus : undefined,
+					search: searchQuery.trim() || undefined,
+					page: currentPage > 1 ? currentPage : undefined,
+				}
+				sessionStorage.setItem(
+					'volunteer-activities-filters',
+					JSON.stringify(currentFilters),
+				)
+			}
+			router.push(`/volunteer-activities/${activity.id}`)
 		},
-		[],
+		[router, selectedStatus, searchQuery, currentPage],
 	)
-
-	const handleCloseDetail = useCallback(() => {
-		setIsDetailOpen(false)
-		setSelectedActivity(null)
-	}, [])
 
 	const handleApply = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
 			if (!session?.user) {
 				handleClientError(
-					ERROR_MESSAGES.AUTHENTICATION_ERROR,
+					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
 					showError,
 					'인증 오류',
 				)
@@ -189,7 +174,6 @@ function VolunteerActivityPageClientContent({
 
 			setApplicationActivity(activity)
 			setIsApplicationModalOpen(true)
-			setIsDetailOpen(false)
 		},
 		[session?.user, showError],
 	)
@@ -208,11 +192,24 @@ function VolunteerActivityPageClientContent({
 		])
 	}, [utils])
 
-	const handleApplyFromDetail = useCallback(
-		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
-			handleApply(activity)
+	const updateURLImmediate = useCallback(
+		(params: { status?: string; page?: number; search?: string }) => {
+			const urlParams = new URLSearchParams()
+
+			if (params.status && params.status !== 'all') {
+				urlParams.set('status', params.status)
+			}
+			if (params.page && params.page > 1) {
+				urlParams.set('page', params.page.toString())
+			}
+			if (params.search && params.search.trim()) {
+				urlParams.set('search', params.search.trim())
+			}
+
+			const newUrl = urlParams.toString() ? `?${urlParams.toString()}` : ''
+			router.replace(`/volunteer-activities${newUrl}`, { scroll: false })
 		},
-		[handleApply],
+		[router],
 	)
 
 	const updateURL = useCallback(
@@ -261,13 +258,14 @@ function VolunteerActivityPageClientContent({
 		(query: string) => {
 			setSearchQuery(query)
 			setCurrentPage(1)
-			updateURL({
+
+			updateURLImmediate({
 				status: selectedStatus !== 'all' ? selectedStatus : undefined,
 				page: 1,
 				search: query,
 			})
 		},
-		[selectedStatus, updateURL],
+		[selectedStatus, updateURLImmediate],
 	)
 
 	useEffect(() => {
@@ -356,9 +354,10 @@ function VolunteerActivityPageClientContent({
 				<div className="flex justify-center">
 					<Button
 						onClick={() => refetch()}
-						className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
+						variant="outline"
+						className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 					>
-						<RefreshCw className="w-4 h-4 mr-1.5" />
+						<RefreshCw className="w-4 h-4" />
 						<span>다시 시도</span>
 					</Button>
 				</div>
@@ -368,12 +367,26 @@ function VolunteerActivityPageClientContent({
 
 	return (
 		<>
-			{/* 검색 및 필터 */}
+			{/* 헤더 영역 - 생성 버튼과 검색/필터 */}
 			<div className="mb-8">
+				{/* 우측 상단 생성 버튼 */}
+				{isAdmin && (
+					<div className="flex justify-end mb-4">
+						<Button
+							onClick={handleCreateActivity}
+							variant="outline"
+							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
+						>
+							<Plus className="w-4 h-4" />
+							<span>봉사활동 생성</span>
+						</Button>
+					</div>
+				)}
+
+				{/* 검색/필터 영역 */}
 				<VolunteerActivityFilterTab
 					selectedStatus={selectedStatus}
 					statusChangeAction={handleStatusChange}
-					allStatusCount={totalCount}
 					searchQuery={searchQuery}
 					searchChangeAction={handleSearchChange}
 				/>
@@ -439,32 +452,6 @@ function VolunteerActivityPageClientContent({
 									: '다른 상태의 봉사활동을 확인해보세요.'}
 					</p>
 				</div>
-			)}
-
-			{/* 오른쪽 하단 플로팅 +버튼 (관리자만) */}
-			{isAdmin && !isDetailOpen && !isApplicationModalOpen && (
-				<button
-					onClick={handleOpenModal}
-					aria-label="봉사활동 생성"
-					className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 cursor-pointer"
-				>
-					<Plus className="w-8 h-8" />
-				</button>
-			)}
-
-			{/* 동적으로 로드되는 모달들 */}
-			<CreateVolunteerActivityModal
-				open={isModalOpen}
-				onClose={handleCloseModal}
-			/>
-
-			{selectedActivity && (
-				<VolunteerActivityDetailModal
-					open={isDetailOpen}
-					onClose={handleCloseDetail}
-					activity={selectedActivity}
-					onApply={handleApplyFromDetail}
-				/>
 			)}
 
 			{/* 신청 모달 */}

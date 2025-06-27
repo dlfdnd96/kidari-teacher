@@ -63,6 +63,10 @@ export const DeleteNoticeInputSchema = z.strictObject({
 	id: z.string().check(z.cuid()),
 })
 
+export const getNoticeInputSchema = z.strictObject({
+	id: z.string().check(z.cuid()),
+})
+
 export const NoticeFormSchema = z.strictObject({
 	title: z.string().check(z.minLength(1, '제목을 입력해주세요.')),
 	content: z.string().check(z.minLength(1, '내용을 입력해주세요.')),
