@@ -63,7 +63,7 @@ const ApplicationModal = dynamic(
 	},
 )
 
-const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
+const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 	id,
 }) => {
 	const router = useRouter()
@@ -906,4 +906,4 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 	)
 }
 
-export default VolunteerActivityDetailPage
+export default VolunteerActivityDetailPageClient

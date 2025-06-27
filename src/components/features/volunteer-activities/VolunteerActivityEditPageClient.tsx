@@ -8,7 +8,7 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { Enum } from '@/enums'
-import VolunteerActivityEditPage from './VolunteerActivityEditPage'
+import VolunteerActivityEditForm from '@/components/features/volunteer-activities/VolunteerActivityEditForm'
 import { VolunteerActivityEditPageClientProps } from '@/types/volunteer-activity'
 import { Button } from '@/components/ui'
 
@@ -112,7 +112,7 @@ const VolunteerActivityEditPageClient: FC<
 
 					{/* 수정 폼 */}
 					<div>
-						<VolunteerActivityEditPage
+						<VolunteerActivityEditForm
 							id={activity.id}
 							initialTitle={activity.title}
 							initialDescription={activity.description}

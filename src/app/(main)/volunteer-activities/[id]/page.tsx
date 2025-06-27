@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import VolunteerActivityDetailPage from '@/components/features/volunteer-activities/VolunteerActivityDetailPage'
+import VolunteerActivityDetailPageClient from '@/components/features/volunteer-activities/VolunteerActivityDetailPageClient'
 import { VolunteerActivityDetailPageProps } from '@/types/volunteer-activity'
 
 export async function generateMetadata({
@@ -39,5 +39,5 @@ export default async function VolunteerActivityDetailPageRoute({
 		notFound()
 	}
 
-	return <VolunteerActivityDetailPage id={id} />
+	return <VolunteerActivityDetailPageClient id={id} />
 }

@@ -22,10 +22,6 @@ export interface NoticeListProps {
 	notices: ZodType<typeof NoticePickAuthorEntitySchema>[]
 }
 
-export interface NoticeTableProps {
-	notices: ZodType<typeof NoticePickAuthorEntitySchema>[]
-}
-
 export interface NoticeDetailPageProps {
 	params: Promise<{ id: string }>
 }

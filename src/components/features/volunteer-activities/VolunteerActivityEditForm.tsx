@@ -52,7 +52,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { validators } from '@/utils/validation'
 import { useFieldValidation } from '@/hooks/useFieldValidation'
 
-const VolunteerActivityEditPage = memo(
+const VolunteerActivityEditForm = memo(
 	({
 		id,
 		initialTitle,
@@ -629,6 +629,6 @@ const VolunteerActivityEditPage = memo(
 	},
 )
 
-VolunteerActivityEditPage.displayName = 'VolunteerActivityEditPage'
+VolunteerActivityEditForm.displayName = 'VolunteerActivityEditForm'
 
-export default VolunteerActivityEditPage
+export default VolunteerActivityEditForm
