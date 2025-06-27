@@ -136,7 +136,7 @@ const VolunteerActivityCard = memo(
 								) && (
 									<button
 										onClick={handleApply}
-										className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+										className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer"
 									>
 										<span>신청</span>
 									</button>

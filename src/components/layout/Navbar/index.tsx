@@ -186,7 +186,7 @@ const Navbar = memo(() => {
 						<div className="flex items-center relative" ref={profileRef}>
 							<button
 								onClick={() => setIsProfileOpen((prev) => !prev)}
-								className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100"
+								className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100 cursor-pointer"
 								aria-label="프로필"
 								type="button"
 							>
@@ -228,7 +228,7 @@ const Navbar = memo(() => {
 												handleLogout()
 												setIsProfileOpen(false)
 											}}
-											className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+											className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer"
 										>
 											<LogOut size={16} />
 											로그아웃
