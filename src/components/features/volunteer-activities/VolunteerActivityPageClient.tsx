@@ -350,13 +350,13 @@ function VolunteerActivityPageClientContent({
 				{/* 우측 상단 생성 버튼 */}
 				{isAdmin && (
 					<div className="flex justify-end mb-4">
-						<button
+						<Button
 							onClick={handleCreateActivity}
-							className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer flex items-center gap-2"
+							className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer flex items-center gap-2 border-0 h-auto"
 						>
 							<Plus className="w-5 h-5" />
 							<span>봉사활동 생성</span>
-						</button>
+						</Button>
 					</div>
 				)}
 

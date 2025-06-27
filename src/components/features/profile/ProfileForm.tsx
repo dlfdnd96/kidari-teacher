@@ -2,9 +2,8 @@
 
 import React, { memo, useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Save, User, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { User, X } from 'lucide-react'
+import { Input, FieldError, Button } from '@/components/ui'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import {
 	CLIENT_ERROR_KEY_MAPPING,
@@ -16,7 +15,6 @@ import type { ProfileFormProps } from '@/types/profile'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { FieldError } from '@/components/ui'
 import { commonValidators } from '@/utils/validation'
 import { useFieldValidation } from '@/hooks/useFieldValidation'
 
@@ -132,10 +130,10 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 
 					{/* 버튼들 */}
 					<div className="flex gap-3 pt-4 justify-center">
-						<button
+						<Button
 							type="submit"
 							disabled={isLoading || formState.isSubmitting}
-							className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+							className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-0"
 						>
 							{isLoading ? (
 								<>
@@ -143,12 +141,9 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 									저장 중...
 								</>
 							) : (
-								<>
-									<Save className="w-4 h-4 mr-2" />
-									수정 완료
-								</>
+								<>수정 완료</>
 							)}
-						</button>
+						</Button>
 
 						<Button
 							type="button"

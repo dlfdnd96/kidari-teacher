@@ -76,17 +76,6 @@ const GallerySection = dynamic(
 	},
 )
 
-const CTASection = dynamic(
-	() => import('@/components/features/homepage/CTASection'),
-	{
-		loading: () => (
-			<div className="max-w-4xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
-				<div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-48"></div>
-			</div>
-		),
-	},
-)
-
 const structuredData = {
 	'@context': 'https://schema.org',
 	'@type': 'Organization',
@@ -204,16 +193,6 @@ export default function HomePage() {
 						}
 					>
 						<GallerySection />
-					</Suspense>
-
-					<Suspense
-						fallback={
-							<div className="max-w-4xl mx-auto mb-12 px-4">
-								<div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-48" />
-							</div>
-						}
-					>
-						<CTASection />
 					</Suspense>
 				</main>
 			</div>

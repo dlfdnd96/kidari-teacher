@@ -13,7 +13,7 @@ import {
 } from '@/utils/error'
 import { NoticeFormSchema } from '@/shared/schemas/notice'
 import { Button, Input, Textarea } from '@/components/ui'
-import { ArrowLeft, FileText, Save, Type } from 'lucide-react'
+import { ArrowLeft, FileText, Type } from 'lucide-react'
 
 const NoticeCreatePageClient = memo(() => {
 	const { register, handleSubmit, reset, formState } = useForm()
@@ -73,13 +73,14 @@ const NoticeCreatePageClient = memo(() => {
 				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
-							<button
+							<Button
 								onClick={() => router.back()}
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 							>
 								<ArrowLeft className="w-4 h-4" />
 								<span className="text-sm font-medium">뒤로가기</span>
-							</button>
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -164,10 +165,10 @@ const NoticeCreatePageClient = memo(() => {
 								>
 									취소
 								</Button>
-								<button
+								<Button
 									type="submit"
 									disabled={loading || formState.isSubmitting || !session?.user}
-									className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+									className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
 									data-testid="create-submit-notice-button"
 								>
 									{loading ? (
@@ -177,11 +178,10 @@ const NoticeCreatePageClient = memo(() => {
 										</>
 									) : (
 										<>
-											<Save className="w-4 h-4" />
 											<span>게시하기</span>
 										</>
 									)}
-								</button>
+								</Button>
 							</div>
 						</div>
 					</form>

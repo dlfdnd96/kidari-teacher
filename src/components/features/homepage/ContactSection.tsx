@@ -14,6 +14,7 @@ import {
 	AlertCircle,
 	Info,
 } from 'lucide-react'
+import { Button } from '@/components/ui'
 
 const ContactSection = memo(() => {
 	const handleExternalLink = useCallback((url: string) => {
@@ -112,13 +113,14 @@ const ContactSection = memo(() => {
 							<div className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">
 								네이버 카페:
 							</div>
-							<button
+							<Button
+								variant="ghost"
 								onClick={() => handleExternalLink(SITE_INFO.cafeUrl)}
-								className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded"
+								className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded p-1 h-auto cursor-pointer"
 								aria-label="네이버 카페로 이동"
 							>
 								<NaverCafeIcon size={20} />
-							</button>
+							</Button>
 						</div>
 						<div className="p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
 							<div className="font-semibold text-gray-800 dark:text-gray-200 mb-1 text-sm sm:text-base">

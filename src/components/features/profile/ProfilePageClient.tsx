@@ -7,7 +7,7 @@ import ProfileForm from '@/components/features/profile/ProfileForm'
 import ProfileStats from '@/components/features/profile/ProfileStats'
 import UserProfileCard from '@/components/features/profile/UserProfileCard'
 import UserProfileForm from '@/components/features/profile/UserProfileForm'
-import { Alert, AlertDescription, Skeleton } from '@/components/ui'
+import { Alert, AlertDescription, Button, Skeleton } from '@/components/ui'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import type { ProfilePageClientProps } from '@/types/profile'
 
@@ -146,13 +146,13 @@ export default function ProfilePageClient({
 					<p className="text-gray-500 mb-6">
 						네트워크 연결을 확인하고 다시 시도해주세요.
 					</p>
-					<button
+					<Button
 						onClick={handleRefresh}
-						className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+						className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-0"
 					>
 						<RefreshCw className="w-4 h-4 mr-2" />
 						다시 시도
-					</button>
+					</Button>
 				</div>
 			</div>
 		)

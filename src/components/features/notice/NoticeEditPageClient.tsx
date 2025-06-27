@@ -3,7 +3,7 @@
 import React, { memo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import NoticeEditForm from '@/components/features/notice/NoticeEditForm'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui'
 import { ArrowLeft } from 'lucide-react'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { NoticeEditPageClientProps } from '@/types/notice'
@@ -40,13 +40,14 @@ const NoticeEditPageClient = memo(({ noticeId }: NoticeEditPageClientProps) => {
 					<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 						<div className="flex items-center justify-between h-14">
 							<div className="py-4">
-								<button
+								<Button
 									onClick={() => router.push('/notice')}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+									variant="outline"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 								>
 									<ArrowLeft className="w-4 h-4" />
 									<span className="text-sm font-medium">뒤로가기</span>
-								</button>
+								</Button>
 							</div>
 						</div>
 					</div>

@@ -5,7 +5,7 @@ import { notFound, useSearchParams, useRouter } from 'next/navigation'
 import NoticeList from '@/components/features/notice/NoticeList'
 import Pagination from '@/components/features/pagination/Pagination'
 import { trpc } from '@/components/providers/TrpcProvider'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui'
 import { keepPreviousData } from '@tanstack/react-query'
 import { NoticePageClientProps } from '@/types/notice'
 import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
@@ -168,13 +168,13 @@ function NoticePageClientContent({
 				{/* 우측 상단 생성 버튼 */}
 				{isAdmin && (
 					<div className="flex justify-end mb-4">
-						<button
+						<Button
 							onClick={handleCreateNotice}
-							className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
+							className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer border-0 h-auto"
 						>
 							<Plus className="w-5 h-5" />
 							<span>공지사항 작성</span>
-						</button>
+						</Button>
 					</div>
 				)}
 			</div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import {
+	Button,
 	Input,
 	Select,
 	SelectContent,
@@ -57,13 +58,15 @@ export default function ActivityFilterTab({
 						className="pl-10 pr-10 h-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-200"
 					/>
 					{localSearchQuery && (
-						<button
+						<Button
 							onClick={handleClearSearch}
-							className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+							variant="ghost"
+							size="icon"
+							className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors h-auto w-auto p-0"
 							aria-label="검색 초기화"
 						>
 							<X className="w-4 h-4" />
-						</button>
+						</Button>
 					)}
 				</div>
 

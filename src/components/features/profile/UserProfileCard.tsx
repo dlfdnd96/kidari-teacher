@@ -51,13 +51,13 @@ const UserProfileCard = memo(
 								프로필을 완성하세요
 							</p>
 							{canEdit && onCreate && (
-								<button
+								<Button
 									onClick={onCreate}
-									className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center"
+									className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center border-0"
 								>
 									<Plus className="w-4 h-4 mr-2" />
 									프로필 정보 추가
-								</button>
+								</Button>
 							)}
 						</div>
 					</div>

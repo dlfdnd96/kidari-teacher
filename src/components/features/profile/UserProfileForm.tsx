@@ -2,12 +2,12 @@
 
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { CalendarIcon, Save, User, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { CalendarIcon, User, X } from 'lucide-react'
 import {
+	Button,
 	CalendarCustom,
 	FieldError,
+	Input,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -316,10 +316,10 @@ const UserProfileForm = memo(
 
 						{/* 버튼들 */}
 						<div className="flex gap-3 pt-4 justify-center">
-							<button
+							<Button
 								type="submit"
 								disabled={isLoading || formState.isSubmitting}
-								className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+								className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-0"
 							>
 								{isLoading ? (
 									<>
@@ -328,11 +328,10 @@ const UserProfileForm = memo(
 									</>
 								) : (
 									<>
-										<Save className="w-4 h-4 mr-2" />
 										{isSetup ? '프로필 생성' : isEditing ? '수정 완료' : '저장'}
 									</>
 								)}
-							</button>
+							</Button>
 
 							{onCancel && (
 								<Button

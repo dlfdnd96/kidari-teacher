@@ -46,6 +46,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
+	Button,
 	Select,
 	SelectContent,
 	SelectItem,
@@ -352,32 +353,35 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
-							<button
+							<Button
 								onClick={handleGoBack}
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 							>
 								<ArrowLeft className="w-4 h-4" />
 								<span className="text-sm font-medium">뒤로가기</span>
-							</button>
+							</Button>
 						</div>
 
 						{/* 수정/삭제 버튼 */}
 						{(isManager || isWriter) && (
 							<div className="py-4 flex items-center gap-2">
-								<button
+								<Button
 									onClick={handleEditClick}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer"
+									variant="outline"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 								>
 									<Edit className="w-4 h-4" />
 									<span>수정</span>
-								</button>
-								<button
+								</Button>
+								<Button
 									onClick={handleDeleteClick}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer"
+									variant="outline"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 								>
 									<Trash2 className="w-4 h-4" />
 									<span>삭제</span>
-								</button>
+								</Button>
 							</div>
 						)}
 					</div>
@@ -663,13 +667,15 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 																		{isManager && (
 																			<div className="flex items-center gap-2 ml-4">
 																				{/* 신청 상세 보기 버튼 */}
-																				<button
+																				<Button
 																					type="button"
-																					className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+																					variant="ghost"
+																					size="icon"
+																					className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors h-auto"
 																					title="상세 보기"
 																				>
 																					<Eye className="w-4 h-4" />
-																				</button>
+																				</Button>
 
 																				{/* 상태 변경 드롭다운 */}
 																				<div className="relative">
@@ -715,7 +721,7 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 												{isManager && (
 													<div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
 														<div className="flex flex-wrap gap-2">
-															<button
+															<Button
 																type="button"
 																onClick={() =>
 																	handleBulkStatusChange(
@@ -731,11 +737,11 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 																			Enum.ApplicationStatus.WAITING,
 																	)
 																}
-																className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer font-medium"
+																className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer font-medium border-0 h-auto"
 															>
 																대기자 전체 선발
-															</button>
-															<button
+															</Button>
+															<Button
 																type="button"
 																onClick={() =>
 																	handleBulkStatusChange(
@@ -751,10 +757,10 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 																			Enum.ApplicationStatus.WAITING,
 																	)
 																}
-																className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer font-medium"
+																className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors cursor-pointer font-medium border-0 h-auto"
 															>
 																대기자 전체 불합격
-															</button>
+															</Button>
 														</div>
 													</div>
 												)}
@@ -774,32 +780,32 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 									!isFullyBooked &&
 									!hasApplied &&
 									!cannotApplyDueToProfession && (
-										<button
+										<Button
 											type="button"
 											onClick={handleApply}
-											className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
+											className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer border-0 h-auto"
 										>
 											신청하기
-										</button>
+										</Button>
 									)}
 
 								{/* 이미 신청한 경우 */}
 								{hasApplied && (
-									<button
+									<Button
 										type="button"
 										disabled
-										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed border-0 h-auto"
 									>
 										신청 완료
-									</button>
+									</Button>
 								)}
 
 								{/* 직업 관련 이유로 신청 불가능한 경우 */}
 								{cannotApplyDueToProfession && !hasApplied && (
-									<button
+									<Button
 										type="button"
 										disabled
-										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed border-0 h-auto"
 										title={
 											hasNoProfessions
 												? '프로필에 직업을 1개 이상 등록해야 신청할 수 있습니다.'
@@ -807,22 +813,22 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 										}
 									>
 										{hasNoProfessions ? '직업 등록 필요' : '신청 불가'}
-									</button>
+									</Button>
 								)}
 
 								{/* 기타 이유로 신청 불가능한 경우 (마감, 정원 초과 등) */}
 								{!canApply && !hasApplied && !cannotApplyDueToProfession && (
-									<button
+									<Button
 										type="button"
 										disabled
-										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed border-0 h-auto"
 									>
 										{isDeadlinePassed
 											? '마감됨'
 											: isFullyBooked
 												? '정원 마감'
 												: '신청 불가'}
-									</button>
+									</Button>
 								)}
 							</div>
 						</div>

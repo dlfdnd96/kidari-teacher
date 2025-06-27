@@ -13,6 +13,7 @@ import {
 } from '@/types/volunteer-activity'
 import { TZDate } from '@date-fns/tz'
 import { TIME_ZONE } from '@/constants/date'
+import { Button } from '@/components/ui'
 
 const VolunteerActivityCard = memo(
 	({ activity, onViewDetail, onApply }: VolunteerActivityCardProps) => {
@@ -134,12 +135,12 @@ const VolunteerActivityCard = memo(
 								!activity.applications?.some(
 									(app) => app.user?.id === session?.user.id,
 								) && (
-									<button
+									<Button
 										onClick={handleApply}
-										className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer"
+										className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer border-0 h-auto"
 									>
 										<span>신청</span>
-									</button>
+									</Button>
 								)}
 						</div>
 					</div>

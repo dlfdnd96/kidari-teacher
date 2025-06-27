@@ -26,6 +26,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
+	Button,
 } from '@/components/ui'
 
 export default function NoticeDetailPageClient({
@@ -119,32 +120,35 @@ export default function NoticeDetailPageClient({
 				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
-							<button
+							<Button
 								onClick={handleBack}
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 							>
 								<ArrowLeft className="w-4 h-4" />
 								<span className="text-sm font-medium">뒤로가기</span>
-							</button>
+							</Button>
 						</div>
 
 						{/* 수정/삭제 버튼 */}
 						{isAdmin && (
 							<div className="py-4 flex items-center gap-2">
-								<button
+								<Button
 									onClick={handleEdit}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer"
+									variant="outline"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 								>
 									<Edit className="w-4 h-4" />
 									<span>수정</span>
-								</button>
-								<button
+								</Button>
+								<Button
 									onClick={handleDeleteClick}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer"
+									variant="outline"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 								>
 									<Trash className="w-4 h-4" />
 									<span>삭제</span>
-								</button>
+								</Button>
 							</div>
 						)}
 					</div>

@@ -223,13 +223,14 @@ const VolunteerActivityCreatePageClient = memo(() => {
 					<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 						<div className="flex items-center h-14">
 							<div className="py-4">
-								<button
+								<Button
 									onClick={handleGoBack}
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+									variant="outline"
+									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 								>
 									<ArrowLeft className="w-4 h-4" />
 									<span className="text-sm font-medium">뒤로가기</span>
-								</button>
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -635,13 +636,13 @@ const VolunteerActivityCreatePageClient = memo(() => {
 									>
 										취소
 									</Button>
-									<button
+									<Button
 										type="submit"
 										disabled={loading}
-										className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+										className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-0"
 									>
 										{loading ? '생성 중...' : '봉사활동 생성'}
-									</button>
+									</Button>
 								</div>
 							</div>
 						</form>

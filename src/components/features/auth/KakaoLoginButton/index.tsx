@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import type { FC, ButtonHTMLAttributes } from 'react'
+import { Button } from '@/components/ui'
 
 const KakaoLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 	props,
@@ -10,10 +11,10 @@ const KakaoLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 	const pathname = usePathname()
 
 	return (
-		<button
+		<Button
 			type="button"
 			aria-label="카카오로 로그인"
-			className="w-full bg-[#FEE500] hover:bg-[#FADA0A] rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer"
+			className="w-full bg-[#FEE500] hover:bg-[#FADA0A] rounded-xl px-4 py-4 h-auto flex items-center justify-center gap-3 transition-all duration-200 shadow-xs cursor-pointer border-0"
 			onClick={() =>
 				signIn('kakao', {
 					callbackUrl: `/profile/check?returnTo=${encodeURIComponent(pathname)}`,
@@ -31,7 +32,7 @@ const KakaoLoginButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 			<span className="text-[#3C1E1E] font-medium text-[15px]">
 				카카오로 로그인
 			</span>
-		</button>
+		</Button>
 	)
 }
 

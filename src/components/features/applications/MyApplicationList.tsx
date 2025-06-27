@@ -35,6 +35,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
+	Button,
 	Table,
 	TableBody,
 	TableCell,
@@ -173,19 +174,20 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				{/* 액션 */}
 				<TableCell className="text-center">
 					{canCancel && (
-						<button
-							className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+						<Button
+							variant="destructive"
+							size="sm"
 							onClick={(e) => {
 								e.stopPropagation()
 								setIsDeleteDialogOpen(true)
 							}}
-							type="button"
 							aria-label="신청 취소"
 							disabled={isCanceling}
+							className="h-8 px-2 text-xs cursor-pointer"
 						>
 							<X className="w-3 h-3" />
 							<span>취소</span>
-						</button>
+						</Button>
 					)}
 				</TableCell>
 			</TableRow>

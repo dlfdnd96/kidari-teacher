@@ -4,6 +4,7 @@ import React, { FC, useCallback } from 'react'
 import ApplicationForm from '@/components/features/applications/ApplicationForm'
 import type { ApplicationModalProps } from '@/types/application'
 import { X } from 'lucide-react'
+import { Button } from '@/components/ui'
 
 const ApplicationModal: FC<ApplicationModalProps> = ({
 	open,
@@ -36,13 +37,15 @@ const ApplicationModal: FC<ApplicationModalProps> = ({
 		>
 			<div className="bg-white rounded-lg shadow-lg w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
 				{/* 닫기 버튼 */}
-				<button
+				<Button
 					onClick={onClose}
+					variant="ghost"
+					size="icon"
 					aria-label="모달 닫기"
-					className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full transition-colors duration-200 cursor-pointer"
+					className="absolute top-4 right-4 z-10 w-8 h-8 text-gray-400 hover:text-gray-600 rounded-full transition-colors duration-200 cursor-pointer"
 				>
 					<X className="w-5 h-5" />
-				</button>
+				</Button>
 
 				{/* 모달 헤더 */}
 				<div className="p-6 pb-4">

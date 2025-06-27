@@ -10,6 +10,7 @@ import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { Enum } from '@/enums'
 import VolunteerActivityEditPage from './VolunteerActivityEditPage'
 import { VolunteerActivityEditPageClientProps } from '@/types/volunteer-activity'
+import { Button } from '@/components/ui'
 
 const VolunteerActivityEditPageClient: FC<
 	VolunteerActivityEditPageClientProps
@@ -81,13 +82,14 @@ const VolunteerActivityEditPageClient: FC<
 				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 					<div className="flex items-center h-14">
 						<div className="py-4">
-							<button
+							<Button
 								onClick={handleCancel}
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 							>
 								<ArrowLeft className="w-4 h-4" />
 								<span className="text-sm font-medium">뒤로가기</span>
-							</button>
+							</Button>
 						</div>
 					</div>
 				</div>

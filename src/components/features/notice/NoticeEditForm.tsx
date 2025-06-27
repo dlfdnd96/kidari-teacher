@@ -2,9 +2,7 @@
 
 import React, { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+import { Input, Textarea, Button } from '@/components/ui'
 import { useRouter } from 'next/navigation'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { trpc } from '@/components/providers/TrpcProvider'
@@ -13,10 +11,9 @@ import {
 	handleClientError,
 	isValidationError,
 } from '@/utils/error'
-
 import { NoticeEditFormSchema } from '@/shared/schemas/notice'
 import { NoticeEditFormProps } from '@/types/notice'
-import { ArrowLeft, Save, Type, FileText } from 'lucide-react'
+import { ArrowLeft, FileText, Type } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 
 const NoticeEditForm = memo(
@@ -77,13 +74,14 @@ const NoticeEditForm = memo(
 				<div>
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
-							<button
+							<Button
 								onClick={() => router.back()}
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
 							>
 								<ArrowLeft className="w-4 h-4" />
 								<span className="text-sm font-medium">뒤로가기</span>
-							</button>
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -167,10 +165,10 @@ const NoticeEditForm = memo(
 									>
 										취소
 									</Button>
-									<button
+									<Button
 										type="submit"
 										disabled={loading || formState.isSubmitting}
-										className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+										className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 h-12 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
 										data-testid="edit-notice-submit-button"
 									>
 										{loading ? (
@@ -180,11 +178,10 @@ const NoticeEditForm = memo(
 											</>
 										) : (
 											<>
-												<Save className="w-4 h-4" />
 												<span>수정하기</span>
 											</>
 										)}
-									</button>
+									</Button>
 								</div>
 							</div>
 						</form>

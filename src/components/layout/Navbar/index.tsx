@@ -252,7 +252,7 @@ const Navbar = memo(() => {
 							{/* 데스크탑 로그인 버튼 */}
 							<button
 								onClick={handleOpenModal}
-								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+								className="hidden sm:inline-block px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/30 cursor-pointer"
 								aria-label="로그인"
 								type="button"
 							>
