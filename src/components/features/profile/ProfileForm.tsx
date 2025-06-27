@@ -95,31 +95,29 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 	const isLoading = updateProfileMutation.isPending
 
 	return (
-		<div className="relative">
+		<div className="bg-white border border-gray-200 rounded-lg">
 			{/* 헤더 */}
-			<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 sm:p-8">
+			<div className="border-b border-gray-200 p-6">
 				<div className="flex items-center">
-					<User className="w-7 h-7 text-white mr-3" />
+					<User className="w-5 h-5 text-gray-500 mr-3" />
 					<div>
-						<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+						<h2 className="text-xl font-semibold text-gray-900 mb-1">
 							프로필 수정
 						</h2>
-						<p className="text-blue-100 text-sm">기본 정보를 수정하세요</p>
 					</div>
 				</div>
 			</div>
 
 			{/* 폼 */}
-			<form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8">
+			<form onSubmit={handleSubmit(onSubmit)} className="p-6">
 				<div className="space-y-6">
 					{/* 이름 필드 */}
 					<div>
 						<label
 							htmlFor="profile-name"
-							className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+							className="block text-sm font-medium text-gray-700 mb-2"
 						>
-							<User className="w-4 h-4 mr-2" />
-							<span>이름 *</span>
+							이름 *
 						</label>
 						<Input
 							id="profile-name"
@@ -127,39 +125,40 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 							placeholder="이름을 입력하세요"
 							defaultValue={session?.user?.name ?? ''}
 							disabled={isLoading}
-							className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
+							className="w-full"
 						/>
 						<FieldError error={errors.name} />
 					</div>
+
 					{/* 버튼들 */}
-					<div className="flex flex-col sm:flex-row gap-3 pt-6">
-						<Button
+					<div className="flex gap-3 pt-4 justify-center">
+						<button
 							type="submit"
 							disabled={isLoading || formState.isSubmitting}
-							className="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+							className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 						>
 							{isLoading ? (
 								<>
-									<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-									<span>저장 중...</span>
+									<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+									저장 중...
 								</>
 							) : (
 								<>
-									<Save className="w-4 h-4 mr-1.5" />
-									<span>저장</span>
+									<Save className="w-4 h-4 mr-2" />
+									수정 완료
 								</>
 							)}
-						</Button>
+						</button>
 
 						<Button
 							type="button"
 							onClick={onCancel}
 							disabled={isLoading}
 							variant="outline"
-							className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+							className="px-8 py-3 h-12 cursor-pointer"
 						>
-							<X className="w-4 h-4 mr-1.5" />
-							<span>취소</span>
+							<X className="w-4 h-4 mr-2" />
+							취소
 						</Button>
 					</div>
 				</div>

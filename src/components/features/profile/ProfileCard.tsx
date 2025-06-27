@@ -28,36 +28,30 @@ const ProfileCard = memo(
 		const getRoleBadgeColor = (role: ZodType<typeof ZodEnum.Role>) => {
 			switch (role) {
 				case 'ADMIN':
-					return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
+					return 'bg-red-50 text-red-700 border-red-200'
 				case 'USER':
-					return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'
+					return 'bg-blue-50 text-blue-700 border-blue-200'
 				default:
-					return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200'
+					return 'bg-gray-50 text-gray-700 border-gray-200'
 			}
 		}
 
 		return (
-			<div className="relative">
+			<div className="bg-white border border-gray-200 rounded-lg">
 				{/* 헤더 */}
-				<div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 sm:p-8">
+				<div className="border-b border-gray-200 p-6">
 					<div className="flex items-center justify-between">
-						<div className="flex items-center">
-							<User className="w-7 h-7 text-white mr-3" />
-							<div>
-								<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-									프로필 정보
-								</h2>
-								<p className="text-blue-100 text-sm">
-									내 기본 정보를 확인하고 관리하세요
-								</p>
-							</div>
+						<div>
+							<h2 className="text-xl font-semibold text-gray-900 mb-1">
+								프로필 정보
+							</h2>
 						</div>
 						{canEdit && (
 							<Button
 								onClick={onEdit}
-								variant="secondary"
+								variant="outline"
 								size="sm"
-								className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50"
+								className="cursor-pointer"
 							>
 								<Edit className="w-4 h-4 mr-1.5" />
 								수정
@@ -67,7 +61,7 @@ const ProfileCard = memo(
 				</div>
 
 				{/* 프로필 내용 */}
-				<div className="p-6 sm:p-8">
+				<div className="p-6">
 					<div className="flex flex-col sm:flex-row items-start gap-6">
 						{/* 프로필 이미지 */}
 						<div className="flex-shrink-0">
@@ -75,20 +69,20 @@ const ProfileCard = memo(
 								{user.image ? (
 									<Image
 										src={user.image}
-										width={1000}
-										height={1000}
+										width={80}
+										height={80}
 										alt={`${user.name}의 프로필`}
-										className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+										className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
 									/>
 								) : (
-									<div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center border-4 border-white shadow-lg">
-										<User className="w-12 h-12 text-white" />
+									<div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+										<User className="w-8 h-8 text-gray-500" />
 									</div>
 								)}
 								{/* 역할 뱃지 */}
-								<div className="absolute -bottom-2 -right-2">
+								<div className="absolute -bottom-1 -right-1">
 									<Badge
-										className={`${getRoleBadgeColor(user.role)} text-xs font-medium px-2 py-1`}
+										className={`${getRoleBadgeColor(user.role)} text-xs font-medium px-2 py-1 border`}
 									>
 										{user.role === Enum.Role.ADMIN && (
 											<Shield className="w-3 h-3 mr-1" />
@@ -102,39 +96,39 @@ const ProfileCard = memo(
 						{/* 프로필 정보 */}
 						<div className="flex-1 space-y-4">
 							{/* 이름 */}
-							<div className="flex items-center gap-3">
-								<User className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+							<div className="flex items-start gap-3">
+								<User className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 								<div>
-									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+									<div className="text-sm font-medium text-gray-500 mb-1">
 										이름
 									</div>
-									<div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+									<div className="text-base font-medium text-gray-900">
 										{user.name}
 									</div>
 								</div>
 							</div>
 
 							{/* 이메일 */}
-							<div className="flex items-center gap-3">
-								<Mail className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0" />
+							<div className="flex items-start gap-3">
+								<Mail className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 								<div>
-									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+									<div className="text-sm font-medium text-gray-500 mb-1">
 										이메일
 									</div>
-									<div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+									<div className="text-base font-medium text-gray-900">
 										{user.email}
 									</div>
 								</div>
 							</div>
 
 							{/* 가입일 */}
-							<div className="flex items-center gap-3">
-								<Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+							<div className="flex items-start gap-3">
+								<Calendar className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 								<div>
-									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+									<div className="text-sm font-medium text-gray-500 mb-1">
 										가입일
 									</div>
-									<div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+									<div className="text-base font-medium text-gray-900">
 										{format(
 											new TZDate(user.createdAt, TIME_ZONE.SEOUL),
 											'yyyy년 M월 d일',
@@ -148,13 +142,13 @@ const ProfileCard = memo(
 
 							{/* 최근 업데이트 */}
 							{user.updatedAt !== user.createdAt && (
-								<div className="flex items-center gap-3">
-									<Calendar className="w-5 h-5 text-gray-500 dark:text-gray-400 shrink-0" />
+								<div className="flex items-start gap-3">
+									<Calendar className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 									<div>
-										<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+										<div className="text-sm font-medium text-gray-500 mb-1">
 											최근 수정
 										</div>
-										<div className="text-sm text-gray-700 dark:text-gray-300">
+										<div className="text-sm text-gray-700">
 											{format(
 												new TZDate(user.updatedAt, TIME_ZONE.SEOUL),
 												'yyyy년 M월 d일 HH:mm',

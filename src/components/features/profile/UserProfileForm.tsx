@@ -2,7 +2,7 @@
 
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Building, CalendarIcon, Phone, Save, User, X } from 'lucide-react'
+import { CalendarIcon, Save, User, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -194,41 +194,33 @@ const UserProfileForm = memo(
 			createProfileMutation.isPending || updateProfileMutation.isPending
 
 		return (
-			<div className="relative">
+			<div className="bg-white border border-gray-200 rounded-lg">
 				{/* 헤더 */}
-				<div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-6 sm:p-8">
+				<div className="border-b border-gray-200 p-6">
 					<div className="flex items-center">
-						<User className="w-7 h-7 text-white mr-3" />
+						<User className="w-5 h-5 text-gray-500 mr-3" />
 						<div>
-							<h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+							<h2 className="text-xl font-semibold text-gray-900 mb-1">
 								{isSetup
 									? '프로필 설정'
 									: isEditing
 										? '프로필 수정'
 										: '추가 정보 입력'}
 							</h2>
-							<p className="text-blue-100 text-sm">
-								{isSetup
-									? '서비스 이용을 위해 추가 정보를 입력해주세요'
-									: isEditing
-										? '프로필 정보를 수정하세요'
-										: '추가 정보를 입력하여 프로필을 완성하세요'}
-							</p>
 						</div>
 					</div>
 				</div>
 
 				{/* 폼 */}
-				<form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8">
+				<form onSubmit={handleSubmit(onSubmit)} className="p-6">
 					<div className="space-y-6">
 						{/* 휴대폰 번호 필드 */}
 						<div>
 							<label
 								htmlFor="profile-phone"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+								className="block text-sm font-medium text-gray-700 mb-2"
 							>
-								<Phone className="w-4 h-4 mr-2" />
-								<span>휴대폰 번호 *</span>
+								휴대폰 번호 *
 							</label>
 							<Input
 								id="profile-phone"
@@ -237,7 +229,7 @@ const UserProfileForm = memo(
 								onChange={handlePhoneChange}
 								placeholder="010-1234-5678"
 								disabled={isLoading}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
+								className="w-full"
 							/>
 							<FieldError error={errors.phone} />
 						</div>
@@ -256,17 +248,16 @@ const UserProfileForm = memo(
 						<div>
 							<label
 								htmlFor="profile-organization"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+								className="block text-sm font-medium text-gray-700 mb-2"
 							>
-								<Building className="w-4 h-4 mr-2" />
-								<span>소속 기관</span>
+								소속 기관
 							</label>
 							<Input
 								id="profile-organization"
 								{...register('organization')}
 								placeholder="소속 기관을 입력하세요"
 								disabled={isLoading}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
+								className="w-full"
 							/>
 						</div>
 
@@ -274,22 +265,21 @@ const UserProfileForm = memo(
 						<div>
 							<label
 								htmlFor="profile-birthDate"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
+								className="block text-sm font-medium text-gray-700 mb-2"
 							>
-								<CalendarIcon className="w-4 h-4 mr-2" />
-								<span>생년월일</span>
+								생년월일
 							</label>
 							<Popover>
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
 										className={cn(
-											'w-full pl-4 pr-4 text-left font-normal bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base hover:bg-white/70 dark:hover:bg-gray-600/50 transition-all duration-200',
+											'w-full justify-start text-left font-normal',
 											!watch('birthDate') && 'text-muted-foreground',
 										)}
 									>
 										{watch('birthDate') ? (
-											<span className="text-gray-900 dark:text-gray-100">
+											<span className="text-gray-900">
 												{format(watch('birthDate')!, 'yyyy년 M월 d일', {
 													locale: ko,
 												})}
@@ -299,7 +289,7 @@ const UserProfileForm = memo(
 												생년월일을 선택하세요
 											</span>
 										)}
-										<CalendarIcon className="ml-auto h-5 w-5 opacity-50 shrink-0" />
+										<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0" align="start">
@@ -325,30 +315,24 @@ const UserProfileForm = memo(
 						</div>
 
 						{/* 버튼들 */}
-						<div className="flex flex-col sm:flex-row gap-3 pt-6">
-							<Button
+						<div className="flex gap-3 pt-4 justify-center">
+							<button
 								type="submit"
 								disabled={isLoading || formState.isSubmitting}
-								className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+								className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 							>
 								{isLoading ? (
 									<>
-										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-										<span>저장 중...</span>
+										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+										저장 중...
 									</>
 								) : (
 									<>
-										<Save className="w-4 h-4 mr-1.5" />
-										<span>
-											{isSetup
-												? '프로필 생성'
-												: isEditing
-													? '수정 완료'
-													: '저장'}
-										</span>
+										<Save className="w-4 h-4 mr-2" />
+										{isSetup ? '프로필 생성' : isEditing ? '수정 완료' : '저장'}
 									</>
 								)}
-							</Button>
+							</button>
 
 							{onCancel && (
 								<Button
@@ -356,10 +340,10 @@ const UserProfileForm = memo(
 									onClick={onCancel}
 									disabled={isLoading}
 									variant="outline"
-									className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+									className="px-8 py-3 h-12 cursor-pointer"
 								>
-									<X className="w-4 h-4 mr-1.5" />
-									<span>취소</span>
+									<X className="w-4 h-4 mr-2" />
+									취소
 								</Button>
 							)}
 						</div>

@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
 	return (
 		<main className="min-h-screen pt-16">
-			<section className="max-w-4xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">
+			<div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 				<ProfilePageClient />
-			</section>
+			</div>
 		</main>
 	)
 }
