@@ -8,7 +8,7 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import type { MyApplicationPageClientProps } from '@/types/application'
-import { FileText, OctagonX, RefreshCw } from 'lucide-react'
+import { OctagonX, RefreshCw } from 'lucide-react'
 
 function MyApplicationPageClientContent({
 	initialPage = 1,
@@ -124,7 +124,6 @@ function MyApplicationPageClientContent({
 			<div className="mb-8">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
-						<FileText className="w-5 h-5 text-blue-600" />
 						<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
 							신청 현황
 						</h3>

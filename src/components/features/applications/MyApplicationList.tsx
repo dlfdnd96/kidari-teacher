@@ -110,12 +110,9 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 
 	return (
 		<>
-			<TableRow
-				className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-				onClick={handleRowClick}
-			>
+			<TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
 				{/* 상태 */}
-				<TableCell>
+				<TableCell className="text-center">
 					<div
 						className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
 					>
@@ -124,9 +121,12 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 봉사활동명 */}
-				<TableCell className="font-medium">
-					<div className="max-w-xs">
-						<div className="truncate text-gray-900 dark:text-gray-100">
+				<TableCell className="font-medium text-center">
+					<div className="max-w-xs mx-auto">
+						<div
+							className="truncate text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+							onClick={handleRowClick}
+						>
 							{application.volunteerActivity.title}
 						</div>
 						<div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -136,8 +136,8 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 신청일 */}
-				<TableCell>
-					<div className="flex items-center gap-1 text-sm">
+				<TableCell className="text-center">
+					<div className="flex items-center justify-center gap-1 text-sm">
 						<Clock className="w-3 h-3 text-gray-400" />
 						{format(new TZDate(application.createdAt, TIME_ZONE.SEOUL), 'M/d', {
 							locale: ko,
@@ -146,8 +146,8 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 활동일시 */}
-				<TableCell>
-					<div className="flex items-center gap-1 text-sm">
+				<TableCell className="text-center">
+					<div className="flex items-center justify-center gap-1 text-sm">
 						<Calendar className="w-3 h-3 text-gray-400" />
 						{format(
 							new TZDate(
@@ -161,8 +161,8 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 장소 */}
-				<TableCell>
-					<div className="flex items-center gap-1 text-sm max-w-xs">
+				<TableCell className="text-center">
+					<div className="flex items-center justify-center gap-1 text-sm max-w-xs mx-auto">
 						<MapPin className="w-3 h-3 text-gray-400 shrink-0" />
 						<span className="truncate">
 							{application.volunteerActivity.location}
@@ -171,10 +171,10 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 액션 */}
-				<TableCell>
+				<TableCell className="text-center">
 					{canCancel && (
 						<button
-							className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+							className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 							onClick={(e) => {
 								e.stopPropagation()
 								setIsDeleteDialogOpen(true)
@@ -287,12 +287,12 @@ export default function MyApplicationList({
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead className="w-20">상태</TableHead>
-							<TableHead className="w-60">봉사활동명</TableHead>
-							<TableHead className="w-20">신청일</TableHead>
-							<TableHead className="w-24">활동일시</TableHead>
-							<TableHead className="w-40">장소</TableHead>
-							<TableHead className="w-16">액션</TableHead>
+							<TableHead className="w-20 text-center">상태</TableHead>
+							<TableHead className="w-60 text-center">봉사활동명</TableHead>
+							<TableHead className="w-20 text-center">신청일</TableHead>
+							<TableHead className="w-24 text-center">활동일시</TableHead>
+							<TableHead className="w-40 text-center">장소</TableHead>
+							<TableHead className="w-16 text-center">액션</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -307,11 +307,8 @@ export default function MyApplicationList({
 							<TableRow>
 								<TableCell colSpan={8} className="text-center py-12">
 									<div className="flex flex-col items-center">
-										<div className="text-gray-400 dark:text-gray-500 mb-2">
-											아직 신청한 봉사활동이 없습니다
-										</div>
-										<div className="text-sm text-gray-500 dark:text-gray-400">
-											관심있는 봉사활동에 신청해보세요!
+										<div className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+											신청한 봉사활동이 없습니다
 										</div>
 									</div>
 								</TableCell>
