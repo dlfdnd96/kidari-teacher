@@ -459,13 +459,9 @@ const VolunteerActivityEditForm = memo(
 											disabled={loading}
 										>
 											{applicationDeadlineValue ? (
-												format(
-													applicationDeadlineValue,
-													'yyyy년 M월 d일 HH:mm',
-													{
-														locale: ko,
-													},
-												)
+												format(applicationDeadlineValue, 'yyyy년 M월 d일', {
+													locale: ko,
+												})
 											) : (
 												<span>신청 마감일 선택</span>
 											)}
@@ -476,12 +472,14 @@ const VolunteerActivityEditForm = memo(
 										<CalendarCustom
 											mode="single"
 											selected={applicationDeadlineValue}
-											onSelect={(date) =>
-												setValue(
-													'applicationDeadline',
-													date || new TZDate(new Date(), TIME_ZONE.SEOUL),
+											onSelect={(date) => {
+												const newDate = new TZDate(
+													date || new Date(),
+													TIME_ZONE.SEOUL,
 												)
-											}
+												newDate.setHours(23, 59, 59, 999)
+												setValue('applicationDeadline', newDate)
+											}}
 											disabled={(date) =>
 												startOfDay(date) <
 												startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
@@ -490,30 +488,6 @@ const VolunteerActivityEditForm = memo(
 											startMonth={new Date()}
 											locale={ko}
 										/>
-										<div className="p-3 border-t">
-											<Input
-												type="time"
-												value={
-													applicationDeadlineValue
-														? format(applicationDeadlineValue, 'HH:mm')
-														: ''
-												}
-												onChange={(e) => {
-													const currentDate =
-														applicationDeadlineValue ||
-														new TZDate(new Date(), TIME_ZONE.SEOUL)
-													if (e.target.value) {
-														const [hours, minutes] = e.target.value.split(':')
-														const newDate = new TZDate(
-															currentDate,
-															TIME_ZONE.SEOUL,
-														)
-														newDate.setHours(parseInt(hours), parseInt(minutes))
-														setValue('applicationDeadline', newDate)
-													}
-												}}
-											/>
-										</div>
 									</PopoverContent>
 								</Popover>
 								<FieldError error={errors.applicationDeadline} />
