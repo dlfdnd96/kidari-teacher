@@ -70,7 +70,7 @@ export default function ActivityFilterTab({
 					)}
 				</div>
 
-				{/* 오른쪽 필터 영역 */}
+				{/* 필터 영역 */}
 				<div className="flex items-center gap-3">
 					{/* 상태 필터 드롭다운 */}
 					<div className="w-full sm:w-80">

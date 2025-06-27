@@ -192,6 +192,26 @@ function VolunteerActivityPageClientContent({
 		])
 	}, [utils])
 
+	const updateURLImmediate = useCallback(
+		(params: { status?: string; page?: number; search?: string }) => {
+			const urlParams = new URLSearchParams()
+
+			if (params.status && params.status !== 'all') {
+				urlParams.set('status', params.status)
+			}
+			if (params.page && params.page > 1) {
+				urlParams.set('page', params.page.toString())
+			}
+			if (params.search && params.search.trim()) {
+				urlParams.set('search', params.search.trim())
+			}
+
+			const newUrl = urlParams.toString() ? `?${urlParams.toString()}` : ''
+			router.replace(`/volunteer-activities${newUrl}`, { scroll: false })
+		},
+		[router],
+	)
+
 	const updateURL = useCallback(
 		(params: { status?: string; page?: number; search?: string }) => {
 			if (urlUpdateTimeoutRef.current) {
@@ -238,13 +258,14 @@ function VolunteerActivityPageClientContent({
 		(query: string) => {
 			setSearchQuery(query)
 			setCurrentPage(1)
-			updateURL({
+
+			updateURLImmediate({
 				status: selectedStatus !== 'all' ? selectedStatus : undefined,
 				page: 1,
 				search: query,
 			})
 		},
-		[selectedStatus, updateURL],
+		[selectedStatus, updateURLImmediate],
 	)
 
 	useEffect(() => {
