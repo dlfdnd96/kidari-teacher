@@ -170,9 +170,10 @@ function NoticePageClientContent({
 					<div className="flex justify-end mb-4">
 						<Button
 							onClick={handleCreateNotice}
-							className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer border-0 h-auto"
+							variant="outline"
+							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 						>
-							<Plus className="w-5 h-5" />
+							<Plus className="w-4 h-4" />
 							<span>공지사항 작성</span>
 						</Button>
 					</div>

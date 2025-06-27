@@ -25,6 +25,8 @@ import {
 	MapPin,
 	Settings,
 	Users,
+	X,
+	Save,
 } from 'lucide-react'
 import {
 	CalendarCustom,
@@ -592,20 +594,32 @@ const VolunteerActivityEditPage = memo(
 					<div className="pt-8 border-t border-gray-200 dark:border-gray-700">
 						<div className="flex justify-center gap-4">
 							<Button
+								type="submit"
+								disabled={loading}
+								variant="outline"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+							>
+								{loading ? (
+									<>
+										<div className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-400 rounded-full animate-spin" />
+										<span>수정 중...</span>
+									</>
+								) : (
+									<>
+										<Save className="w-4 h-4" />
+										<span>수정 완료</span>
+									</>
+								)}
+							</Button>
+							<Button
 								type="button"
 								variant="outline"
 								onClick={onCancel}
-								className="px-8 py-3 h-12 cursor-pointer"
+								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 								disabled={loading}
 							>
-								취소
-							</Button>
-							<Button
-								type="submit"
-								disabled={loading}
-								className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-0"
-							>
-								{loading ? '수정 중...' : '수정 완료'}
+								<X className="w-4 h-4" />
+								<span>취소</span>
 							</Button>
 						</div>
 					</div>

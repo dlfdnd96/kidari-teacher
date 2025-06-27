@@ -333,9 +333,10 @@ function VolunteerActivityPageClientContent({
 				<div className="flex justify-center">
 					<Button
 						onClick={() => refetch()}
-						className="flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
+						variant="outline"
+						className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 					>
-						<RefreshCw className="w-4 h-4 mr-1.5" />
+						<RefreshCw className="w-4 h-4" />
 						<span>다시 시도</span>
 					</Button>
 				</div>
@@ -352,9 +353,10 @@ function VolunteerActivityPageClientContent({
 					<div className="flex justify-end mb-4">
 						<Button
 							onClick={handleCreateActivity}
-							className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer flex items-center gap-2 border-0 h-auto"
+							variant="outline"
+							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 						>
-							<Plus className="w-5 h-5" />
+							<Plus className="w-4 h-4" />
 							<span>봉사활동 생성</span>
 						</Button>
 					</div>

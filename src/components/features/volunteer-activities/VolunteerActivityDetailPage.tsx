@@ -783,9 +783,9 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 										<Button
 											type="button"
 											onClick={handleApply}
-											className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer border-0 h-auto"
+											className="flex items-center gap-2 px-6 py-3 text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer border-0 h-auto"
 										>
-											신청하기
+											<span>신청하기</span>
 										</Button>
 									)}
 
@@ -794,9 +794,10 @@ const VolunteerActivityDetailPage: FC<VolunteerActivityDetailProps> = ({
 									<Button
 										type="button"
 										disabled
-										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed border-0 h-auto"
+										variant="outline"
+										className="flex items-center gap-2 px-3 py-2 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium cursor-not-allowed h-auto opacity-50"
 									>
-										신청 완료
+										<span>신청 완료</span>
 									</Button>
 								)}
 

@@ -123,7 +123,7 @@ const Navbar = memo(() => {
 				<div className="flex items-center gap-3 flex-1" ref={menuRef}>
 					<button
 						onClick={handleMenuToggle}
-						className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100"
+						className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 hover:bg-gray-100 cursor-pointer"
 						aria-label="메뉴"
 						type="button"
 					>
