@@ -2,11 +2,11 @@
 
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Briefcase, Phone, Send, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Briefcase, Phone } from 'lucide-react'
 import {
+	Button,
 	FieldError,
+	Input,
 	Select,
 	SelectContent,
 	SelectItem,
@@ -34,7 +34,6 @@ import { useFieldValidation } from '@/hooks/useFieldValidation'
 const ApplicationForm = memo(
 	({
 		volunteerActivityId,
-		volunteerActivityTitle,
 		onCancel,
 		onClose,
 		onSuccess,
@@ -183,139 +182,135 @@ const ApplicationForm = memo(
 		const cannotApply = hasNoProfessions || availableProfessions.length === 0
 
 		return (
-			<>
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-					{/* 활동 정보 표시 */}
-					<div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-						<div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-							신청할 봉사활동
-						</div>
-						<div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-							{volunteerActivityTitle}
+			<form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+				{/* 조건 안내 */}
+				{hasNoProfessions && (
+					<div className="bg-red-50 border border-red-200 rounded-md p-3">
+						<div className="text-sm text-red-700">
+							⚠️ 봉사활동 신청을 위해서는 프로필에 직업을 1개 이상 등록해야
+							합니다.
 						</div>
 					</div>
+				)}
 
-					{/* 조건 안내 */}
-					{hasNoProfessions && (
-						<div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
-							<div className="text-sm text-red-700 dark:text-red-300">
-								⚠️ 봉사활동 신청을 위해서는 프로필에 직업을 1개 이상 등록해야
-								합니다.
-							</div>
+				{!hasNoProfessions && availableProfessions.length === 0 && (
+					<div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+						<div className="text-sm text-amber-700">
+							⚠️ 신청 가능한 직업이 없습니다. 이미 모든 직업으로 신청이
+							완료되었습니다.
 						</div>
-					)}
+					</div>
+				)}
 
-					{!hasNoProfessions && availableProfessions.length === 0 && (
-						<div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-							<div className="text-sm text-yellow-700 dark:text-yellow-300">
-								⚠️ 신청 가능한 직업이 없습니다. 이미 모든 직업으로 신청이
-								완료되었습니다.
-							</div>
-						</div>
-					)}
-
-					{/* 직업 선택 필드 */}
-					{!cannotApply && (
-						<div>
-							<label
-								htmlFor="profession"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<Briefcase className="w-4 h-4 mr-2" />
-								<span>신청할 직업 *</span>
-							</label>
-							<Select
-								value={selectedProfession || undefined}
-								onValueChange={(value) =>
-									setSelectedProfession(
-										value as ZodType<typeof ZodEnum.Profession>,
-									)
-								}
-								disabled={isLoading || isLoadingProfile}
-							>
-								<SelectTrigger className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200">
-									<SelectValue placeholder="신청할 직업을 선택하세요" />
-								</SelectTrigger>
-								<SelectContent>
-									{availableProfessions.map((profession) => (
-										<SelectItem key={profession} value={profession}>
-											{PROFESSION_LABELS[profession]}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-							<FieldError error={errors.profession} />
-							<p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-								아직 신청되지 않은 직업만 선택할 수 있습니다. 한 봉사활동에는
-								같은 직업으로 중복 신청할 수 없습니다.
-							</p>
-						</div>
-					)}
-
-					{/* 긴급연락처 필드 */}
-					{!cannotApply && (
-						<div>
-							<label
-								htmlFor="emergency-contact"
-								className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3"
-							>
-								<Phone className="w-4 h-4 mr-2" />
-								<span>긴급연락처 *</span>
-							</label>
-							<Input
-								id="emergency-contact"
-								type="tel"
-								value={displayPhone}
-								onChange={handlePhoneChange}
-								placeholder="010-1234-5678"
-								disabled={isLoading || isLoadingProfile}
-								className="bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
-							/>
-							<FieldError error={errors.emergencyContact} />
-							<p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-								활동 중 비상상황 발생 시 연락받을 번호를 입력해주세요. (숫자만
-								입력하세요)
-							</p>
-						</div>
-					)}
-
-					{/* 버튼들 */}
-					<div className="flex flex-col sm:flex-row gap-3 pt-4">
-						{!cannotApply && (
-							<Button
-								type="submit"
-								disabled={
-									isLoading || formState.isSubmitting || !selectedProfession
-								}
-								className="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-							>
-								{isLoading ? (
-									<>
-										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-										<span>신청 중...</span>
-									</>
-								) : (
-									<>
-										<Send className="w-4 h-4 mr-1.5" />
-										<span>신청하기</span>
-									</>
-								)}
-							</Button>
-						)}
-
-						<Button
-							type="button"
-							onClick={onCancel}
-							disabled={isLoading}
-							variant="outline"
-							className="flex-1 flex items-center justify-center bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+				{/* 직업 선택 필드 */}
+				{!cannotApply && (
+					<div>
+						<label
+							htmlFor="profession"
+							className="flex items-center text-sm font-medium text-gray-700 mb-2"
 						>
-							<X className="w-4 h-4 mr-1.5" />
-							<span>취소</span>
-						</Button>
+							<Briefcase className="w-4 h-4 mr-2" />
+							<span>신청할 직업</span>
+						</label>
+						<Select
+							value={selectedProfession || undefined}
+							onValueChange={(value) =>
+								setSelectedProfession(
+									value as ZodType<typeof ZodEnum.Profession>,
+								)
+							}
+							disabled={isLoading || isLoadingProfile}
+						>
+							<SelectTrigger className="w-full h-10 border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+								<SelectValue placeholder="신청할 직업을 선택하세요" />
+							</SelectTrigger>
+							<SelectContent>
+								{availableProfessions.map((profession) => (
+									<SelectItem key={profession} value={profession}>
+										{PROFESSION_LABELS[profession]}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<FieldError error={errors.profession} />
+						<p className="text-xs text-gray-500 mt-1">
+							아직 신청되지 않은 직업만 선택할 수 있습니다.
+						</p>
 					</div>
-				</form>
-			</>
+				)}
+
+				{/* 긴급연락처 필드 */}
+				{!cannotApply && (
+					<div>
+						<label
+							htmlFor="emergency-contact"
+							className="flex items-center text-sm font-medium text-gray-700 mb-2"
+						>
+							<Phone className="w-4 h-4 mr-2" />
+							<span>긴급연락처</span>
+						</label>
+						<Input
+							id="emergency-contact"
+							type="tel"
+							value={displayPhone}
+							onChange={handlePhoneChange}
+							placeholder="010-1234-5678"
+							disabled={isLoading || isLoadingProfile}
+							className="w-full h-10 border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+						/>
+						<FieldError error={errors.emergencyContact} />
+						<p className="text-xs text-gray-500 mt-1">
+							활동 중 비상상황 발생 시 연락받을 번호를 입력해주세요.
+						</p>
+					</div>
+				)}
+
+				{/* 안내 사항 */}
+				{!cannotApply && (
+					<div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+						<div className="text-sm text-blue-700">
+							<div className="font-medium mb-1">신청 전 확인사항</div>
+							<ul className="text-xs space-y-0.5 ml-2">
+								<li>• 신청 후 취소는 활동 시작 전까지만 가능합니다</li>
+								<li>• 선발 결과는 신청 마감 후 안내드립니다</li>
+								<li>• 긴급연락처는 정확히 입력해주세요</li>
+							</ul>
+						</div>
+					</div>
+				)}
+
+				{/* 버튼들 */}
+				<div className="flex gap-3 pt-4">
+					<Button
+						type="button"
+						onClick={onCancel}
+						disabled={isLoading}
+						variant="outline"
+						className="flex-1 h-10 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium cursor-pointer"
+					>
+						취소
+					</Button>
+
+					{!cannotApply && (
+						<Button
+							type="submit"
+							disabled={
+								isLoading || formState.isSubmitting || !selectedProfession
+							}
+							className="flex-1 h-10 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium cursor-pointer rounded-md shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{isLoading ? (
+								<>
+									<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+									신청 중...
+								</>
+							) : (
+								'신청하기'
+							)}
+						</Button>
+					)}
+				</div>
+			</form>
 		)
 	},
 )

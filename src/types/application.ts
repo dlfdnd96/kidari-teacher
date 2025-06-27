@@ -12,7 +12,6 @@ export interface MyApplicationsPageProps {
 
 export interface ApplicationFormProps {
 	volunteerActivityId: string
-	volunteerActivityTitle: string
 	onCancel: () => void
 	onClose: () => void
 	onSuccess: () => void
