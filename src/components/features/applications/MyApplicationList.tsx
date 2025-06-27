@@ -55,8 +55,11 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 	const cancelApplicationMutation =
 		trpc.application.deleteApplication.useMutation({
 			onSuccess: async () => {
-				await utils.application.getMyApplicationList.invalidate()
-				await utils.volunteerActivity.getVolunteerActivityList.invalidate()
+				await Promise.all([
+					utils.application.getMyApplicationList.invalidate(),
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getApplicationList.invalidate(),
+				])
 				router.refresh()
 			},
 			onError: (error) => {
