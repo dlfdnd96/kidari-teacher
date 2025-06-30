@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod/v4-mini'
 import { ZodEnum } from '@/enums'
+import { encode } from 'next-auth/jwt'
 
 export async function POST(request: NextRequest) {
 	try {
@@ -25,28 +26,46 @@ export async function POST(request: NextRequest) {
 			},
 		})
 
-		const sessionToken = crypto.randomUUID()
-		const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+		// JWT 토큰 생성
+		const secret = process.env.NEXTAUTH_SECRET
+		if (!secret) {
+			throw new Error('NEXTAUTH_SECRET is not defined')
+		}
 
-		await prisma.session.create({
-			data: {
-				sessionToken,
-				userId: testUser.id,
-				expires,
-			},
+		const maxAge = 30 * 24 * 60 * 60 // 30 days
+		const expires = new Date(Date.now() + maxAge * 1000)
+
+		// JWT 페이로드 생성
+		const token = {
+			sub: testUser.id,
+			userId: testUser.id,
+			name: testUser.name,
+			email: testUser.email,
+			role: testUser.role,
+			iat: Math.floor(Date.now() / 1000),
+			exp: Math.floor(Date.now() / 1000) + maxAge,
+		}
+
+		// NextAuth의 encode 함수를 사용하여 JWT 토큰 생성
+		const jwtToken = await encode({
+			token,
+			secret,
+			maxAge,
 		})
 
 		const response = NextResponse.json({
 			success: true,
 			user: testUser,
-			sessionToken,
+			token: jwtToken,
 		})
 
-		response.cookies.set('next-auth.session-token', sessionToken, {
+		// JWT 토큰을 next-auth.session-token 쿠키에 설정
+		response.cookies.set('next-auth.session-token', jwtToken, {
 			httpOnly: true,
 			path: '/',
 			sameSite: 'lax',
 			expires: expires,
+			secure: process.env.NODE_ENV === 'production',
 		})
 
 		return response

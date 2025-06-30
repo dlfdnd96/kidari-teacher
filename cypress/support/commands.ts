@@ -19,7 +19,19 @@ Cypress.Commands.add(
 
 			cy.log(`로그인 성공: ${role}`)
 
-			cy.getCookies().should('have.length.greaterThan', 0)
+			// JWT 토큰이 쿠키에 설정되었는지 확인
+			cy.getCookie('next-auth.session-token').should('exist')
+
+			// 세션이 유효한지 확인 (JWT 토큰 검증)
+			cy.request({
+				method: 'GET',
+				url: '/api/auth/session',
+				failOnStatusCode: false,
+			}).then((sessionResponse) => {
+				expect(sessionResponse.status).to.eq(200)
+				expect(sessionResponse.body).to.have.property('user')
+				cy.log('JWT 세션 검증 완료')
+			})
 		})
 	},
 )

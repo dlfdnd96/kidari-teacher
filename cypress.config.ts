@@ -63,7 +63,7 @@ export default defineConfig({
 
 				// 로그 출력
 				log(message) {
-					console.log(message)
+					console.log(`[Cypress Log] ${message}`)
 					return null
 				},
 

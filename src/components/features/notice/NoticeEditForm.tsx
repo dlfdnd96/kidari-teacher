@@ -28,8 +28,10 @@ const NoticeEditForm = memo(
 		const utils = trpc.useUtils()
 		const updateNoticeMutation = trpc.notice.updateNotice.useMutation({
 			onSuccess: async () => {
-				await utils.notice.getNoticeList.invalidate()
-				router.refresh()
+				await Promise.all([
+					utils.notice.getNoticeList.invalidate(),
+					utils.notice.getNotice.invalidate({ id }),
+				])
 				onCancel()
 			},
 			onError: (error) => {
