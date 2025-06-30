@@ -6,7 +6,7 @@ Cypress.Commands.add(
 	(role: string, options?: { timeout?: number }) => {
 		const { timeout = 10000 } = options || {}
 
-		cy.log(`로그인 시도: ${role}`)
+		cy.task('serverLog', `로그인 시도: ${role}`)
 
 		cy.request({
 			method: 'POST',
@@ -17,7 +17,7 @@ Cypress.Commands.add(
 			expect(response.status).to.eq(200)
 			expect(response.body).to.have.property('success', true)
 
-			cy.log(`로그인 성공: ${role}`)
+			cy.task('serverLog', `로그인 성공: ${role}`)
 
 			// JWT 토큰이 쿠키에 설정되었는지 확인
 			cy.getCookie('next-auth.session-token').should('exist')
@@ -30,7 +30,7 @@ Cypress.Commands.add(
 			}).then((sessionResponse) => {
 				expect(sessionResponse.status).to.eq(200)
 				expect(sessionResponse.body).to.have.property('user')
-				cy.log('JWT 세션 검증 완료')
+				cy.task('serverLog', 'JWT 세션 검증 완료')
 			})
 		})
 	},
@@ -38,7 +38,7 @@ Cypress.Commands.add(
 
 // 테스트 데이터 정리 명령어
 Cypress.Commands.add('cleanupTestData', (dataType: string) => {
-	cy.log(`테스트 데이터 정리: ${dataType}`)
+	cy.task('serverLog', `테스트 데이터 정리: ${dataType}`)
 
 	cy.request({
 		method: 'DELETE',
@@ -51,9 +51,9 @@ Cypress.Commands.add('cleanupTestData', (dataType: string) => {
 		failOnStatusCode: false,
 	}).then((response) => {
 		if (response.status === 200) {
-			cy.log(`${dataType} 데이터 정리 완료`)
+			cy.task('serverLog', `${dataType} 데이터 정리 완료`)
 		} else {
-			cy.log(`${dataType} 데이터 정리 실패 또는 불필요`)
+			cy.task('serverLog', `${dataType} 데이터 정리 실패 또는 불필요`)
 		}
 	})
 })
@@ -70,7 +70,7 @@ Cypress.Commands.add(
 		} else {
 			cy.intercept(httpMethod, url).as(alias)
 		}
-		cy.log(`API 인터셉트 설정: ${httpMethod} ${url} as ${alias}`)
+		cy.task('serverLog', `API 인터셉트 설정: ${httpMethod} ${url} as ${alias}`)
 	},
 )
 
@@ -108,7 +108,10 @@ Cypress.Commands.add('checkAccessibility', () => {
 	cy.injectAxe()
 	cy.checkA11y(undefined, undefined, (violations) => {
 		violations.forEach((violation) => {
-			cy.log(`접근성 위반: ${violation.id} - ${violation.description}`)
+			cy.task(
+				'serverLog',
+				`접근성 위반: ${violation.id} - ${violation.description}`,
+			)
 		})
 	})
 })
@@ -125,7 +128,7 @@ Cypress.Commands.add(
 
 		const [width, height] = viewports[device]
 		cy.viewport(width, height)
-		cy.log(`뷰포트 설정: ${device} (${width}x${height})`)
+		cy.task('serverLog', `뷰포트 설정: ${device} (${width}x${height})`)
 	},
 )
 
@@ -134,7 +137,7 @@ Cypress.Commands.add('clearBrowserData', () => {
 	cy.clearAllCookies()
 	cy.clearAllLocalStorage()
 	cy.clearAllSessionStorage()
-	cy.log('브라우저 데이터 정리 완료')
+	cy.task('serverLog', '브라우저 데이터 정리 완료')
 })
 
 // 파일 업로드 헬퍼 (drag & drop 지원)
