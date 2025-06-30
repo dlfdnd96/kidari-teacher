@@ -1,10 +1,5 @@
 declare namespace Cypress {
 	interface Chainable {
-		/**
-		 * 세션 쿠키를 직접 설정하는 로그인
-		 * @param role - 사용자 역할
-		 * @example cy.login('ADMIN')
-		 */
 		login(role: string): Chainable<void>
 		cleanupTestData(dataType: string): Chainable<void>
 		interceptAPI(
@@ -36,5 +31,16 @@ declare namespace Cypress {
 		deleteNoticeViaUI(notice: NoticeData): Chainable<void>
 		goToNoticeDetailByTitle(title: string): Chainable<void>
 		setupNoticeTest(): Chainable<void>
+
+		// 신청 내역 관련 커맨드
+		createApplicationViaUI(
+			volunteerActivity: VolunteerActivityTestData,
+			application: ApplicationData,
+		): Chainable<void>
+		cancelApplicationViaUI(activityTitle: string): Chainable<void>
+		attemptCancelApplicationViaUI(activityTitle: string): Chainable<void>
+		goToVolunteerActivityDetailByTitle(activityTitle: string): Chainable<void>
+		setupApplicationTest(): Chainable<void>
+		createTestApplicationData(): Chainable<any>
 	}
 }

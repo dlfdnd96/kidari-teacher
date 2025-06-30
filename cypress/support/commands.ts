@@ -1,4 +1,5 @@
 import './commands/notice'
+import './commands/application'
 import { z } from 'zod/v4-mini'
 
 Cypress.Commands.add(
