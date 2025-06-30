@@ -172,7 +172,7 @@ function NoticePageClientContent({
 							onClick={handleCreateNotice}
 							variant="outline"
 							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-							data-testid="create-notice-button"
+							data-cy="create-notice-button"
 						>
 							<Plus className="w-4 h-4" />
 							<span>공지사항 작성</span>

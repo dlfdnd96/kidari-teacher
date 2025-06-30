@@ -231,7 +231,7 @@ export default function NoticeDetailPageClient({
 						<AlertDialogCancel
 							onClick={handleDeleteCancel}
 							className={'cursor-pointer'}
-							data-testid="cancel-delete-notice-button"
+							data-cy="cancel-delete-notice-button"
 						>
 							취소
 						</AlertDialogCancel>
@@ -239,7 +239,7 @@ export default function NoticeDetailPageClient({
 							onClick={handleDeleteConfirm}
 							disabled={deleteNoticeMutation.isPending}
 							className="bg-red-600 hover:bg-red-700 focus:ring-red-600 cursor-pointer"
-							data-testid="delete-notice-button"
+							data-cy="delete-notice-button"
 						>
 							{deleteNoticeMutation.isPending ? '삭제 중...' : '삭제'}
 						</AlertDialogAction>

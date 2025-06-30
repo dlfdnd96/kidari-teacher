@@ -26,5 +26,15 @@ declare namespace Cypress {
 			fileName: string,
 			fileType?: string,
 		): Chainable<void>
+
+		// 공지사항 관련 커맨드
+		createNoticeViaUI(notice: NoticeData): Chainable<void>
+		editNoticeViaUI(
+			originalNotice: NoticeData,
+			updatedNotice: NoticeData,
+		): Chainable<void>
+		deleteNoticeViaUI(notice: NoticeData): Chainable<void>
+		goToNoticeDetailByTitle(title: string): Chainable<void>
+		setupNoticeTest(): Chainable<void>
 	}
 }

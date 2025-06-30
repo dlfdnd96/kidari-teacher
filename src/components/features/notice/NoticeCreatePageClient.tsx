@@ -105,7 +105,7 @@ const NoticeCreatePageClient = memo(() => {
 					<form
 						onSubmit={handleSubmit(onSubmit)}
 						className="space-y-8"
-						data-testid="create-notice-form-modal"
+						data-cy="create-notice-form-modal"
 					>
 						{/* 기본 정보 섹션 */}
 						<div className="space-y-6">
@@ -125,7 +125,7 @@ const NoticeCreatePageClient = memo(() => {
 										placeholder="공지사항 제목을 입력하세요"
 										disabled={loading}
 										className="w-full h-12"
-										data-testid="create-notice-title-input"
+										data-cy="create-notice-title-input"
 									/>
 								</div>
 							</div>
@@ -147,7 +147,7 @@ const NoticeCreatePageClient = memo(() => {
 										rows={12}
 										disabled={loading}
 										className="w-full resize-none"
-										data-testid="create-notice-content-input"
+										data-cy="create-notice-content-input"
 									/>
 								</div>
 							</div>
@@ -161,7 +161,7 @@ const NoticeCreatePageClient = memo(() => {
 									disabled={loading || formState.isSubmitting || !session?.user}
 									variant="outline"
 									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
-									data-testid="create-submit-notice-button"
+									data-cy="create-submit-notice-button"
 								>
 									{loading ? (
 										<>

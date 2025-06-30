@@ -1,5 +1,5 @@
 export const errorSelectors = {
-	errorModal: '[data-testid="error-modal"]',
-	errorModalTitle: '[data-testid="error-modal-title"]',
-	errorModalMessage: '[data-testid="error-modal-message"]',
+	errorModal: '[data-cy="error-modal"]',
+	errorModalTitle: '[data-cy="error-modal-title"]',
+	errorModalMessage: '[data-cy="error-modal-message"]',
 }

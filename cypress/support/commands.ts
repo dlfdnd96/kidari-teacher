@@ -1,4 +1,4 @@
-// 로그인
+import './commands/notice'
 import { z } from 'zod/v4-mini'
 
 Cypress.Commands.add(
@@ -76,7 +76,7 @@ Cypress.Commands.add(
 
 // 로딩 상태 대기
 Cypress.Commands.add('waitForLoading', (selector?: string) => {
-	const loadingSelector = selector || '[data-testid="loading"]'
+	const loadingSelector = selector || '[data-cy="loading"]'
 
 	// 로딩이 시작되기를 기다림
 	cy.get('body').then(($body) => {
@@ -94,14 +94,12 @@ Cypress.Commands.add(
 		message: string,
 		type: 'success' | 'error' | 'warning' | 'info' = 'success',
 	) => {
-		cy.get(`[data-testid="toast-${type}"]`, { timeout: 10000 })
+		cy.get(`[data-cy="toast-${type}"]`, { timeout: 10000 })
 			.should('be.visible')
 			.and('contain.text', message)
 
 		// 토스트가 자동으로 사라지는지 확인
-		cy.get(`[data-testid="toast-${type}"]`, { timeout: 15000 }).should(
-			'not.exist',
-		)
+		cy.get(`[data-cy="toast-${type}"]`, { timeout: 15000 }).should('not.exist')
 	},
 )
 
