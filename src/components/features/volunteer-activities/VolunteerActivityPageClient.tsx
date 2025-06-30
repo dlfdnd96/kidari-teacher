@@ -84,6 +84,7 @@ function VolunteerActivityPageClientContent({
 				limit: pageSize,
 				sort: {
 					startAt: 'asc',
+					createdAt: 'asc',
 				},
 			},
 			filter: {
