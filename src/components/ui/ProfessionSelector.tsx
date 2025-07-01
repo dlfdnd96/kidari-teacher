@@ -42,7 +42,9 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 		const handleProfessionToggle = (
 			profession: ZodType<typeof ZodEnum.Profession>,
 		) => {
-			if (disabled) return
+			if (disabled) {
+				return
+			}
 
 			const isSelected = selectedProfessions.includes(profession)
 			if (isSelected) {
@@ -55,17 +57,24 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 		const handleRemoveProfession = (
 			profession: ZodType<typeof ZodEnum.Profession>,
 		) => {
-			if (disabled) return
+			if (disabled) {
+				return
+			}
 			onProfessionsChange(selectedProfessions.filter((p) => p !== profession))
 		}
 
 		const clearAll = () => {
-			if (disabled) return
+			if (disabled) {
+				return
+			}
 			onProfessionsChange([])
 		}
 
 		return (
-			<div className={cn('space-y-3', className)}>
+			<div
+				className={cn('space-y-3', className)}
+				data-cy="user-profile-profession-selector"
+			>
 				{/* 헤더 */}
 				<div className="flex items-center justify-between">
 					<label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -98,6 +107,7 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 							aria-expanded={open}
 							disabled={disabled}
 							className="w-full justify-between bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base hover:bg-white/70 dark:hover:bg-gray-600/50 transition-all duration-200"
+							data-cy="user-profile-profession-combobox"
 						>
 							<span className="text-left">
 								{selectedProfessions.length === 0 ? (
@@ -126,6 +136,7 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 											value={profession.label}
 											onSelect={() => handleProfessionToggle(profession.value)}
 											className="cursor-pointer"
+											data-cy={`user-profile-profession-${profession.value}`}
 										>
 											<div className="flex items-center space-x-2 w-full">
 												<div className="flex items-center justify-center w-4 h-4 border border-gray-300 rounded">

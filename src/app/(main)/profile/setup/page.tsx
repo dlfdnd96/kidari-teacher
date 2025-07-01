@@ -160,7 +160,7 @@ export default function ProfileSetupPage() {
 	}
 
 	return (
-		<div className="min-h-screen">
+		<div className="min-h-screen" data-cy="profile-setup-page">
 			{/* 메인 컨텐츠 */}
 			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
 				<div className="p-6 sm:p-8">
@@ -199,6 +199,7 @@ export default function ProfileSetupPage() {
 										placeholder="이름을 입력하세요"
 										disabled={isLoading}
 										className="w-full h-12"
+										data-cy="setup-profile-name-input"
 									/>
 									<FieldError error={errors.name} />
 								</div>
@@ -243,6 +244,7 @@ export default function ProfileSetupPage() {
 										onChange={handlePhoneChange}
 										disabled={isLoading}
 										className="w-full h-12"
+										data-cy="setup-user-profile-phone-input"
 									/>
 									<FieldError error={errors.phone} />
 								</div>
@@ -277,6 +279,7 @@ export default function ProfileSetupPage() {
 										placeholder="소속 기관을 입력하세요"
 										disabled={isLoading}
 										className="w-full h-12"
+										data-cy="setup-user-profile-organization-input"
 									/>
 								</div>
 							</div>
@@ -289,6 +292,7 @@ export default function ProfileSetupPage() {
 									type="submit"
 									disabled={isLoading}
 									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+									data-cy="setup-profile-submit-button"
 								>
 									{isLoading ? (
 										<>

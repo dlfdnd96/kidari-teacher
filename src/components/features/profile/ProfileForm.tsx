@@ -93,7 +93,10 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 	const isLoading = updateProfileMutation.isPending
 
 	return (
-		<div className="bg-white border border-gray-200 rounded-lg">
+		<div
+			className="bg-white border border-gray-200 rounded-lg"
+			data-cy="profile-form"
+		>
 			{/* 헤더 */}
 			<div className="border-b border-gray-200 p-6">
 				<div className="flex items-center">
@@ -124,6 +127,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 							defaultValue={session?.user?.name ?? ''}
 							disabled={isLoading}
 							className="w-full"
+							data-cy="profile-name-input"
 						/>
 						<FieldError error={errors.name} />
 					</div>
@@ -135,6 +139,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 							disabled={isLoading || formState.isSubmitting}
 							variant="outline"
 							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+							data-cy="profile-form-submit"
 						>
 							{isLoading ? (
 								<>
@@ -155,6 +160,7 @@ const ProfileForm = memo(({ onCancel, refetchUser }: ProfileFormProps) => {
 							disabled={isLoading}
 							variant="outline"
 							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
+							data-cy="profile-form-cancel"
 						>
 							<X className="w-4 h-4" />
 							<span>취소</span>
