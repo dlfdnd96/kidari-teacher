@@ -353,6 +353,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 															!startAtValue && 'text-muted-foreground',
 														)}
 														disabled={loading}
+														data-cy="create-volunteer-activity-start-date-time-popover"
 													>
 														{startAtValue ? (
 															format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
@@ -435,6 +436,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 															!endAtValue && 'text-muted-foreground',
 														)}
 														disabled={loading}
+														data-cy="create-volunteer-activity-end-date-time-popover"
 													>
 														{endAtValue ? (
 															format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
@@ -517,6 +519,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 															'text-muted-foreground',
 													)}
 													disabled={loading}
+													data-cy="create-volunteer-activity-application-deadline-popover"
 												>
 													{applicationDeadlineValue ? (
 														format(applicationDeadlineValue, 'yyyy년 M월 d일', {
@@ -660,6 +663,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 										onClick={handleGoBack}
 										className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 										disabled={loading}
+										data-cy="create-cancel-button"
 									>
 										<X className="w-4 h-4" />
 										<span>취소</span>

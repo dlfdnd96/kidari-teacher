@@ -360,6 +360,7 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 								onClick={handleGoBack}
 								variant="outline"
 								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
+								data-cy="back-button"
 							>
 								<ArrowLeft className="w-4 h-4" />
 								<span className="text-sm font-medium">뒤로가기</span>
@@ -373,6 +374,7 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 									onClick={handleEditClick}
 									variant="outline"
 									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
+									data-cy="edit-button"
 								>
 									<Edit className="w-4 h-4" />
 									<span>수정</span>
@@ -381,6 +383,7 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 									onClick={handleDeleteClick}
 									variant="outline"
 									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
+									data-cy="delete-button"
 								>
 									<Trash2 className="w-4 h-4" />
 									<span>삭제</span>
@@ -890,6 +893,7 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 						<AlertDialogCancel
 							onClick={handleDeleteCancel}
 							className={'cursor-pointer'}
+							data-cy="cancel-delete-volunteer-activity-button"
 						>
 							취소
 						</AlertDialogCancel>
@@ -897,6 +901,7 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 							onClick={handleDeleteConfirm}
 							disabled={deleteVolunteerActivityMutation.isPending}
 							className="bg-red-600 hover:bg-red-700 focus:ring-red-600 cursor-pointer"
+							data-cy="delete-volunteer-activity-button"
 						>
 							{deleteVolunteerActivityMutation.isPending
 								? '삭제 중...'

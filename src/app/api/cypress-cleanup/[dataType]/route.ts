@@ -21,6 +21,15 @@ export async function DELETE(request: NextRequest) {
 				deletedItems.notices = deletedCount
 				break
 
+			case 'volunteer-activities':
+				const volunteerResults = await cleanupVolunteerActivities(testRunId)
+				Object.assign(deletedItems, volunteerResults)
+				deletedCount = Object.values(volunteerResults).reduce(
+					(sum, count) => sum + count,
+					0,
+				)
+				break
+
 			case 'users':
 				deletedCount = await cleanupTestUsers(testRunId)
 				deletedItems.users = deletedCount
@@ -112,46 +121,26 @@ async function cleanupNotices(testRunId: string): Promise<number> {
 	return result.count
 }
 
-// 테스트 사용자 정리
-async function cleanupTestUsers(_testRunId: string): Promise<number> {
-	const result: Record<string, number> = {}
+// 봉사활동 정리
+async function cleanupVolunteerActivities(
+	_testRunId: string,
+): Promise<Record<string, number>> {
+	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		await tx.userProfile.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
-						{ name: { contains: 'test' } },
-					],
-				},
-			},
-		})
-		await tx.userProfession.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
-						{ name: { contains: 'test' } },
-					],
-				},
-			},
-		})
-		const { count } = await tx.user.deleteMany({
+		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany({
 			where: {
 				OR: [
-					{ email: { contains: 'test' } },
-					{ email: { contains: 'cypress' } },
-					{ name: { contains: 'test' } },
-					{ email: { endsWith: '@test.com' } },
+					{ title: { contains: '테스트' } },
+					{ title: { contains: 'test' } },
+					{ description: { contains: '테스트' } },
+					{ description: { contains: 'test' } },
 				],
 			},
 		})
-		result.count = count
+		results.volunteerActivities = volunteerActivitiesResult.count
 	})
 
-	return result.count
+	return results
 }
 
 // 테스트 유저 프로필 정리
@@ -165,8 +154,9 @@ async function cleanupTestUserProfiles(
 				user: {
 					OR: [
 						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
+						{ email: { contains: '테스트' } },
 						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
 					],
 				},
 			},
@@ -178,8 +168,9 @@ async function cleanupTestUserProfiles(
 				user: {
 					OR: [
 						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
+						{ email: { contains: '테스트' } },
 						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
 					],
 				},
 			},
@@ -190,9 +181,54 @@ async function cleanupTestUserProfiles(
 	return results
 }
 
+// 테스트 사용자 정리
+async function cleanupTestUsers(_testRunId: string): Promise<number> {
+	const result: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		await tx.userProfile.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
+		await tx.userProfession.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
+		const { count } = await tx.user.deleteMany({
+			where: {
+				OR: [
+					{ email: { contains: 'test' } },
+					{ email: { contains: '테스트' } },
+					{ name: { contains: 'test' } },
+					{ name: { contains: '테스트' } },
+					{ email: { endsWith: '@test.com' } },
+				],
+			},
+		})
+		result.count = count
+	})
+
+	return result.count
+}
+
 // 모든 테스트 데이터 정리
 async function cleanupAllTestData(
-	testRunId: string,
+	_testRunId: string,
 ): Promise<Record<string, number>> {
 	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
@@ -201,7 +237,8 @@ async function cleanupAllTestData(
 				OR: [
 					{ title: { contains: '테스트' } },
 					{ title: { contains: 'test' } },
-					{ content: { contains: testRunId } },
+					{ content: { contains: '테스트' } },
+					{ content: { contains: 'test' } },
 				],
 			},
 		})
@@ -212,8 +249,9 @@ async function cleanupAllTestData(
 				user: {
 					OR: [
 						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
+						{ email: { contains: '테스트' } },
 						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
 					],
 				},
 			},
@@ -223,8 +261,9 @@ async function cleanupAllTestData(
 				user: {
 					OR: [
 						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
+						{ email: { contains: '테스트' } },
 						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
 					],
 				},
 			},
@@ -233,7 +272,7 @@ async function cleanupAllTestData(
 			where: {
 				OR: [
 					{ email: { contains: 'test' } },
-					{ email: { contains: 'cypress' } },
+					{ email: { contains: '테스트' } },
 					{ email: { endsWith: '@test.com' } },
 				],
 			},

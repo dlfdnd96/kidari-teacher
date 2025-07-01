@@ -53,6 +53,7 @@ const VolunteerActivityCard = memo(
 			<div
 				className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700 overflow-hidden group"
 				onClick={handleViewDetail}
+				data-cy="volunteer-activity-card"
 			>
 				{/* 카드 헤더 */}
 				<div className="p-4 pb-3">

@@ -1,6 +1,7 @@
 import './commands/notice'
 import './commands/application'
 import './commands/profile'
+import './commands/volunteer-activity'
 import { z } from 'zod/v4-mini'
 
 Cypress.Commands.add(

@@ -90,6 +90,7 @@ export const ZodEnum = {
 
 	TestDataType: z.enum([
 		'notices',
+		'volunteer-activities',
 		'users',
 		'user-profiles',
 		'sessions',

@@ -229,6 +229,7 @@ const VolunteerActivityEditForm = memo(
 									placeholder="봉사활동명을 입력해주세요"
 									className="w-full h-12"
 									disabled={loading}
+									data-cy="edit-volunteer-activity-title-input"
 								/>
 								<FieldError error={errors.title} />
 							</div>
@@ -251,6 +252,7 @@ const VolunteerActivityEditForm = memo(
 									rows={6}
 									className="w-full resize-none"
 									disabled={loading}
+									data-cy="edit-volunteer-activity-content-input"
 								/>
 								<FieldError error={errors.description} />
 							</div>
@@ -274,6 +276,7 @@ const VolunteerActivityEditForm = memo(
 									readOnly
 									onClick={handleAddressSearch}
 									className="w-full h-12 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
+									data-cy="edit-volunteer-activity-location-input"
 								/>
 								<FieldError error={errors.location} />
 							</div>
@@ -306,6 +309,7 @@ const VolunteerActivityEditForm = memo(
 													!startAtValue && 'text-muted-foreground',
 												)}
 												disabled={loading}
+												data-cy="edit-volunteer-activity-start-date-time-popover"
 											>
 												{startAtValue ? (
 													format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
@@ -358,6 +362,7 @@ const VolunteerActivityEditForm = memo(
 															setValue('startAt', newDate)
 														}
 													}}
+													data-cy="edit-volunteer-activity-start-date-time-input"
 												/>
 											</div>
 										</PopoverContent>
@@ -382,6 +387,7 @@ const VolunteerActivityEditForm = memo(
 													!endAtValue && 'text-muted-foreground',
 												)}
 												disabled={loading}
+												data-cy="edit-volunteer-activity-end-date-time-popover"
 											>
 												{endAtValue ? (
 													format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
@@ -432,6 +438,7 @@ const VolunteerActivityEditForm = memo(
 															setValue('endAt', newDate)
 														}
 													}}
+													data-cy="edit-volunteer-activity-end-date-time-input"
 												/>
 											</div>
 										</PopoverContent>
@@ -457,6 +464,7 @@ const VolunteerActivityEditForm = memo(
 												!applicationDeadlineValue && 'text-muted-foreground',
 											)}
 											disabled={loading}
+											data-cy="edit-volunteer-activity-application-deadline-popover"
 										>
 											{applicationDeadlineValue ? (
 												format(applicationDeadlineValue, 'yyyy년 M월 d일', {
@@ -522,6 +530,7 @@ const VolunteerActivityEditForm = memo(
 										placeholder="최대 모집 인원을 입력해주세요"
 										className="w-full h-12"
 										disabled={loading}
+										data-cy="edit-volunteer-activity-recruitment-count-input"
 									/>
 									<p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
 										비워두면 인원 제한이 없습니다
@@ -572,6 +581,7 @@ const VolunteerActivityEditForm = memo(
 								disabled={loading}
 								variant="outline"
 								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+								data-cy="edit-volunteer-activity-submit-button"
 							>
 								{loading ? (
 									<>
@@ -591,6 +601,7 @@ const VolunteerActivityEditForm = memo(
 								onClick={onCancel}
 								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 								disabled={loading}
+								data-cy="edit-cancel-button"
 							>
 								<X className="w-4 h-4" />
 								<span>취소</span>

@@ -51,5 +51,19 @@ declare namespace Cypress {
 		goToProfile(): Chainable<void>
 		goToProfileSetup(): Chainable<void>
 		setupProfileTest(): Chainable<void>
+
+		// 봉사활동 관련 커맨드
+		createVolunteerActivityViaUI(
+			activity: VolunteerActivityTestData,
+		): Chainable<void>
+		editVolunteerActivityViaUI(
+			originalActivity: VolunteerActivityTestData,
+			updatedActivity: VolunteerActivityTestData,
+		): Chainable<void>
+		deleteVolunteerActivityViaUI(
+			activity: VolunteerActivityTestData,
+		): Chainable<void>
+		goToVolunteerActivityDetailByTitle(title: string): Chainable<void>
+		setupVolunteerActivityTest(): Chainable<void>
 	}
 }
