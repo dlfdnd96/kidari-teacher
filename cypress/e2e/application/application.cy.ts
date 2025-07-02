@@ -122,6 +122,7 @@ describe('신청 내역 CRUD 테스트', () => {
 			cy.createApplicationViaUI(pastVolunteerActivity, testApplication)
 		})
 
+		// FIXME: custom calendar 컴포넌트의 disabled를 비활성화 해야함
 		it('과거 봉사활동의 신청은 취소할 수 없다', () => {
 			myApplicationPage
 				.visit()
