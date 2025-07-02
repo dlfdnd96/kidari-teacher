@@ -1,5 +1,5 @@
 import { profileSelectors } from './selectors'
-import { PROFILE_TIMEOUTS } from '../../constants/profile'
+import { PROFILE_TIMEOUTS } from '../../constants'
 import { UserProfileData } from '../../fixtures/profile/profileTestData'
 
 export class UserProfileFormPage {

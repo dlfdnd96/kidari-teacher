@@ -1,5 +1,5 @@
 import { profileSelectors } from './selectors'
-import { PROFILE_ROUTES, PROFILE_TIMEOUTS } from '../../constants/profile'
+import { PROFILE_ROUTES, PROFILE_TIMEOUTS } from '../../constants'
 import { formatPhoneNumber } from '../utils'
 
 export class ProfilePage {

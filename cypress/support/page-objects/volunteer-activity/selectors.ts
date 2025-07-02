@@ -17,6 +17,10 @@ export const volunteerActivitySelectors = {
 	createEndAtInput: '[data-cy="create-volunteer-activity-end-date-time-input"]',
 	createApplicationDeadlinePopOver:
 		'[data-cy="create-volunteer-activity-application-deadline-popover"]',
+	createStatusInput: '[data-cy="create-volunteer-activity-status-input"]',
+	createStatusSelect: '[data-cy="create-volunteer-activity-status-select"]',
+	createStatusTrigger: '[data-cy="create-volunteer-activity-status-trigger"]',
+	createStatusContent: '[data-cy="create-volunteer-activity-status-content"]',
 	createMaxParticipantsInput:
 		'[data-cy="create-volunteer-activity-recruitment-count-input"]',
 	createSubmitButton: '[data-cy="create-volunteer-activity-button"]',

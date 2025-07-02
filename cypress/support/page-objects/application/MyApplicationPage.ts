@@ -2,7 +2,8 @@ import {
 	APPLICATION_MESSAGES,
 	APPLICATION_ROUTES,
 	APPLICATION_TIMEOUTS,
-} from '../../constants/application'
+	VOLUNTEER_ACTIVITY_ROUTES,
+} from '../../constants'
 
 export class MyApplicationPage {
 	private baseUrl = APPLICATION_ROUTES.MY_APPLICATIONS
@@ -28,10 +29,6 @@ export class MyApplicationPage {
 			.not(':contains("신청한 봉사활동이 없습니다")')
 	}
 
-	getApplicationTable() {
-		return cy.get('table')
-	}
-
 	verifyApplicationExists(activityTitle: string) {
 		cy.contains(activityTitle, {
 			timeout: APPLICATION_TIMEOUTS.ELEMENT_VISIBLE,
@@ -52,7 +49,7 @@ export class MyApplicationPage {
 	clickFirstApplication() {
 		this.getApplicationRows()
 			.first()
-			.find('[data-cy="application-title"], td:nth-child(2)')
+			.find('[data-cy="application-title"] div.cursor-pointer')
 			.click()
 		return this
 	}
@@ -63,7 +60,7 @@ export class MyApplicationPage {
 	}
 
 	verifyAtVolunteerActivityDetail() {
-		cy.url().should('include', APPLICATION_ROUTES.VOLUNTEER_ACTIVITIES + '/')
+		cy.url().should('include', `${VOLUNTEER_ACTIVITY_ROUTES.LIST}/`)
 		return this
 	}
 
@@ -75,26 +72,14 @@ export class MyApplicationPage {
 	verifyEmptyState() {
 		cy.contains(APPLICATION_MESSAGES.NO_APPLICATIONS, {
 			timeout: APPLICATION_TIMEOUTS.ELEMENT_VISIBLE,
-		})
+		}).should('be.visible')
 		return this
 	}
 
 	verifyTotalCount(count: number) {
 		cy.contains(`총 ${count}개`, {
 			timeout: APPLICATION_TIMEOUTS.ELEMENT_VISIBLE,
-		})
-		return this
-	}
-
-	verifyLoadingIndicator() {
-		cy.contains(APPLICATION_MESSAGES.LOADING, {
-			timeout: APPLICATION_TIMEOUTS.ELEMENT_VISIBLE,
-		})
-		return this
-	}
-
-	verifyNoLoadingIndicator() {
-		cy.contains(APPLICATION_MESSAGES.LOADING).should('not.exist')
+		}).should('be.visible')
 		return this
 	}
 
@@ -123,6 +108,30 @@ export class MyApplicationPage {
 		cy.contains('tr', activityTitle)
 			.find('button:contains("취소")')
 			.should('not.exist')
+		return this
+	}
+
+	verifyErrorState() {
+		cy.contains('신청 내역을 불러올 수 없습니다', {
+			timeout: APPLICATION_TIMEOUTS.ELEMENT_VISIBLE,
+		}).should('be.visible')
+		return this
+	}
+
+	verifyRetryButtonVisible() {
+		cy.contains('다시 시도', {
+			timeout: APPLICATION_TIMEOUTS.ELEMENT_VISIBLE,
+		}).should('be.visible')
+		return this
+	}
+
+	clickRetryButton() {
+		cy.contains('다시 시도').click()
+		return this
+	}
+
+	checkAccessibility() {
+		cy.checkAccessibility()
 		return this
 	}
 }

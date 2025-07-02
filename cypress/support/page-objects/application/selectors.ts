@@ -14,9 +14,20 @@ export const applicationSelectors = {
 	cancelButton: '[data-cy="cancel-application-button"]',
 
 	// 취소 확인 모달
-	cancelConfirmDialog: '[role="dialog"]',
-	confirmCancelButton: '[data-cy="confirm-cancel-button"]',
-	cancelCancelButton: '[data-cy="cancel-cancel-button"]',
+	cancelConfirmDialog: '[data-cy="cancel-application-alert-dialog"]',
+	confirmCancelButton: '[data-cy="confirm-application-cancel-button"]',
+	cancelCancelButton: '[data-cy="cancel-application-cancel-button"]',
+
+	// 신청 모달
+	applicationModal: '[data-cy="application-modal"]',
+	applyButton: '[data-cy="apply-volunteer-activity-button"]',
+	userProfileProfessionSelector:
+		'[data-cy="application-form-user-profile-profession-selector"]',
+	userProfileProfessionSelectBox:
+		'[data-cy="application-form-user-profile-profession-select-box"]',
+	emergencyContactInput: '[data-cy="application-form-emergency-contact-input"]',
+	submitApplicationButton: '[data-cy="apply-application-form-button"]',
+	cancelApplicationButton: '[data-cy="cancel-application-form-button"]',
 
 	// 페이지네이션
 	pagination: '[data-cy="pagination"]',

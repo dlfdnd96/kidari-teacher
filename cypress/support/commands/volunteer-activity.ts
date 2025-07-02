@@ -4,7 +4,7 @@ import {
 	DetailVolunteerActivityPage,
 	EditVolunteerActivityPage,
 	VolunteerActivityPage,
-} from '../page-objects/volunteer-activity'
+} from '../page-objects'
 
 Cypress.Commands.add(
 	'createVolunteerActivityViaUI',

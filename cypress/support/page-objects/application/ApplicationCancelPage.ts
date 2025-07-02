@@ -1,9 +1,6 @@
 import { MyApplicationPage } from './MyApplicationPage'
 import { applicationSelectors } from './selectors'
-import {
-	APPLICATION_MESSAGES,
-	APPLICATION_TIMEOUTS,
-} from '../../constants/application'
+import { APPLICATION_MESSAGES, APPLICATION_TIMEOUTS } from '../../constants'
 
 export class ApplicationCancelPage extends MyApplicationPage {
 	verifyCancelConfirmationDialog() {
@@ -14,31 +11,17 @@ export class ApplicationCancelPage extends MyApplicationPage {
 	}
 
 	confirmCancel() {
-		// 신청 취소 버튼 클릭
-		cy.get(applicationSelectors.cancelConfirmDialog)
-			.find('button')
-			.contains('신청 취소')
-			.click()
+		cy.get(applicationSelectors.confirmCancelButton).click()
 		return this
 	}
 
 	cancelCancel() {
-		// 취소 버튼 클릭 (취소 안함)
-		cy.get(applicationSelectors.cancelConfirmDialog)
-			.find('button')
-			.contains('취소')
-			.first()
-			.click()
+		cy.get(applicationSelectors.cancelCancelButton).click()
 		return this
 	}
 
 	verifyDialogClosed() {
 		cy.get(applicationSelectors.cancelConfirmDialog).should('not.exist')
-		return this
-	}
-
-	verifyDialogVisible() {
-		cy.get(applicationSelectors.cancelConfirmDialog).should('be.visible')
 		return this
 	}
 

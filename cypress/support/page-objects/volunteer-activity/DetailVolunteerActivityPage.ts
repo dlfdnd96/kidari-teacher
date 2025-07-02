@@ -3,7 +3,7 @@ import { volunteerActivitySelectors } from './selectors'
 import {
 	VOLUNTEER_ACTIVITY_MESSAGES,
 	VOLUNTEER_ACTIVITY_TIMEOUTS,
-} from '../../constants/volunteer-activity'
+} from '../../constants'
 
 export class DetailVolunteerActivityPage extends VolunteerActivityPage {
 	verifyVolunteerActivityContent(title: string, description: string) {

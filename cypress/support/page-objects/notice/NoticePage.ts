@@ -1,5 +1,5 @@
 import { noticeSelectors } from './selectors'
-import { NOTICE_ROUTES, NOTICE_TIMEOUTS } from '../../constants/notice'
+import { NOTICE_ROUTES, NOTICE_TIMEOUTS } from '../../constants'
 
 export class NoticePage {
 	private baseUrl = NOTICE_ROUTES.LIST

@@ -8,7 +8,7 @@ import {
 	DetailVolunteerActivityPage,
 	EditVolunteerActivityPage,
 	VolunteerActivityPage,
-} from '../../support/page-objects/volunteer-activity'
+} from '../../support/page-objects'
 
 describe('봉사활동 CRUD 테스트', () => {
 	let testVolunteerActivity: VolunteerActivityTestData

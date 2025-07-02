@@ -1,3 +1,6 @@
+import { ZodType } from '../../../../src/shared/types'
+import { Enum, ZodEnum } from '../../../../src/enums'
+
 export interface VolunteerActivityTestData {
 	title: string
 	description: string
@@ -7,11 +10,14 @@ export interface VolunteerActivityTestData {
 	endDate: string
 	endTime: string
 	applicationDeadline: string
+	status: ZodType<typeof ZodEnum.VolunteerActivityStatus>
 	maxParticipants: string
 }
 
 export class VolunteerActivityTestDataFactory {
-	static createTestVolunteerActivity(): VolunteerActivityTestData {
+	static createTestVolunteerActivity(
+		status?: ZodType<typeof ZodEnum.VolunteerActivityStatus>,
+	): VolunteerActivityTestData {
 		const timestamp = Date.now()
 		const now = new Date()
 		const futureDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) // 7일 후
@@ -29,11 +35,14 @@ export class VolunteerActivityTestDataFactory {
 			endDate: farFutureDate.toISOString().split('T')[0],
 			endTime: '17:00',
 			applicationDeadline: applicationDeadlineDate.toISOString().split('T')[0],
+			status: status || Enum.VolunteerActivityStatus.PLANNING,
 			maxParticipants: '10',
 		}
 	}
 
-	static createUpdatedTestVolunteerActivity(): VolunteerActivityTestData {
+	static createUpdatedTestVolunteerActivity(
+		status?: ZodType<typeof ZodEnum.VolunteerActivityStatus>,
+	): VolunteerActivityTestData {
 		const timestamp = Date.now()
 		const now = new Date()
 		const futureDate = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000) // 10일 후
@@ -51,6 +60,31 @@ export class VolunteerActivityTestDataFactory {
 			endDate: farFutureDate.toISOString().split('T')[0],
 			endTime: '18:00',
 			applicationDeadline: applicationDeadlineDate.toISOString().split('T')[0],
+			status: status || Enum.VolunteerActivityStatus.PLANNING,
+			maxParticipants: '15',
+		}
+	}
+
+	static createPastVolunteerActivityTestData(
+		status?: ZodType<typeof ZodEnum.VolunteerActivityStatus>,
+	): VolunteerActivityTestData {
+		const timestamp = Date.now()
+		const pastDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 7일 전
+		const pastEndDate = new Date(pastDate.getTime() + 2 * 60 * 60 * 1000) // 시작 후 2시간
+		const applicationDeadlineDate = new Date(
+			pastDate.getTime() - 24 * 60 * 60 * 1000,
+		) // 과거로부터 1일 전
+
+		return {
+			title: `과거 테스트 봉사활동 ${timestamp}`,
+			description: `과거 테스트 봉사활동 내용입니다. ${timestamp}`,
+			location: `과거 테스트 장소 ${timestamp}`,
+			startDate: pastDate.toISOString().split('T')[0],
+			startTime: '10:00',
+			endDate: pastEndDate.toISOString().split('T')[0],
+			endTime: '18:00',
+			applicationDeadline: applicationDeadlineDate.toISOString().split('T')[0],
+			status: status || Enum.VolunteerActivityStatus.PLANNING,
 			maxParticipants: '15',
 		}
 	}

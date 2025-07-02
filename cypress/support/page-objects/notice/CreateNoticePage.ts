@@ -1,7 +1,7 @@
 import { noticeSelectors } from './selectors'
 import { NoticePage } from './NoticePage'
 import { NoticeData } from '../../fixtures/notice/noticeTestData'
-import { NOTICE_ROUTES } from '../../constants/notice'
+import { NOTICE_ROUTES } from '../../constants'
 
 export class CreateNoticePage extends NoticePage {
 	verifyAtCreatePage() {

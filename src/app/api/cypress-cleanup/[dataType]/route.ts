@@ -21,6 +21,15 @@ export async function DELETE(request: NextRequest) {
 				deletedItems.notices = deletedCount
 				break
 
+			case 'applications':
+				const applicationResults = await cleanupApplications(testRunId)
+				Object.assign(deletedItems, applicationResults)
+				deletedCount = Object.values(applicationResults).reduce(
+					(sum, count) => sum + count,
+					0,
+				)
+				break
+
 			case 'volunteer-activities':
 				const volunteerResults = await cleanupVolunteerActivities(testRunId)
 				Object.assign(deletedItems, volunteerResults)
@@ -102,7 +111,7 @@ export async function DELETE(request: NextRequest) {
 }
 
 // 공지사항 정리
-async function cleanupNotices(testRunId: string): Promise<number> {
+async function cleanupNotices(_testRunId: string): Promise<number> {
 	const result: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
 		const { count } = await tx.notice.deleteMany({
@@ -110,8 +119,8 @@ async function cleanupNotices(testRunId: string): Promise<number> {
 				OR: [
 					{ title: { contains: '테스트' } },
 					{ title: { contains: 'test' } },
-					{ title: { contains: 'Test' } },
-					{ content: { contains: testRunId } },
+					{ content: { contains: '테스트' } },
+					{ content: { contains: 'test' } },
 				],
 			},
 		})
@@ -119,6 +128,28 @@ async function cleanupNotices(testRunId: string): Promise<number> {
 	})
 
 	return result.count
+}
+
+// 봉사활동 신청 정리
+async function cleanupApplications(
+	_testRunId: string,
+): Promise<Record<string, number>> {
+	const results: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		const volunteerApplicationsResult = await tx.application.deleteMany({
+			where: {
+				OR: [
+					{ user: { email: { contains: 'test' } } },
+					{ user: { email: { contains: '테스트' } } },
+					{ user: { name: { contains: 'test' } } },
+					{ user: { name: { contains: '테스트' } } },
+				],
+			},
+		})
+		results.volunteerApplications = volunteerApplicationsResult.count
+	})
+
+	return results
 }
 
 // 봉사활동 정리
@@ -243,6 +274,30 @@ async function cleanupAllTestData(
 			},
 		})
 		results.notices = noticesResult.count
+
+		const applicationsResult = await tx.application.deleteMany({
+			where: {
+				OR: [
+					{ user: { email: { contains: 'test' } } },
+					{ user: { email: { contains: '테스트' } } },
+					{ user: { name: { contains: 'test' } } },
+					{ user: { name: { contains: '테스트' } } },
+				],
+			},
+		})
+		results.applications = applicationsResult.count
+
+		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany({
+			where: {
+				OR: [
+					{ title: { contains: '테스트' } },
+					{ title: { contains: 'test' } },
+					{ description: { contains: '테스트' } },
+					{ description: { contains: 'test' } },
+				],
+			},
+		})
+		results.volunteerActivities = volunteerActivitiesResult.count
 
 		await tx.userProfile.deleteMany({
 			where: {

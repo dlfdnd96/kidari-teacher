@@ -107,7 +107,7 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 							aria-expanded={open}
 							disabled={disabled}
 							className="w-full justify-between bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-300/50 dark:border-gray-600/50 rounded-xl h-12 text-base hover:bg-white/70 dark:hover:bg-gray-600/50 transition-all duration-200"
-							data-cy="user-profile-profession-combobox"
+							data-cy="user-profile-profession-combo-box"
 						>
 							<span className="text-left">
 								{selectedProfessions.length === 0 ? (
@@ -156,7 +156,10 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 
 				{/* 선택된 직업 표시 */}
 				{selectedProfessions.length > 0 && (
-					<div className="flex flex-wrap gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+					<div
+						className="flex flex-wrap gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+						data-cy="selected-user-profile-professions"
+					>
 						{selectedProfessions.map((profession) => (
 							<Badge
 								key={profession}
@@ -171,6 +174,7 @@ const ProfessionSelector = memo<ProfessionSelectorProps>(
 									onClick={() => handleRemoveProfession(profession)}
 									disabled={disabled}
 									className="h-4 w-4 p-0 ml-1 hover:bg-transparent text-gray-500 hover:text-gray-700"
+									data-cy={`selected-user-profile-profession-${profession}`}
 								>
 									<X className="w-3 h-3" />
 								</Button>

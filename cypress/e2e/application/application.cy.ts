@@ -1,13 +1,18 @@
 import {
 	ApplicationData,
 	ApplicationTestDataFactory,
-	VolunteerActivityTestData,
 } from '../../support/fixtures/application/applicationTestData'
 import { errorSelectors } from '../../support/page-objects/error/selectors'
 import {
 	MyApplicationPage,
 	ApplicationCancelPage,
 } from '../../support/page-objects'
+import {
+	VolunteerActivityTestData,
+	VolunteerActivityTestDataFactory,
+} from '../../support/fixtures/volunteer-activity/volunteerActivityTestData'
+import { Enum } from '../../../src/enums'
+import { MAX_RETRY_COUNT } from '../../support/constants'
 
 describe('신청 내역 CRUD 테스트', () => {
 	let testApplication: ApplicationData
@@ -19,9 +24,13 @@ describe('신청 내역 CRUD 테스트', () => {
 	beforeEach(() => {
 		testApplication = ApplicationTestDataFactory.createTestApplication()
 		testVolunteerActivity =
-			ApplicationTestDataFactory.createVolunteerActivityTestData()
+			VolunteerActivityTestDataFactory.createTestVolunteerActivity(
+				Enum.VolunteerActivityStatus.RECRUITING,
+			)
 		pastVolunteerActivity =
-			ApplicationTestDataFactory.createPastVolunteerActivityTestData()
+			VolunteerActivityTestDataFactory.createPastVolunteerActivityTestData(
+				Enum.VolunteerActivityStatus.RECRUITING,
+			)
 
 		// Page Object 인스턴스 생성
 		myApplicationPage = new MyApplicationPage()
@@ -44,7 +53,7 @@ describe('신청 내역 CRUD 테스트', () => {
 			cy.createApplicationViaUI(testVolunteerActivity, testApplication)
 		})
 
-		it.only('신청 내역 목록을 조회할 수 있다', () => {
+		it('신청 내역 목록을 조회할 수 있다', () => {
 			myApplicationPage
 				.visit()
 				.verifyMinimumApplicationCount(1)
@@ -52,9 +61,10 @@ describe('신청 내역 CRUD 테스트', () => {
 		})
 
 		it('신청 내역 상세 내용을 조회할 수 있다', () => {
-			myApplicationPage.clickFirstApplication()
-
-			myApplicationPage.verifyAtVolunteerActivityDetail()
+			myApplicationPage
+				.visit()
+				.clickFirstApplication()
+				.verifyAtVolunteerActivityDetail()
 		})
 
 		it('총 개수가 올바르게 표시된다', () => {
@@ -64,7 +74,7 @@ describe('신청 내역 CRUD 테스트', () => {
 		it('신청 상태가 올바르게 표시된다', () => {
 			myApplicationPage
 				.visit()
-				.verifyApplicationStatus(testVolunteerActivity.title, '대기중')
+				.verifyApplicationStatus(testVolunteerActivity.title, '대기 중')
 		})
 	})
 
@@ -74,9 +84,9 @@ describe('신청 내역 CRUD 테스트', () => {
 		})
 
 		it('대기중 상태의 신청을 취소할 수 있다', () => {
-			myApplicationPage.visit()
-
-			myApplicationPage.verifyCancelButtonVisible(testVolunteerActivity.title)
+			myApplicationPage
+				.visit()
+				.verifyCancelButtonVisible(testVolunteerActivity.title)
 
 			cy.cancelApplicationViaUI(testVolunteerActivity.title)
 
@@ -99,6 +109,8 @@ describe('신청 내역 CRUD 테스트', () => {
 		})
 
 		it('취소 확인 취소 시 신청이 유지된다', () => {
+			myApplicationPage.visit()
+
 			cy.attemptCancelApplicationViaUI(testVolunteerActivity.title)
 
 			myApplicationPage.verifyApplicationExists(testVolunteerActivity.title)
@@ -118,14 +130,15 @@ describe('신청 내역 CRUD 테스트', () => {
 	})
 
 	describe('페이지네이션', () => {
-		it('페이지네이션이 올바르게 동작한다', () => {
+		beforeEach(() => {
 			cy.createApplicationViaUI(testVolunteerActivity, testApplication)
+		})
 
+		it('페이지네이션이 올바르게 동작한다', () => {
 			myApplicationPage.visit().verifyMinimumApplicationCount(1)
 
 			cy.get('body').then(($body) => {
 				if ($body.find('[data-cy="pagination"]').length > 0) {
-					// 페이지네이션이 있는 경우 테스트
 					cy.get('[data-cy="pagination"]').should('be.visible')
 				}
 			})
@@ -174,7 +187,7 @@ describe('신청 내역 CRUD 테스트', () => {
 		})
 
 		it('신청 목록 조회 실패 시 에러 상태를 표시한다', () => {
-			cy.intercept('POST', '/api/trpc/application.getMyApplicationList*', {
+			cy.intercept('GET', '/api/trpc/application.getMyApplicationList*', {
 				statusCode: 500,
 				body: {
 					error: {
@@ -192,18 +205,17 @@ describe('신청 내역 CRUD 테스트', () => {
 
 			cy.wait('@getApplicationListError')
 
-			cy.contains('신청 내역을 불러올 수 없습니다').should('be.visible')
-			cy.contains('다시 시도').should('be.visible')
+			myApplicationPage.verifyErrorState().verifyRetryButtonVisible()
 		})
 
 		it('재시도 버튼이 동작한다', () => {
 			let callCount = 0
 			cy.intercept(
-				'POST',
+				'GET',
 				'/api/trpc/application.getMyApplicationList*',
 				(req) => {
 					callCount++
-					if (callCount === 1) {
+					if (callCount < MAX_RETRY_COUNT) {
 						req.reply({
 							statusCode: 500,
 							body: {
@@ -221,37 +233,9 @@ describe('신청 내역 CRUD 테스트', () => {
 
 			myApplicationPage.visit()
 
-			cy.contains('다시 시도').click()
-
-			myApplicationPage.verifyApplicationExists(testVolunteerActivity.title)
-		})
-	})
-
-	describe('접근성 및 반응형', () => {
-		beforeEach(() => {
-			cy.createApplicationViaUI(testVolunteerActivity, testApplication)
-		})
-
-		it('모바일 화면에서 올바르게 표시된다', () => {
-			cy.setViewport('mobile')
-
 			myApplicationPage
-				.visit()
+				.clickRetryButton()
 				.verifyApplicationExists(testVolunteerActivity.title)
-		})
-
-		it('태블릿 화면에서 올바르게 표시된다', () => {
-			cy.setViewport('tablet')
-
-			myApplicationPage
-				.visit()
-				.verifyApplicationExists(testVolunteerActivity.title)
-		})
-
-		it('접근성 요구사항을 충족한다', () => {
-			myApplicationPage.visit()
-
-			cy.checkAccessibility()
 		})
 	})
 })

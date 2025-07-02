@@ -17,7 +17,8 @@ export const profileSelectors = {
 	userProfilePhone: '[data-cy="user-profile-phone"]',
 	userProfileEditButton: '[data-cy="edit-user-profile-button"]',
 	userProfileCreateButton: '[data-cy="create-user-profile-button"]',
-	userProfileProfessionComboBox: '[data-cy="user-profile-profession-combobox"]',
+	userProfileProfessionComboBox:
+		'[data-cy="user-profile-profession-combo-box"]',
 	userProfileProfessionSelector: '[data-cy="user-profile-profession-selector"]',
 
 	// User Profile Form

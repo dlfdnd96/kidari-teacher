@@ -41,7 +41,6 @@ declare namespace Cypress {
 		attemptCancelApplicationViaUI(activityTitle: string): Chainable<void>
 		goToVolunteerActivityDetailByTitle(activityTitle: string): Chainable<void>
 		setupApplicationTest(): Chainable<void>
-		createTestApplicationData(): Chainable<any>
 
 		// 프로필 관련 커맨드
 		editProfileViaUI(updatedProfile: ProfileData): Chainable<void>

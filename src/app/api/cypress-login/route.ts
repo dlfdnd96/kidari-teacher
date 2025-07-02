@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod/v4-mini'
-import { ZodEnum } from '@/enums'
+import { Enum, ZodEnum } from '@/enums'
 import { encode } from 'next-auth/jwt'
 
 export async function POST(request: NextRequest) {
@@ -23,15 +23,25 @@ export async function POST(request: NextRequest) {
 				email,
 				name: user,
 				role: parsedRole,
+				profiles: {
+					create: [
+						{
+							phone: '01012345678',
+						},
+					],
+				},
+				professions: {
+					create: [
+						{
+							profession: Enum.Profession.ACCOUNTANT,
+						},
+					],
+				},
 			},
 		})
 
 		// JWT 토큰 생성
-		const secret = process.env.NEXTAUTH_SECRET
-		if (!secret) {
-			throw new Error('NEXTAUTH_SECRET is not defined')
-		}
-
+		const secret = z.string().parse(process.env.NEXTAUTH_SECRET)
 		const maxAge = 30 * 24 * 60 * 60 // 30 days
 		const expires = new Date(Date.now() + maxAge * 1000)
 

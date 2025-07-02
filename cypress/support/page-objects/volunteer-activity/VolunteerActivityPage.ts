@@ -2,7 +2,7 @@ import { volunteerActivitySelectors } from './selectors'
 import {
 	VOLUNTEER_ACTIVITY_ROUTES,
 	VOLUNTEER_ACTIVITY_TIMEOUTS,
-} from '../../constants/volunteer-activity'
+} from '../../constants'
 
 export class VolunteerActivityPage {
 	private baseUrl = VOLUNTEER_ACTIVITY_ROUTES.LIST

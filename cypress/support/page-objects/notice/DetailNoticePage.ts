@@ -1,6 +1,6 @@
 import { NoticePage } from './NoticePage'
 import { noticeSelectors } from './selectors'
-import { NOTICE_MESSAGES, NOTICE_TIMEOUTS } from '../../constants/notice'
+import { NOTICE_MESSAGES, NOTICE_TIMEOUTS } from '../../constants'
 
 export class DetailNoticePage extends NoticePage {
 	verifyNoticeContent(title: string, content: string) {

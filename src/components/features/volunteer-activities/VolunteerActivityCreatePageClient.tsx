@@ -607,6 +607,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 													watch('status') ||
 													Enum.VolunteerActivityStatus.PLANNING
 												}
+												data-cy="create-volunteer-activity-status-input"
 											/>
 											<Select
 												value={
@@ -615,11 +616,15 @@ const VolunteerActivityCreatePageClient = memo(() => {
 												}
 												disabled={loading}
 												onValueChange={(value) => setValue('status', value)}
+												data-cy="create-volunteer-activity-status-select"
 											>
-												<SelectTrigger className="w-full h-12">
+												<SelectTrigger
+													className="w-full h-12"
+													data-cy="create-volunteer-activity-status-trigger"
+												>
 													<SelectValue placeholder="상태를 선택해주세요" />
 												</SelectTrigger>
-												<SelectContent>
+												<SelectContent data-cy="create-volunteer-activity-status-content">
 													{Object.entries(VOLUNTEER_ACTIVITY_STATUS_LABELS).map(
 														([value, label]) => (
 															<SelectItem key={value} value={value}>
