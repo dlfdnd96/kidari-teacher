@@ -7,6 +7,7 @@
 	},
 	"scripts": {
 		"dev": "next dev --turbopack",
+		"dev:test": "NODE_ENV=test npm run dev",
 		"prebuild": "prisma generate",
 		"build": "next build",
 		"start": "next start",
@@ -14,9 +15,9 @@
 		"format": "prettier --write .",
 		"lint-staged": "lint-staged",
 		"prepare": "node -e \"process.env.CI && process.exit(0)\" || husky",
-		"cypress:open": "cypress open",
-		"cypress:run": "cypress run",
-		"test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run"
+		"cypress:open": "dotenv -e .env.test -- npx prisma db push --force-reset --skip-generate && cypress open",
+		"cypress:run": "dotenv -e .env.test -- npx prisma db push --force-reset --skip-generate && cypress run",
+		"test:e2e": "dotenv -e .env.test -- npx prisma db push --force-reset --skip-generate && start-server-and-test dev http://localhost:3000 cypress:run"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.0",
@@ -64,6 +65,7 @@
 		"axe-core": "^4.10.3",
 		"cypress": "^14.4.1",
 		"cypress-axe": "^1.6.0",
+		"dotenv-cli": "^8.0.0",
 		"eslint": "^9.28.0",
 		"eslint-config-next": "^15.3.3",
 		"husky": "^9.1.7",
