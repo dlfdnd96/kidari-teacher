@@ -35,20 +35,9 @@ export interface NoticeEditPageClientProps {
 	noticeId: string
 }
 
-export interface NoticeModalProps {
-	open: boolean
-	onClose: () => void
-}
-
 export interface NoticeCardProps {
 	notice: ZodType<typeof NoticePickAuthorEntitySchema>
-	onViewDetail?: (notice: ZodType<typeof NoticePickAuthorEntitySchema>) => void
-}
-
-export interface NoticeDetailModalProps {
-	open: boolean
-	onClose: () => void
-	notice: ZodType<typeof NoticePickAuthorEntitySchema> | null
+	index?: number
 }
 
 export interface NoticeEditFormProps {
@@ -56,4 +45,36 @@ export interface NoticeEditFormProps {
 	initialTitle: string
 	initialContent: string
 	onCancel: () => void
+}
+
+export interface LoadingSpinnerProps {
+	size?: 'sm' | 'md' | 'lg'
+	text?: string
+	className?: string
+}
+
+export interface ErrorStateProps {
+	title?: string
+	message?: string
+	onRetry?: () => void
+	className?: string
+}
+
+export interface BackButtonProps {
+	onClick: () => void
+	text?: string
+	className?: string
+}
+
+export interface NoticeSkeletonListProps {
+	count?: number
+	showHeader?: boolean
+	showPagination?: boolean
+}
+
+export interface UseNoticeFormProps {
+	initialTitle?: string
+	initialContent?: string
+	onSuccess?: () => void
+	onSubmit: (data: { title: string; content: string }) => Promise<void>
 }

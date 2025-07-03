@@ -1,68 +1,34 @@
 'use client'
 
 import React, { memo, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { trpc } from '@/components/providers/TrpcProvider'
-import {
-	CLIENT_ERROR_KEY_MAPPING,
-	handleClientError,
-	isValidationError,
-} from '@/utils/error'
-import { NoticeFormSchema } from '@/shared/schemas/notice'
 import { Button, Input, Textarea } from '@/components/ui'
-import { ArrowLeft, FileText, Type, X, Send } from 'lucide-react'
+import { FileText, Type, X, Send } from 'lucide-react'
+import { BackButton } from './components'
+import { useNoticeActions, useNoticeForm } from './hooks'
 
 const NoticeCreatePageClient = memo(() => {
-	const { register, handleSubmit, reset, formState } = useForm()
 	const { data: session } = useSession()
-	const router = useRouter()
-	const { showError } = useErrorModal()
+	const { createNoticeMutation, navigateToList, goBack, checkAuthentication } =
+		useNoticeActions()
 
-	const utils = trpc.useUtils()
+	const handleSubmit = useCallback(
+		async (data: { title: string; content: string }) => {
+			if (!checkAuthentication()) return
 
-	const createNoticeMutation = trpc.notice.createNotice.useMutation({
-		onSuccess: async () => {
-			await utils.notice.getNoticeList.invalidate()
-			router.refresh()
-			reset()
-			handleSuccess()
+			await createNoticeMutation.mutateAsync(data)
 		},
-		onError: (error) => {
-			handleClientError(error, showError, '공지사항 등록 오류')
-		},
-	})
-
-	const onSubmit = useCallback(
-		async (data: unknown) => {
-			if (!session?.user) {
-				handleClientError(
-					CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
-					showError,
-					'인증 오류',
-				)
-				return
-			}
-
-			try {
-				const validatedData = NoticeFormSchema.parse(data)
-				await createNoticeMutation.mutateAsync(validatedData)
-			} catch (error: unknown) {
-				if (isValidationError(error)) {
-					handleClientError(error, showError, '입력 검증 오류')
-				} else {
-					handleClientError(error, showError, '공지사항 등록 오류')
-				}
-			}
-		},
-		[createNoticeMutation, session, showError],
+		[createNoticeMutation, checkAuthentication],
 	)
 
-	const handleSuccess = useCallback(() => {
-		router.push('/notice')
-	}, [router])
+	const {
+		register,
+		handleSubmit: handleFormSubmit,
+		formState,
+	} = useNoticeForm({
+		onSuccess: navigateToList,
+		onSubmit: handleSubmit,
+	})
 
 	const loading = createNoticeMutation.isPending
 
@@ -73,14 +39,7 @@ const NoticeCreatePageClient = memo(() => {
 				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
-							<Button
-								onClick={() => router.back()}
-								variant="outline"
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
-							>
-								<ArrowLeft className="w-4 h-4" />
-								<span className="text-sm font-medium">뒤로가기</span>
-							</Button>
+							<BackButton onClick={goBack} />
 						</div>
 					</div>
 				</div>
@@ -103,7 +62,7 @@ const NoticeCreatePageClient = memo(() => {
 
 					{/* 폼 */}
 					<form
-						onSubmit={handleSubmit(onSubmit)}
+						onSubmit={handleFormSubmit}
 						className="space-y-8"
 						data-cy="create-notice-form-modal"
 					>
@@ -177,7 +136,7 @@ const NoticeCreatePageClient = memo(() => {
 								</Button>
 								<Button
 									type="button"
-									onClick={handleSuccess}
+									onClick={navigateToList}
 									variant="outline"
 									disabled={loading}
 									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"

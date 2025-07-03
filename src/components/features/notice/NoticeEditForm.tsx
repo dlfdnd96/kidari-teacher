@@ -1,72 +1,37 @@
 'use client'
 
 import React, { memo, useCallback } from 'react'
-import { useForm } from 'react-hook-form'
 import { Input, Textarea, Button } from '@/components/ui'
-import { useRouter } from 'next/navigation'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { trpc } from '@/components/providers/TrpcProvider'
-import {
-	CLIENT_ERROR_KEY_MAPPING,
-	handleClientError,
-	isValidationError,
-} from '@/utils/error'
-import { NoticeEditFormSchema } from '@/shared/schemas/notice'
+import { FileText, Type, X, Save } from 'lucide-react'
 import { NoticeEditFormProps } from '@/types/notice'
-import { ArrowLeft, FileText, Type, X, Save } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { BackButton } from './components'
+import { useNoticeActions, useNoticeForm } from './hooks'
 
 const NoticeEditForm = memo(
 	({ id, initialTitle, initialContent, onCancel }: NoticeEditFormProps) => {
-		const { register, handleSubmit, formState } = useForm({
-			defaultValues: { title: initialTitle, content: initialContent },
-		})
-		const router = useRouter()
-		const { data: session } = useSession()
-		const { showError } = useErrorModal()
+		const { updateNoticeMutation, goBack } = useNoticeActions()
 
-		const utils = trpc.useUtils()
-		const updateNoticeMutation = trpc.notice.updateNotice.useMutation({
-			onSuccess: async () => {
-				await Promise.all([
-					utils.notice.getNoticeList.invalidate(),
-					utils.notice.getNotice.invalidate({ id }),
-				])
-				onCancel()
+		const handleSubmit = useCallback(
+			async (data: { title: string; content: string }) => {
+				await updateNoticeMutation.mutateAsync({
+					id,
+					title: data.title,
+					content: data.content,
+				})
 			},
-			onError: (error) => {
-				handleClientError(error, showError, '공지사항 수정 오류')
-			},
-		})
-
-		const onSubmit = useCallback(
-			async (data: unknown) => {
-				if (!session?.user) {
-					handleClientError(
-						CLIENT_ERROR_KEY_MAPPING.AUTHENTICATION_ERROR,
-						showError,
-						'인증 오류',
-					)
-					return
-				}
-
-				try {
-					const validatedData = NoticeEditFormSchema.parse(data)
-					await updateNoticeMutation.mutateAsync({
-						id,
-						title: validatedData.title,
-						content: validatedData.content,
-					})
-				} catch (error: unknown) {
-					if (isValidationError(error)) {
-						handleClientError(error, showError, '입력 검증 오류')
-					} else {
-						handleClientError(error, showError, '공지사항 수정 오류')
-					}
-				}
-			},
-			[session?.user, showError, updateNoticeMutation, id],
+			[updateNoticeMutation, id],
 		)
+
+		const {
+			register,
+			handleSubmit: handleFormSubmit,
+			formState,
+		} = useNoticeForm({
+			initialTitle,
+			initialContent,
+			onSuccess: onCancel,
+			onSubmit: handleSubmit,
+		})
 
 		const loading = updateNoticeMutation.isPending
 
@@ -76,14 +41,7 @@ const NoticeEditForm = memo(
 				<div>
 					<div className="flex items-center justify-between h-14">
 						<div className="py-4">
-							<Button
-								onClick={() => router.back()}
-								variant="outline"
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
-							>
-								<ArrowLeft className="w-4 h-4" />
-								<span className="text-sm font-medium">뒤로가기</span>
-							</Button>
+							<BackButton onClick={goBack} />
 						</div>
 					</div>
 				</div>
@@ -105,7 +63,7 @@ const NoticeEditForm = memo(
 
 						{/* 폼 */}
 						<form
-							onSubmit={handleSubmit(onSubmit)}
+							onSubmit={handleFormSubmit}
 							className="space-y-8"
 							data-cy="notice-edit-form"
 						>
