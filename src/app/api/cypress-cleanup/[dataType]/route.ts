@@ -21,14 +21,36 @@ export async function DELETE(request: NextRequest) {
 				deletedItems.notices = deletedCount
 				break
 
+			case 'applications':
+				const applicationResults = await cleanupApplications(testRunId)
+				Object.assign(deletedItems, applicationResults)
+				deletedCount = Object.values(applicationResults).reduce(
+					(sum, count) => sum + count,
+					0,
+				)
+				break
+
+			case 'volunteer-activities':
+				const volunteerResults = await cleanupVolunteerActivities(testRunId)
+				Object.assign(deletedItems, volunteerResults)
+				deletedCount = Object.values(volunteerResults).reduce(
+					(sum, count) => sum + count,
+					0,
+				)
+				break
+
 			case 'users':
 				deletedCount = await cleanupTestUsers(testRunId)
 				deletedItems.users = deletedCount
 				break
 
-			case 'sessions':
-				deletedCount = await cleanupTestSessions(testRunId)
-				deletedItems.sessions = deletedCount
+			case 'user-profiles':
+				const userProfileResults = await cleanupTestUserProfiles(testRunId)
+				Object.assign(deletedItems, userProfileResults)
+				deletedCount = Object.values(userProfileResults).reduce(
+					(sum, count) => sum + count,
+					0,
+				)
 				break
 
 			case 'test-data':
@@ -89,65 +111,147 @@ export async function DELETE(request: NextRequest) {
 }
 
 // 공지사항 정리
-async function cleanupNotices(testRunId: string): Promise<number> {
-	const result = await prisma.notice.deleteMany({
-		where: {
-			OR: [
-				{ title: { contains: '테스트' } },
-				{ title: { contains: 'test' } },
-				{ title: { contains: 'Test' } },
-				{ content: { contains: testRunId } },
-			],
-		},
+async function cleanupNotices(_testRunId: string): Promise<number> {
+	const result: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		const { count } = await tx.notice.deleteMany({
+			where: {
+				OR: [
+					{ title: { contains: '테스트' } },
+					{ title: { contains: 'test' } },
+					{ content: { contains: '테스트' } },
+					{ content: { contains: 'test' } },
+				],
+			},
+		})
+		result.count = count
 	})
 
 	return result.count
+}
+
+// 봉사활동 신청 정리
+async function cleanupApplications(
+	_testRunId: string,
+): Promise<Record<string, number>> {
+	const results: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		const volunteerApplicationsResult = await tx.application.deleteMany({
+			where: {
+				OR: [
+					{ user: { email: { contains: 'test' } } },
+					{ user: { email: { contains: '테스트' } } },
+					{ user: { name: { contains: 'test' } } },
+					{ user: { name: { contains: '테스트' } } },
+				],
+			},
+		})
+		results.volunteerApplications = volunteerApplicationsResult.count
+	})
+
+	return results
+}
+
+// 봉사활동 정리
+async function cleanupVolunteerActivities(
+	_testRunId: string,
+): Promise<Record<string, number>> {
+	const results: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany({
+			where: {
+				OR: [
+					{ title: { contains: '테스트' } },
+					{ title: { contains: 'test' } },
+					{ description: { contains: '테스트' } },
+					{ description: { contains: 'test' } },
+				],
+			},
+		})
+		results.volunteerActivities = volunteerActivitiesResult.count
+	})
+
+	return results
+}
+
+// 테스트 유저 프로필 정리
+async function cleanupTestUserProfiles(
+	_testRunId: string,
+): Promise<Record<string, number>> {
+	const results: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		const userProfilesResult = await tx.userProfile.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
+		results.userProfiles = userProfilesResult.count
+
+		const userProfessionsResult = await tx.userProfession.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
+		results.userProfessions = userProfessionsResult.count
+	})
+
+	return results
 }
 
 // 테스트 사용자 정리
 async function cleanupTestUsers(_testRunId: string): Promise<number> {
-	await prisma.session.deleteMany({
-		where: {
-			user: {
+	const result: Record<string, number> = {}
+	await prisma.$transaction(async (tx) => {
+		await tx.userProfile.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
+		await tx.userProfession.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
+		const { count } = await tx.user.deleteMany({
+			where: {
 				OR: [
 					{ email: { contains: 'test' } },
-					{ email: { contains: 'cypress' } },
+					{ email: { contains: '테스트' } },
 					{ name: { contains: 'test' } },
+					{ name: { contains: '테스트' } },
+					{ email: { endsWith: '@test.com' } },
 				],
 			},
-		},
-	})
-
-	const result = await prisma.user.deleteMany({
-		where: {
-			OR: [
-				{ email: { contains: 'test' } },
-				{ email: { contains: 'cypress' } },
-				{ name: { contains: 'test' } },
-				{ email: { endsWith: '@test.com' } },
-			],
-		},
-	})
-
-	return result.count
-}
-
-// 테스트 세션 정리
-async function cleanupTestSessions(_testRunId: string): Promise<number> {
-	const result = await prisma.session.deleteMany({
-		where: {
-			OR: [
-				{ expires: { lt: new Date() } },
-				{
-					user: {
-						OR: [
-							{ email: { contains: 'test' } },
-							{ email: { contains: 'cypress' } },
-						],
-					},
-				},
-			],
-		},
+		})
+		result.count = count
 	})
 
 	return result.count
@@ -155,7 +259,7 @@ async function cleanupTestSessions(_testRunId: string): Promise<number> {
 
 // 모든 테스트 데이터 정리
 async function cleanupAllTestData(
-	testRunId: string,
+	_testRunId: string,
 ): Promise<Record<string, number>> {
 	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
@@ -164,27 +268,66 @@ async function cleanupAllTestData(
 				OR: [
 					{ title: { contains: '테스트' } },
 					{ title: { contains: 'test' } },
-					{ content: { contains: testRunId } },
+					{ content: { contains: '테스트' } },
+					{ content: { contains: 'test' } },
 				],
 			},
 		})
 		results.notices = noticesResult.count
-		const sessionsResult = await tx.session.deleteMany({
+
+		const applicationsResult = await tx.application.deleteMany({
+			where: {
+				OR: [
+					{ user: { email: { contains: 'test' } } },
+					{ user: { email: { contains: '테스트' } } },
+					{ user: { name: { contains: 'test' } } },
+					{ user: { name: { contains: '테스트' } } },
+				],
+			},
+		})
+		results.applications = applicationsResult.count
+
+		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany({
+			where: {
+				OR: [
+					{ title: { contains: '테스트' } },
+					{ title: { contains: 'test' } },
+					{ description: { contains: '테스트' } },
+					{ description: { contains: 'test' } },
+				],
+			},
+		})
+		results.volunteerActivities = volunteerActivitiesResult.count
+
+		await tx.userProfile.deleteMany({
 			where: {
 				user: {
 					OR: [
 						{ email: { contains: 'test' } },
-						{ email: { contains: 'cypress' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
 					],
 				},
 			},
 		})
-		results.sessions = sessionsResult.count
+		await tx.userProfession.deleteMany({
+			where: {
+				user: {
+					OR: [
+						{ email: { contains: 'test' } },
+						{ email: { contains: '테스트' } },
+						{ name: { contains: 'test' } },
+						{ name: { contains: '테스트' } },
+					],
+				},
+			},
+		})
 		const usersResult = await tx.user.deleteMany({
 			where: {
 				OR: [
 					{ email: { contains: 'test' } },
-					{ email: { contains: 'cypress' } },
+					{ email: { contains: '테스트' } },
 					{ email: { endsWith: '@test.com' } },
 				],
 			},

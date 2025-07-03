@@ -1,10 +1,5 @@
 declare namespace Cypress {
 	interface Chainable {
-		/**
-		 * 세션 쿠키를 직접 설정하는 로그인
-		 * @param role - 사용자 역할
-		 * @example cy.login('ADMIN')
-		 */
 		login(role: string): Chainable<void>
 		cleanupTestData(dataType: string): Chainable<void>
 		interceptAPI(
@@ -26,5 +21,48 @@ declare namespace Cypress {
 			fileName: string,
 			fileType?: string,
 		): Chainable<void>
+
+		// 공지사항 관련 커맨드
+		createNoticeViaUI(notice: NoticeData): Chainable<void>
+		editNoticeViaUI(
+			originalNotice: NoticeData,
+			updatedNotice: NoticeData,
+		): Chainable<void>
+		deleteNoticeViaUI(notice: NoticeData): Chainable<void>
+		goToNoticeDetailByTitle(title: string): Chainable<void>
+		setupNoticeTest(): Chainable<void>
+
+		// 신청 내역 관련 커맨드
+		createApplicationViaUI(
+			volunteerActivity: VolunteerActivityTestData,
+			application: ApplicationData,
+		): Chainable<void>
+		cancelApplicationViaUI(activityTitle: string): Chainable<void>
+		attemptCancelApplicationViaUI(activityTitle: string): Chainable<void>
+		goToVolunteerActivityDetailByTitle(activityTitle: string): Chainable<void>
+		setupApplicationTest(): Chainable<void>
+
+		// 프로필 관련 커맨드
+		editProfileViaUI(updatedProfile: ProfileData): Chainable<void>
+		editUserProfileViaUI(updatedUserProfile: UserProfileData): Chainable<void>
+		createUserProfileViaUI(userProfile: UserProfileData): Chainable<void>
+		setupProfileViaUI(setupProfile: SetupProfileData): Chainable<void>
+		goToProfile(): Chainable<void>
+		goToProfileSetup(): Chainable<void>
+		setupProfileTest(): Chainable<void>
+
+		// 봉사활동 관련 커맨드
+		createVolunteerActivityViaUI(
+			activity: VolunteerActivityTestData,
+		): Chainable<void>
+		editVolunteerActivityViaUI(
+			originalActivity: VolunteerActivityTestData,
+			updatedActivity: VolunteerActivityTestData,
+		): Chainable<void>
+		deleteVolunteerActivityViaUI(
+			activity: VolunteerActivityTestData,
+		): Chainable<void>
+		goToVolunteerActivityDetailByTitle(title: string): Chainable<void>
+		setupVolunteerActivityTest(): Chainable<void>
 	}
 }

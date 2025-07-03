@@ -24,7 +24,10 @@ const UserProfileCard = memo(
 	({ profile, onEdit, onCreate, canEdit = false }: UserProfileCardProps) => {
 		if (!profile) {
 			return (
-				<div className="bg-white border border-gray-200 rounded-lg">
+				<div
+					className="bg-white border border-gray-200 rounded-lg"
+					data-cy="user-profile-card-empty"
+				>
 					{/* 헤더 */}
 					<div className="border-b border-gray-200 p-6">
 						<div className="flex items-center">
@@ -54,6 +57,7 @@ const UserProfileCard = memo(
 								<Button
 									onClick={onCreate}
 									className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center border-0"
+									data-cy="create-user-profile-button"
 								>
 									<Plus className="w-4 h-4 mr-2" />
 									프로필 정보 추가
@@ -66,7 +70,10 @@ const UserProfileCard = memo(
 		}
 
 		return (
-			<div className="bg-white border border-gray-200 rounded-lg">
+			<div
+				className="bg-white border border-gray-200 rounded-lg"
+				data-cy="user-profile-card"
+			>
 				{/* 헤더 */}
 				<div className="border-b border-gray-200 p-6">
 					<div className="flex items-center justify-between">
@@ -84,6 +91,7 @@ const UserProfileCard = memo(
 								variant="outline"
 								size="sm"
 								className="cursor-pointer"
+								data-cy="edit-user-profile-button"
 							>
 								<Edit className="w-4 h-4 mr-1.5" />
 								수정
@@ -102,7 +110,10 @@ const UserProfileCard = memo(
 								<div className="text-sm font-medium text-gray-500 mb-1">
 									휴대폰 번호
 								</div>
-								<div className="text-base font-medium text-gray-900">
+								<div
+									className="text-base font-medium text-gray-900"
+									data-cy="user-profile-phone"
+								>
 									{profile.phone
 										? formatPhoneNumber(profile.phone)
 										: '정보 없음'}

@@ -22,6 +22,7 @@ const NoticeList = memo(({ notices }: NoticeListProps) => {
 							animationDelay: `${index * 100}ms`,
 						}}
 						onClick={() => router.push(`/notice/${notice.id}`)}
+						data-cy="notice-card"
 					>
 						{/* 카드 헤더 */}
 						<div className="mb-4">

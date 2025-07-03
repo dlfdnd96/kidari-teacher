@@ -114,9 +114,12 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 
 	return (
 		<>
-			<TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+			<TableRow
+				className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+				data-cy="application-row"
+			>
 				{/* 상태 */}
-				<TableCell className="text-center">
+				<TableCell className="text-center" data-cy="application-status">
 					<div
 						className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
 					>
@@ -125,7 +128,10 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 봉사활동명 */}
-				<TableCell className="font-medium text-center">
+				<TableCell
+					className="font-medium text-center"
+					data-cy="application-title"
+				>
 					<div className="max-w-xs mx-auto">
 						<div
 							className="truncate text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -140,7 +146,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 신청일 */}
-				<TableCell className="text-center">
+				<TableCell className="text-center" data-cy="application-created-at">
 					<div className="flex items-center justify-center gap-1 text-sm">
 						<Clock className="w-3 h-3 text-gray-400" />
 						{format(new TZDate(application.createdAt, TIME_ZONE.SEOUL), 'M/d', {
@@ -150,7 +156,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 활동일시 */}
-				<TableCell className="text-center">
+				<TableCell className="text-center" data-cy="application-activity-date">
 					<div className="flex items-center justify-center gap-1 text-sm">
 						<Calendar className="w-3 h-3 text-gray-400" />
 						{format(
@@ -165,7 +171,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 장소 */}
-				<TableCell className="text-center">
+				<TableCell className="text-center" data-cy="application-location">
 					<div className="flex items-center justify-center gap-1 text-sm max-w-xs mx-auto">
 						<MapPin className="w-3 h-3 text-gray-400 shrink-0" />
 						<span className="truncate">
@@ -175,7 +181,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				</TableCell>
 
 				{/* 액션 */}
-				<TableCell className="text-center">
+				<TableCell className="text-center" data-cy="application-action">
 					{canCancel && (
 						<Button
 							variant="destructive"
@@ -187,6 +193,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 							aria-label="신청 취소"
 							disabled={isCanceling}
 							className="h-8 px-2 text-xs cursor-pointer"
+							data-cy="cancel-application-button"
 						>
 							<X className="w-3 h-3" />
 							<span>취소</span>
@@ -200,7 +207,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 				open={isDeleteDialogOpen}
 				onOpenChange={setIsDeleteDialogOpen}
 			>
-				<AlertDialogContent>
+				<AlertDialogContent data-cy="cancel-application-alert-dialog">
 					<AlertDialogHeader>
 						<AlertDialogTitle className="flex items-center gap-3 text-red-600 dark:text-red-400">
 							<AlertTriangle className="w-6 h-6" />
@@ -229,6 +236,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 						<AlertDialogCancel
 							onClick={() => setIsDeleteDialogOpen(false)}
 							className={'cursor-pointer'}
+							data-cy="cancel-application-cancel-button"
 						>
 							취소
 						</AlertDialogCancel>
@@ -236,6 +244,7 @@ const ApplicationRow = memo(({ application }: MyApplicationListRowProps) => {
 							onClick={handleCancel}
 							disabled={cancelApplicationMutation.isPending}
 							className="bg-red-600 hover:bg-red-700 focus:ring-red-600 cursor-pointer"
+							data-cy="confirm-application-cancel-button"
 						>
 							{cancelApplicationMutation.isPending ? '취소 중...' : '신청 취소'}
 						</AlertDialogAction>
@@ -289,7 +298,7 @@ export default function MyApplicationList({
 		<div className="space-y-4">
 			{/* 테이블 */}
 			<div className="rounded-md border border-gray-200 dark:border-gray-700">
-				<Table>
+				<Table data-cy="my-applications-table">
 					<TableHeader>
 						<TableRow>
 							<TableHead className="w-20 text-center">상태</TableHead>
@@ -311,7 +320,10 @@ export default function MyApplicationList({
 						) : (
 							<TableRow>
 								<TableCell colSpan={8} className="text-center py-12">
-									<div className="flex flex-col items-center">
+									<div
+										className="flex flex-col items-center"
+										data-cy="empty-applications"
+									>
 										<div className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
 											신청한 봉사활동이 없습니다
 										</div>

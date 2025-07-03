@@ -1,4 +1,7 @@
-// 로그인
+import './commands/notice'
+import './commands/application'
+import './commands/profile'
+import './commands/volunteer-activity'
 import { z } from 'zod/v4-mini'
 
 Cypress.Commands.add(
@@ -6,7 +9,7 @@ Cypress.Commands.add(
 	(role: string, options?: { timeout?: number }) => {
 		const { timeout = 10000 } = options || {}
 
-		cy.log(`로그인 시도: ${role}`)
+		cy.task('serverLog', `로그인 시도: ${role}`)
 
 		cy.request({
 			method: 'POST',
@@ -17,16 +20,28 @@ Cypress.Commands.add(
 			expect(response.status).to.eq(200)
 			expect(response.body).to.have.property('success', true)
 
-			cy.log(`로그인 성공: ${role}`)
+			cy.task('serverLog', `로그인 성공: ${role}`)
 
-			cy.getCookies().should('have.length.greaterThan', 0)
+			// JWT 토큰이 쿠키에 설정되었는지 확인
+			cy.getCookie('next-auth.session-token').should('exist')
+
+			// 세션이 유효한지 확인 (JWT 토큰 검증)
+			cy.request({
+				method: 'GET',
+				url: '/api/auth/session',
+				failOnStatusCode: false,
+			}).then((sessionResponse) => {
+				expect(sessionResponse.status).to.eq(200)
+				expect(sessionResponse.body).to.have.property('user')
+				cy.task('serverLog', 'JWT 세션 검증 완료')
+			})
 		})
 	},
 )
 
 // 테스트 데이터 정리 명령어
 Cypress.Commands.add('cleanupTestData', (dataType: string) => {
-	cy.log(`테스트 데이터 정리: ${dataType}`)
+	cy.task('serverLog', `테스트 데이터 정리: ${dataType}`)
 
 	cy.request({
 		method: 'DELETE',
@@ -39,9 +54,9 @@ Cypress.Commands.add('cleanupTestData', (dataType: string) => {
 		failOnStatusCode: false,
 	}).then((response) => {
 		if (response.status === 200) {
-			cy.log(`${dataType} 데이터 정리 완료`)
+			cy.task('serverLog', `${dataType} 데이터 정리 완료`)
 		} else {
-			cy.log(`${dataType} 데이터 정리 실패 또는 불필요`)
+			cy.task('serverLog', `${dataType} 데이터 정리 실패 또는 불필요`)
 		}
 	})
 })
@@ -58,13 +73,13 @@ Cypress.Commands.add(
 		} else {
 			cy.intercept(httpMethod, url).as(alias)
 		}
-		cy.log(`API 인터셉트 설정: ${httpMethod} ${url} as ${alias}`)
+		cy.task('serverLog', `API 인터셉트 설정: ${httpMethod} ${url} as ${alias}`)
 	},
 )
 
 // 로딩 상태 대기
 Cypress.Commands.add('waitForLoading', (selector?: string) => {
-	const loadingSelector = selector || '[data-testid="loading"]'
+	const loadingSelector = selector || '[data-cy="loading"]'
 
 	// 로딩이 시작되기를 기다림
 	cy.get('body').then(($body) => {
@@ -82,14 +97,12 @@ Cypress.Commands.add(
 		message: string,
 		type: 'success' | 'error' | 'warning' | 'info' = 'success',
 	) => {
-		cy.get(`[data-testid="toast-${type}"]`, { timeout: 10000 })
+		cy.get(`[data-cy="toast-${type}"]`, { timeout: 10000 })
 			.should('be.visible')
 			.and('contain.text', message)
 
 		// 토스트가 자동으로 사라지는지 확인
-		cy.get(`[data-testid="toast-${type}"]`, { timeout: 15000 }).should(
-			'not.exist',
-		)
+		cy.get(`[data-cy="toast-${type}"]`, { timeout: 15000 }).should('not.exist')
 	},
 )
 
@@ -98,7 +111,10 @@ Cypress.Commands.add('checkAccessibility', () => {
 	cy.injectAxe()
 	cy.checkA11y(undefined, undefined, (violations) => {
 		violations.forEach((violation) => {
-			cy.log(`접근성 위반: ${violation.id} - ${violation.description}`)
+			cy.task(
+				'serverLog',
+				`접근성 위반: ${violation.id} - ${violation.description}`,
+			)
 		})
 	})
 })
@@ -115,7 +131,7 @@ Cypress.Commands.add(
 
 		const [width, height] = viewports[device]
 		cy.viewport(width, height)
-		cy.log(`뷰포트 설정: ${device} (${width}x${height})`)
+		cy.task('serverLog', `뷰포트 설정: ${device} (${width}x${height})`)
 	},
 )
 
@@ -124,7 +140,7 @@ Cypress.Commands.add('clearBrowserData', () => {
 	cy.clearAllCookies()
 	cy.clearAllLocalStorage()
 	cy.clearAllSessionStorage()
-	cy.log('브라우저 데이터 정리 완료')
+	cy.task('serverLog', '브라우저 데이터 정리 완료')
 })
 
 // 파일 업로드 헬퍼 (drag & drop 지원)

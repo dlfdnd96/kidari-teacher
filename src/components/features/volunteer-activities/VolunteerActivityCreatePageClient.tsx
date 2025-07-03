@@ -273,6 +273,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 											placeholder="봉사활동명을 입력해주세요"
 											className="w-full h-12"
 											disabled={loading}
+											data-cy="create-volunteer-activity-title-input"
 										/>
 										<FieldError error={errors.title} />
 									</div>
@@ -295,6 +296,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 											rows={6}
 											className="w-full resize-none"
 											disabled={loading}
+											data-cy="create-volunteer-activity-content-input"
 										/>
 										<FieldError error={errors.description} />
 									</div>
@@ -318,6 +320,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 											readOnly
 											onClick={handleAddressSearch}
 											className="w-full h-12 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
+											data-cy="create-volunteer-activity-location-input"
 										/>
 										<FieldError error={errors.location} />
 									</div>
@@ -350,6 +353,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 															!startAtValue && 'text-muted-foreground',
 														)}
 														disabled={loading}
+														data-cy="create-volunteer-activity-start-date-time-popover"
 													>
 														{startAtValue ? (
 															format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
@@ -407,6 +411,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 																	setValue('startAt', newDate)
 																}
 															}}
+															data-cy="create-volunteer-activity-start-date-time-input"
 														/>
 													</div>
 												</PopoverContent>
@@ -431,6 +436,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 															!endAtValue && 'text-muted-foreground',
 														)}
 														disabled={loading}
+														data-cy="create-volunteer-activity-end-date-time-popover"
 													>
 														{endAtValue ? (
 															format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
@@ -486,6 +492,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 																	setValue('endAt', newDate)
 																}
 															}}
+															data-cy="create-volunteer-activity-end-date-time-input"
 														/>
 													</div>
 												</PopoverContent>
@@ -512,6 +519,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 															'text-muted-foreground',
 													)}
 													disabled={loading}
+													data-cy="create-volunteer-activity-application-deadline-popover"
 												>
 													{applicationDeadlineValue ? (
 														format(applicationDeadlineValue, 'yyyy년 M월 d일', {
@@ -577,6 +585,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 												placeholder="최대 모집 인원을 입력해주세요."
 												className="w-full h-12"
 												disabled={loading}
+												data-cy="create-volunteer-activity-recruitment-count-input"
 											/>
 											<p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
 												비워두면 인원 제한이 없습니다
@@ -598,6 +607,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 													watch('status') ||
 													Enum.VolunteerActivityStatus.PLANNING
 												}
+												data-cy="create-volunteer-activity-status-input"
 											/>
 											<Select
 												value={
@@ -606,11 +616,15 @@ const VolunteerActivityCreatePageClient = memo(() => {
 												}
 												disabled={loading}
 												onValueChange={(value) => setValue('status', value)}
+												data-cy="create-volunteer-activity-status-select"
 											>
-												<SelectTrigger className="w-full h-12">
+												<SelectTrigger
+													className="w-full h-12"
+													data-cy="create-volunteer-activity-status-trigger"
+												>
 													<SelectValue placeholder="상태를 선택해주세요" />
 												</SelectTrigger>
-												<SelectContent>
+												<SelectContent data-cy="create-volunteer-activity-status-content">
 													{Object.entries(VOLUNTEER_ACTIVITY_STATUS_LABELS).map(
 														([value, label]) => (
 															<SelectItem key={value} value={value}>
@@ -634,6 +648,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 										disabled={loading}
 										variant="outline"
 										className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto disabled:opacity-50 disabled:cursor-not-allowed"
+										data-cy="create-volunteer-activity-button"
 									>
 										{loading ? (
 											<>
@@ -653,6 +668,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 										onClick={handleGoBack}
 										className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 										disabled={loading}
+										data-cy="create-cancel-button"
 									>
 										<X className="w-4 h-4" />
 										<span>취소</span>

@@ -48,13 +48,6 @@ export default defineConfig({
 
 			// 커스텀 태스크 등록
 			on('task', {
-				// 데이터베이스 시드 작업
-				seedDatabase(data) {
-					// 실제 구현에서는 데이터베이스 시드 로직 추가
-					console.log('데이터베이스 시드:', data)
-					return null
-				},
-
 				// 테스트 데이터 정리 작업
 				cleanupTestData(options) {
 					console.log('테스트 데이터 정리:', options)
@@ -62,8 +55,8 @@ export default defineConfig({
 				},
 
 				// 로그 출력
-				log(message) {
-					console.log(message)
+				serverLog(message) {
+					console.log(`[Server Log] ${message}`)
 					return null
 				},
 

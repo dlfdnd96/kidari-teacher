@@ -37,7 +37,10 @@ const ProfileCard = memo(
 		}
 
 		return (
-			<div className="bg-white border border-gray-200 rounded-lg">
+			<div
+				className="bg-white border border-gray-200 rounded-lg"
+				data-cy="profile-card"
+			>
 				{/* 헤더 */}
 				<div className="border-b border-gray-200 p-6">
 					<div className="flex items-center justify-between">
@@ -52,6 +55,7 @@ const ProfileCard = memo(
 								variant="outline"
 								size="sm"
 								className="cursor-pointer"
+								data-cy="edit-profile-button"
 							>
 								<Edit className="w-4 h-4 mr-1.5" />
 								수정
@@ -102,7 +106,10 @@ const ProfileCard = memo(
 									<div className="text-sm font-medium text-gray-500 mb-1">
 										이름
 									</div>
-									<div className="text-base font-medium text-gray-900">
+									<div
+										className="text-base font-medium text-gray-900"
+										data-cy="profile-name"
+									>
 										{user.name}
 									</div>
 								</div>
@@ -115,7 +122,10 @@ const ProfileCard = memo(
 									<div className="text-sm font-medium text-gray-500 mb-1">
 										이메일
 									</div>
-									<div className="text-base font-medium text-gray-900">
+									<div
+										className="text-base font-medium text-gray-900"
+										data-cy="profile-email"
+									>
 										{user.email}
 									</div>
 								</div>

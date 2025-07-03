@@ -204,7 +204,7 @@ const ApplicationForm = memo(
 
 				{/* 직업 선택 필드 */}
 				{!cannotApply && (
-					<div>
+					<div data-cy="application-form-user-profile-profession-selector">
 						<label
 							htmlFor="profession"
 							className="flex items-center text-sm font-medium text-gray-700 mb-2"
@@ -221,12 +221,19 @@ const ApplicationForm = memo(
 							}
 							disabled={isLoading || isLoadingProfile}
 						>
-							<SelectTrigger className="w-full h-10 border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+							<SelectTrigger
+								className="w-full h-10 border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+								data-cy="application-form-user-profile-profession-select-box"
+							>
 								<SelectValue placeholder="신청할 직업을 선택하세요" />
 							</SelectTrigger>
 							<SelectContent>
 								{availableProfessions.map((profession) => (
-									<SelectItem key={profession} value={profession}>
+									<SelectItem
+										key={profession}
+										value={profession}
+										data-cy={`application-form-user-profile-profession-${profession}`}
+									>
 										{PROFESSION_LABELS[profession]}
 									</SelectItem>
 								))}
@@ -257,6 +264,7 @@ const ApplicationForm = memo(
 							placeholder="010-1234-5678"
 							disabled={isLoading || isLoadingProfile}
 							className="w-full h-10 border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+							data-cy="application-form-emergency-contact-input"
 						/>
 						<FieldError error={errors.emergencyContact} />
 						<p className="text-xs text-gray-500 mt-1">
@@ -287,6 +295,7 @@ const ApplicationForm = memo(
 						disabled={isLoading}
 						variant="outline"
 						className="flex-1 h-10 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium cursor-pointer"
+						data-cy="cancel-application-form-button"
 					>
 						취소
 					</Button>
@@ -298,6 +307,7 @@ const ApplicationForm = memo(
 								isLoading || formState.isSubmitting || !selectedProfession
 							}
 							className="flex-1 h-10 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium cursor-pointer rounded-md shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+							data-cy="apply-application-form-button"
 						>
 							{isLoading ? (
 								<>

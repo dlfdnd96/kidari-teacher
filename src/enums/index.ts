@@ -88,5 +88,14 @@ export const ZodEnum = {
 		'bottom-right',
 	]),
 
-	TestDataType: z.enum(['notices', 'users', 'sessions', 'all', 'test-data']),
+	TestDataType: z.enum([
+		'notices',
+		'applications',
+		'volunteer-activities',
+		'users',
+		'user-profiles',
+		'sessions',
+		'all',
+		'test-data',
+	]),
 }

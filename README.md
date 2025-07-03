@@ -103,5 +103,16 @@ npm run dev
 npm run test:e2e
 
 # 테스트 GUI 열기
+npm run dev:test
 npm run cypress:open
+```
+
+DB docker 명령어
+
+**주의**
+
+- local, test 환경의 환경변수가 다름
+
+```bash
+docker compose --env-file SOME_PATH_ENV_FILE up -d
 ```
