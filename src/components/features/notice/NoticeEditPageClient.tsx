@@ -3,7 +3,7 @@
 import React, { memo, useCallback } from 'react'
 import { trpc } from '@/components/providers/TrpcProvider'
 import { NoticeEditPageClientProps } from '@/types/notice'
-import { BackButton, LoadingSpinner, ErrorState } from './components'
+import { BackButton, LoadingSpinner, ErrorState } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
 import NoticeEditForm from './NoticeEditForm'
 

@@ -4,7 +4,7 @@ import React, { memo, useCallback } from 'react'
 import { Input, Textarea, Button } from '@/components/ui'
 import { FileText, Type, X, Save } from 'lucide-react'
 import { NoticeEditFormProps } from '@/types/notice'
-import { BackButton } from './components'
+import { BackButton } from '@/components/common/ui'
 import { useNoticeActions, useNoticeForm } from './hooks'
 
 const NoticeEditForm = memo(

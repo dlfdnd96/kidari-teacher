@@ -1,7 +1,13 @@
 import React from 'react'
 import { Button } from '@/components/ui'
 import { OctagonX, RefreshCw } from 'lucide-react'
-import { ErrorStateProps } from '@/types/notice'
+
+export interface ErrorStateProps {
+	title?: string
+	message?: string
+	onRetry?: () => void
+	className?: string
+}
 
 const ErrorState: React.FC<ErrorStateProps> = ({
 	title = '오류가 발생했습니다',

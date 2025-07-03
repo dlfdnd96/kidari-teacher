@@ -4,7 +4,7 @@ import React, { memo, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button, Input, Textarea } from '@/components/ui'
 import { FileText, Type, X, Send } from 'lucide-react'
-import { BackButton } from './components'
+import { BackButton } from '@/components/common/ui'
 import { useNoticeActions, useNoticeForm } from './hooks'
 
 const NoticeCreatePageClient = memo(() => {

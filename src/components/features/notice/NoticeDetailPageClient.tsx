@@ -19,7 +19,7 @@ import {
 	AlertDialogTitle,
 	Button,
 } from '@/components/ui'
-import { BackButton, LoadingSpinner } from './components'
+import { BackButton, LoadingSpinner } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
 
 export default function NoticeDetailPageClient({

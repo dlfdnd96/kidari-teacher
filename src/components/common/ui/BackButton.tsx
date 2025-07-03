@@ -1,7 +1,12 @@
 import React from 'react'
 import { Button } from '@/components/ui'
 import { ArrowLeft } from 'lucide-react'
-import { BackButtonProps } from '@/types/notice'
+
+export interface BackButtonProps {
+	onClick: () => void
+	text?: string
+	className?: string
+}
 
 const BackButton: React.FC<BackButtonProps> = ({
 	onClick,

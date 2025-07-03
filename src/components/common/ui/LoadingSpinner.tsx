@@ -1,5 +1,10 @@
 import React from 'react'
-import { LoadingSpinnerProps } from '@/types/notice'
+
+export interface LoadingSpinnerProps {
+	size?: 'sm' | 'md' | 'lg'
+	text?: string
+	className?: string
+}
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 	size = 'md',
