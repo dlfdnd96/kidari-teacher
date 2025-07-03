@@ -114,16 +114,7 @@ export async function DELETE(request: NextRequest) {
 async function cleanupNotices(_testRunId: string): Promise<number> {
 	const result: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		const { count } = await tx.notice.deleteMany({
-			where: {
-				OR: [
-					{ title: { contains: '테스트' } },
-					{ title: { contains: 'test' } },
-					{ content: { contains: '테스트' } },
-					{ content: { contains: 'test' } },
-				],
-			},
-		})
+		const { count } = await tx.notice.deleteMany()
 		result.count = count
 	})
 
@@ -136,16 +127,7 @@ async function cleanupApplications(
 ): Promise<Record<string, number>> {
 	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		const volunteerApplicationsResult = await tx.application.deleteMany({
-			where: {
-				OR: [
-					{ user: { email: { contains: 'test' } } },
-					{ user: { email: { contains: '테스트' } } },
-					{ user: { name: { contains: 'test' } } },
-					{ user: { name: { contains: '테스트' } } },
-				],
-			},
-		})
+		const volunteerApplicationsResult = await tx.application.deleteMany()
 		results.volunteerApplications = volunteerApplicationsResult.count
 	})
 
@@ -158,16 +140,7 @@ async function cleanupVolunteerActivities(
 ): Promise<Record<string, number>> {
 	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany({
-			where: {
-				OR: [
-					{ title: { contains: '테스트' } },
-					{ title: { contains: 'test' } },
-					{ description: { contains: '테스트' } },
-					{ description: { contains: 'test' } },
-				],
-			},
-		})
+		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany()
 		results.volunteerActivities = volunteerActivitiesResult.count
 	})
 
@@ -180,32 +153,10 @@ async function cleanupTestUserProfiles(
 ): Promise<Record<string, number>> {
 	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		const userProfilesResult = await tx.userProfile.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: '테스트' } },
-						{ name: { contains: 'test' } },
-						{ name: { contains: '테스트' } },
-					],
-				},
-			},
-		})
+		const userProfilesResult = await tx.userProfile.deleteMany()
 		results.userProfiles = userProfilesResult.count
 
-		const userProfessionsResult = await tx.userProfession.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: '테스트' } },
-						{ name: { contains: 'test' } },
-						{ name: { contains: '테스트' } },
-					],
-				},
-			},
-		})
+		const userProfessionsResult = await tx.userProfession.deleteMany()
 		results.userProfessions = userProfessionsResult.count
 	})
 
@@ -216,41 +167,9 @@ async function cleanupTestUserProfiles(
 async function cleanupTestUsers(_testRunId: string): Promise<number> {
 	const result: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		await tx.userProfile.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: '테스트' } },
-						{ name: { contains: 'test' } },
-						{ name: { contains: '테스트' } },
-					],
-				},
-			},
-		})
-		await tx.userProfession.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: '테스트' } },
-						{ name: { contains: 'test' } },
-						{ name: { contains: '테스트' } },
-					],
-				},
-			},
-		})
-		const { count } = await tx.user.deleteMany({
-			where: {
-				OR: [
-					{ email: { contains: 'test' } },
-					{ email: { contains: '테스트' } },
-					{ name: { contains: 'test' } },
-					{ name: { contains: '테스트' } },
-					{ email: { endsWith: '@test.com' } },
-				],
-			},
-		})
+		await tx.userProfile.deleteMany()
+		await tx.userProfession.deleteMany()
+		const { count } = await tx.user.deleteMany()
 		result.count = count
 	})
 
@@ -263,75 +182,18 @@ async function cleanupAllTestData(
 ): Promise<Record<string, number>> {
 	const results: Record<string, number> = {}
 	await prisma.$transaction(async (tx) => {
-		const noticesResult = await tx.notice.deleteMany({
-			where: {
-				OR: [
-					{ title: { contains: '테스트' } },
-					{ title: { contains: 'test' } },
-					{ content: { contains: '테스트' } },
-					{ content: { contains: 'test' } },
-				],
-			},
-		})
+		const noticesResult = await tx.notice.deleteMany()
 		results.notices = noticesResult.count
 
-		const applicationsResult = await tx.application.deleteMany({
-			where: {
-				OR: [
-					{ user: { email: { contains: 'test' } } },
-					{ user: { email: { contains: '테스트' } } },
-					{ user: { name: { contains: 'test' } } },
-					{ user: { name: { contains: '테스트' } } },
-				],
-			},
-		})
+		const applicationsResult = await tx.application.deleteMany()
 		results.applications = applicationsResult.count
 
-		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany({
-			where: {
-				OR: [
-					{ title: { contains: '테스트' } },
-					{ title: { contains: 'test' } },
-					{ description: { contains: '테스트' } },
-					{ description: { contains: 'test' } },
-				],
-			},
-		})
+		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany()
 		results.volunteerActivities = volunteerActivitiesResult.count
 
-		await tx.userProfile.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: '테스트' } },
-						{ name: { contains: 'test' } },
-						{ name: { contains: '테스트' } },
-					],
-				},
-			},
-		})
-		await tx.userProfession.deleteMany({
-			where: {
-				user: {
-					OR: [
-						{ email: { contains: 'test' } },
-						{ email: { contains: '테스트' } },
-						{ name: { contains: 'test' } },
-						{ name: { contains: '테스트' } },
-					],
-				},
-			},
-		})
-		const usersResult = await tx.user.deleteMany({
-			where: {
-				OR: [
-					{ email: { contains: 'test' } },
-					{ email: { contains: '테스트' } },
-					{ email: { endsWith: '@test.com' } },
-				],
-			},
-		})
+		await tx.userProfile.deleteMany()
+		await tx.userProfession.deleteMany()
+		const usersResult = await tx.user.deleteMany()
 		results.users = usersResult.count
 	})
 
