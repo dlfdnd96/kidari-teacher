@@ -293,11 +293,7 @@ function VolunteerActivityPageClientContent({
 	const loadingIndicator = useMemo(
 		() =>
 			showLoading && (
-				<VolunteerActivitySkeletonList
-					count={12}
-					showHeader={true}
-					showPagination={false}
-				/>
+				<VolunteerActivitySkeletonList count={12} showPagination={false} />
 			),
 		[showLoading],
 	)

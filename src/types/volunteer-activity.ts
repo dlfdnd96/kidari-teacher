@@ -80,7 +80,6 @@ export interface VolunteerActivityPageClientProps {
 
 export interface VolunteerActivitySkeletonListProps {
 	count?: number
-	showHeader?: boolean
 	showPagination?: boolean
 }
 

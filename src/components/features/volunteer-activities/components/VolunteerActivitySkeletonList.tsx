@@ -3,11 +3,11 @@ import { VolunteerActivitySkeletonListProps } from '@/types/volunteer-activity'
 
 const VolunteerActivitySkeletonList: React.FC<
 	VolunteerActivitySkeletonListProps
-> = ({ count = 12, showHeader = true, showPagination = true }) => {
+> = ({ count = 12, showPagination = true }) => {
 	return (
 		<div className="space-y-6">
 			{/* 헤더 스켈레톤 */}
-			{showHeader && (
+			{
 				<div className="space-y-6">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-2">
@@ -27,7 +27,7 @@ const VolunteerActivitySkeletonList: React.FC<
 						<div className="w-full sm:w-80 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
 					</div>
 				</div>
-			)}
+			}
 
 			{/* 봉사활동 목록 스켈레톤 */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
