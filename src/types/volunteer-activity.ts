@@ -1,5 +1,8 @@
-import { Enum, ZodEnum } from '@/enums'
-import { VolunteerActivityEntitySchema } from '@/shared/schemas/volunteer-activity'
+import { Enum } from '@/enums'
+import {
+	VolunteerActivityFormSchema,
+	VolunteerActivityEntitySchema,
+} from '@/shared/schemas/volunteer-activity'
 import { ZodType } from '@/shared/types'
 import {
 	Calendar,
@@ -50,6 +53,19 @@ export interface VolunteerActivityListProps {
 	onApply: (activity: ZodType<typeof VolunteerActivityEntitySchema>) => void
 }
 
+export interface VolunteerActivityFormProps {
+	onSubmit: (data: ZodType<typeof VolunteerActivityFormSchema>) => Promise<void>
+	onSuccess: () => void
+	onCancel: () => void
+	activity?: ZodType<typeof VolunteerActivityEntitySchema>
+}
+
+export interface UseVolunteerActivityFormProps {
+	onSubmit: (data: ZodType<typeof VolunteerActivityFormSchema>) => Promise<void>
+	onSuccess: () => void
+	activity?: ZodType<typeof VolunteerActivityEntitySchema>
+}
+
 export interface VolunteerActivityEditPageProps {
 	params: Promise<{ id: string }>
 }
@@ -58,21 +74,14 @@ export interface VolunteerActivityEditPageClientProps {
 	id: string
 }
 
-export interface VolunteerActivityEditFormProps {
-	id: string
-	initialTitle: string
-	initialDescription: string
-	initialStartAt: Date
-	initialEndAt: Date
-	initialLocation: string
-	initialStatus: ZodType<typeof ZodEnum.VolunteerActivityStatus>
-	initialApplicationDeadline: Date
-	initialMaxParticipants: number | null
-	onCancel: () => void
-}
-
 export interface VolunteerActivityPageClientProps {
 	initialPage: number
+}
+
+export interface VolunteerActivitySkeletonListProps {
+	count?: number
+	showHeader?: boolean
+	showPagination?: boolean
 }
 
 export const VOLUNTEER_ACTIVITY_FILTER_OPTIONS = [

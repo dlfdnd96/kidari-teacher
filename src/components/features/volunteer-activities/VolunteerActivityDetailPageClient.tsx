@@ -54,6 +54,7 @@ import {
 	SelectValue,
 } from '@/components/ui'
 import dynamic from 'next/dynamic'
+import { useVolunteerActivityActions } from './hooks'
 
 const ApplicationModal = dynamic(
 	() => import('@/components/features/applications/ApplicationModal'),
@@ -72,10 +73,13 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 	const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false)
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
+	const { getVolunteerActivityQuery, deleteVolunteerActivityMutation } =
+		useVolunteerActivityActions()
+
 	const utils = trpc.useUtils()
 
 	const { data: activity, isLoading: isActivityLoading } =
-		trpc.volunteerActivity.getVolunteerActivity.useQuery(
+		getVolunteerActivityQuery(
 			{ id },
 			{
 				retry: false,
@@ -110,20 +114,6 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 			},
 			onError: (error) => {
 				handleClientError(error, showError, '봉사활동 상태 수정 오류')
-			},
-		})
-
-	const deleteVolunteerActivityMutation =
-		trpc.volunteerActivity.deleteVolunteerActivity.useMutation({
-			onSuccess: async () => {
-				await Promise.all([
-					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
-					utils.application.getMyApplicationList.invalidate(),
-				])
-				router.push('/volunteer-activities')
-			},
-			onError: (error) => {
-				handleClientError(error, showError, '봉사활동 삭제 오류')
 			},
 		})
 

@@ -1,134 +1,133 @@
 'use client'
 
-import React, { FC } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { memo, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { ArrowLeft } from 'lucide-react'
-import { trpc } from '@/components/providers/TrpcProvider'
-import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
-import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
-import { Enum } from '@/enums'
-import VolunteerActivityEditForm from '@/components/features/volunteer-activities/VolunteerActivityEditForm'
 import { VolunteerActivityEditPageClientProps } from '@/types/volunteer-activity'
-import { Button } from '@/components/ui'
+import { BackButton, ErrorState, LoadingSpinner } from '@/components/common/ui'
+import { useVolunteerActivityActions } from './hooks'
+import { Enum } from '@/enums'
+import { VolunteerActivityForm } from './components'
+import { ZodType } from '@/shared/types'
+import { VolunteerActivityFormSchema } from '@/shared/schemas/volunteer-activity'
 
-const VolunteerActivityEditPageClient: FC<
-	VolunteerActivityEditPageClientProps
-> = ({ id }) => {
-	const router = useRouter()
-	const { data: session } = useSession()
-	const { showError } = useErrorModal()
+const VolunteerActivityEditPageClient = memo(
+	({ id }: VolunteerActivityEditPageClientProps) => {
+		const { data: session } = useSession()
+		const {
+			getVolunteerActivityQuery,
+			checkAuthentication,
+			updateVolunteerActivityMutation,
+			navigateToList,
+			navigateToDetail,
+		} = useVolunteerActivityActions()
 
-	const { data: activity, isLoading: isActivityLoading } =
-		trpc.volunteerActivity.getVolunteerActivity.useQuery(
-			{ id },
-			{
-				retry: false,
-				staleTime: 5 * 60 * 1000,
+		const {
+			data: activity,
+			isLoading,
+			isError,
+		} = getVolunteerActivityQuery({ id })
+
+		const handleSubmit = useCallback(
+			async (data: ZodType<typeof VolunteerActivityFormSchema>) => {
+				if (!checkAuthentication()) {
+					return
+				}
+
+				await updateVolunteerActivityMutation.mutateAsync({
+					id,
+					...data,
+				})
 			},
+			[checkAuthentication, updateVolunteerActivityMutation, id],
 		)
 
-	const handleCancel = () => {
-		if (typeof window !== 'undefined') {
-			const detailId = sessionStorage.getItem('volunteer-activity-detail-id')
-			if (detailId === id) {
-				sessionStorage.removeItem('volunteer-activity-detail-id')
-				router.push(`/volunteer-activities/${id}`)
-				return
-			}
+		const handleCancel = useCallback(() => {
+			navigateToDetail(id)
+		}, [navigateToDetail, id])
+
+		if (isLoading) {
+			return (
+				<div className="min-h-screen flex items-center justify-center">
+					<LoadingSpinner size="lg" />
+				</div>
+			)
 		}
-		router.push('/volunteer-activities')
-	}
 
-	if (isActivityLoading) {
-		return (
-			<div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-					<p className="text-gray-600 dark:text-gray-400">로딩 중...</p>
-				</div>
-			</div>
-		)
-	}
-
-	if (!activity) {
-		handleClientError(
-			CLIENT_ERROR_KEY_MAPPING.NOT_FOUND_ERROR,
-			showError,
-			'봉사활동 불러오기 오류',
-		)
-		router.push(`/volunteer-activities/${id}`)
-		return
-	}
-
-	const canEdit =
-		session?.user.id === activity.managerId ||
-		session?.user.role === Enum.Role.ADMIN
-
-	if (!canEdit) {
-		handleClientError(
-			CLIENT_ERROR_KEY_MAPPING.AUTHORIZATION_ERROR,
-			showError,
-			'권한 오류',
-		)
-		router.push(`/volunteer-activities/${id}`)
-		return
-	}
-
-	return (
-		<div className="min-h-screen bg-white dark:bg-gray-900">
-			{/* 상단 네비게이션 */}
-			<div className="pt-4">
-				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
-					<div className="flex items-center h-14">
-						<div className="py-4">
-							<Button
-								onClick={handleCancel}
-								variant="outline"
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
-							>
-								<ArrowLeft className="w-4 h-4" />
-								<span className="text-sm font-medium">뒤로가기</span>
-							</Button>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* 메인 컨텐츠 */}
-			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
-				<div className="bg-white dark:bg-gray-800 p-6 sm:p-8">
-					{/* 헤더 */}
-					<div className="mb-8">
-						<div className="flex items-start justify-between mb-4">
-							<div className="flex-1 min-w-0">
-								<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3">
-									봉사활동 수정
-								</h1>
+		if (isError || !activity) {
+			return (
+				<div className="min-h-screen">
+					{/* 상단 네비게이션 */}
+					<div>
+						<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
+							<div className="flex items-center justify-between h-14">
+								<div className="py-4">
+									<BackButton onClick={navigateToList} />
+								</div>
 							</div>
 						</div>
-						<div className="border-b border-gray-200 dark:border-gray-700"></div>
 					</div>
 
-					{/* 수정 폼 */}
-					<div>
-						<VolunteerActivityEditForm
-							id={activity.id}
-							initialTitle={activity.title}
-							initialDescription={activity.description}
-							initialStartAt={activity.startAt}
-							initialEndAt={activity.endAt}
-							initialLocation={activity.location}
-							initialStatus={activity.status}
-							initialApplicationDeadline={activity.applicationDeadline}
-							initialMaxParticipants={activity.maxParticipants}
-							onCancel={handleCancel}
-						/>
+					{/* 메인 컨텐츠 */}
+					<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
+						<div className="p-6 sm:p-8">
+							<ErrorState
+								title="봉사활동을 찾을 수 없습니다"
+								message="요청하신 봉사활동이 존재하지 않거나 삭제되었습니다."
+								onRetry={navigateToList}
+							/>
+						</div>
 					</div>
 				</div>
+			)
+		}
+
+		const canEdit =
+			session?.user.id === activity.managerId ||
+			session?.user.role === Enum.Role.ADMIN
+
+		if (!canEdit) {
+			return (
+				<div className="min-h-screen">
+					{/* 상단 네비게이션 */}
+					<div>
+						<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
+							<div className="flex items-center justify-between h-14">
+								<div className="py-4">
+									<BackButton onClick={navigateToDetail.bind(null, id)} />
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* 메인 컨텐츠 */}
+					<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
+						<div className="p-6 sm:p-8">
+							<ErrorState
+								title="수정 권한이 없습니다"
+								message="이 봉사활동을 수정할 권한이 없습니다."
+								onRetry={() => navigateToDetail(id)}
+							/>
+						</div>
+					</div>
+				</div>
+			)
+		}
+
+		return (
+			<div className="min-h-screen">
+				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
+					<VolunteerActivityForm
+						activity={activity}
+						onSubmit={handleSubmit}
+						onSuccess={handleCancel}
+						onCancel={handleCancel}
+					/>
+				</div>
 			</div>
-		</div>
-	)
-}
+		)
+	},
+)
+
+VolunteerActivityEditPageClient.displayName = 'VolunteerActivityEditPageClient'
 
 export default VolunteerActivityEditPageClient

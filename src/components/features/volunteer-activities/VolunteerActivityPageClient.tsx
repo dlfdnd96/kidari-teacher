@@ -1,11 +1,17 @@
 'use client'
 
-import React, { Suspense, useCallback, useEffect, useState } from 'react'
+import React, {
+	Suspense,
+	useCallback,
+	useEffect,
+	useState,
+	useMemo,
+} from 'react'
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
-import VolunteerActivityList from '@/components/features/volunteer-activities/VolunteerActivityList'
-import VolunteerActivityFilterTab from '@/components/features/volunteer-activities/VolunteerActivityFilterTab'
+import VolunteerActivityList from './components/VolunteerActivityList'
+import { VolunteerActivityFilterTab } from './components'
 import Pagination from '@/components/features/pagination/Pagination'
 import { ZodType } from '@/shared/types'
 import { VolunteerActivityEntitySchema } from '@/shared/schemas/volunteer-activity'
@@ -13,10 +19,13 @@ import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui/button'
 import { keepPreviousData } from '@tanstack/react-query'
 import { VolunteerActivityPageClientProps } from '@/types/volunteer-activity'
-import { CircleAlert, OctagonX, Plus, RefreshCw } from 'lucide-react'
+import { Plus, RefreshCw } from 'lucide-react'
 import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { Enum } from '@/enums'
+import { VolunteerActivitySkeletonList } from './components'
+import { ErrorState } from '@/components/common/ui'
+import { useVolunteerActivityActions } from './hooks'
 
 const ApplicationModal = dynamic(
 	() => import('@/components/features/applications/ApplicationModal'),
@@ -33,6 +42,8 @@ function VolunteerActivityPageClientContent({
 	const router = useRouter()
 	const { showError } = useErrorModal()
 	const { data: session } = useSession()
+	const { getVolunteerActivityListQuery, navigateToCreate, navigateToDetail } =
+		useVolunteerActivityActions()
 
 	const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false)
 	const [applicationActivity, setApplicationActivity] = useState<ZodType<
@@ -77,7 +88,7 @@ function VolunteerActivityPageClientContent({
 		isError,
 		refetch,
 		isFetching,
-	} = trpc.volunteerActivity.getVolunteerActivityList.useQuery(
+	} = getVolunteerActivityListQuery(
 		{
 			pageable: {
 				offset: (currentPage - 1) * pageSize,
@@ -141,8 +152,8 @@ function VolunteerActivityPageClientContent({
 				JSON.stringify(currentFilters),
 			)
 		}
-		router.push('/volunteer-activities/create')
-	}, [router, selectedStatus, searchQuery, currentPage])
+		navigateToCreate()
+	}, [navigateToCreate, selectedStatus, searchQuery, currentPage])
 
 	const handleViewDetail = useCallback(
 		(activity: ZodType<typeof VolunteerActivityEntitySchema>) => {
@@ -157,9 +168,9 @@ function VolunteerActivityPageClientContent({
 					JSON.stringify(currentFilters),
 				)
 			}
-			router.push(`/volunteer-activities/${activity.id}`)
+			navigateToDetail(activity.id)
 		},
-		[router, selectedStatus, searchQuery, currentPage],
+		[navigateToDetail, selectedStatus, searchQuery, currentPage],
 	)
 
 	const handleApply = useCallback(
@@ -279,91 +290,70 @@ function VolunteerActivityPageClientContent({
 
 	const showLoading = isLoading || isPageChanging
 
+	const loadingIndicator = useMemo(
+		() =>
+			showLoading && (
+				<VolunteerActivitySkeletonList
+					count={12}
+					showHeader={true}
+					showPagination={false}
+				/>
+			),
+		[showLoading],
+	)
+
+	const emptyState = useMemo(
+		() =>
+			!showLoading &&
+			volunteerActivities.length === 0 && (
+				<ErrorState
+					title={
+						searchQuery.trim()
+							? `"${searchQuery}" 검색 결과가 없습니다`
+							: selectedStatus === 'all'
+								? '아직 등록된 봉사활동이 없습니다'
+								: '해당 조건의 봉사활동이 없습니다'
+					}
+					message={
+						searchQuery.trim()
+							? '다른 검색어를 입력하거나 필터를 변경해보세요.'
+							: isAdmin
+								? selectedStatus === 'all'
+									? '첫 번째 봉사활동을 생성해보세요!'
+									: '다른 상태로 전환하거나 새로운 봉사활동을 생성해보세요.'
+								: selectedStatus === 'all'
+									? '새로운 봉사활동을 기다려주세요.'
+									: '다른 상태의 봉사활동을 확인해보세요.'
+					}
+				/>
+			),
+		[
+			showLoading,
+			volunteerActivities.length,
+			searchQuery,
+			selectedStatus,
+			isAdmin,
+		],
+	)
+
+	const errorState = useMemo(
+		() =>
+			isError && (
+				<ErrorState
+					title="봉사활동을 불러올 수 없습니다"
+					message="네트워크 연결을 확인하고 다시 시도해주세요."
+					onRetry={() => refetch()}
+				/>
+			),
+		[isError, refetch],
+	)
+
 	if (showLoading) {
-		return (
-			<div className="space-y-6">
-				{/* 검색 및 필터 스켈레톤 */}
-				<div className="space-y-6">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-							<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-40 animate-pulse" />
-						</div>
-					</div>
-
-					{/* 검색바 스켈레톤 */}
-					<div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
-
-					{/* 필터 버튼들 스켈레톤 */}
-					<div className="space-y-3">
-						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse" />
-						<div className="flex flex-wrap gap-3">
-							{[1, 2, 3, 4].map((i) => (
-								<div
-									key={i}
-									className="h-10 bg-gray-200 dark:bg-gray-700 rounded-full w-24 animate-pulse"
-								/>
-							))}
-						</div>
-					</div>
-				</div>
-
-				{/* 봉사활동 목록 스켈레톤 */}
-				{[1, 2, 3].map((i) => (
-					<div
-						key={i}
-						className="bg-white/90 dark:bg-gray-800/90 rounded-3xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50 animate-pulse border-l-4 border-l-gray-300"
-					>
-						<div className="flex items-start justify-between mb-4">
-							<div className="flex-1">
-								<div className="flex items-center gap-3 mb-2">
-									<div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
-									<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-									<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-16" />
-								</div>
-							</div>
-							{isAdmin && (
-								<div className="flex gap-2">
-									<div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
-									<div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
-								</div>
-							)}
-						</div>
-						<div className="space-y-2 mb-4">
-							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-							<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6" />
-						</div>
-						<div className="mt-4 flex gap-2">
-							<div className="flex-1 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-							<div className="flex-1 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-						</div>
-					</div>
-				))}
-			</div>
-		)
+		return loadingIndicator
 	}
 
 	if (isError) {
-		return (
-			<div className="text-center py-12">
-				<div className="flex justify-center mb-6">
-					<OctagonX className="w-16 h-16 text-red-400 dark:text-red-500" />
-				</div>
-				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-					봉사활동을 불러올 수 없습니다
-				</h3>
-				<div className="flex justify-center">
-					<Button
-						onClick={() => refetch()}
-						variant="outline"
-						className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-					>
-						<RefreshCw className="w-4 h-4" />
-						<span>다시 시도</span>
-					</Button>
-				</div>
-			</div>
-		)
+		return errorState
 	}
 
 	return (
@@ -430,31 +420,7 @@ function VolunteerActivityPageClientContent({
 			)}
 
 			{/* 빈 상태 표시 */}
-			{volunteerActivities.length === 0 && (
-				<div className="text-center py-12">
-					<div className="flex justify-center mb-6">
-						<CircleAlert className="w-16 h-16 text-gray-400 dark:text-gray-500" />
-					</div>
-					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-						{searchQuery.trim()
-							? `"${searchQuery}" 검색 결과가 없습니다`
-							: selectedStatus === 'all'
-								? '아직 등록된 봉사활동이 없습니다'
-								: '해당 조건의 봉사활동이 없습니다'}
-					</h3>
-					<p className="text-gray-500 dark:text-gray-400">
-						{searchQuery.trim()
-							? '다른 검색어를 입력하거나 필터를 변경해보세요.'
-							: isAdmin
-								? selectedStatus === 'all'
-									? '첫 번째 봉사활동을 생성해보세요!'
-									: '다른 상태로 전환하거나 새로운 봉사활동을 생성해보세요.'
-								: selectedStatus === 'all'
-									? '새로운 봉사활동을 기다려주세요.'
-									: '다른 상태의 봉사활동을 확인해보세요.'}
-					</p>
-				</div>
-			)}
+			{emptyState}
 
 			{/* 신청 모달 */}
 			{applicationActivity && (
@@ -474,7 +440,7 @@ export default function VolunteerActivityPageClient({
 	initialPage,
 }: VolunteerActivityPageClientProps) {
 	return (
-		<Suspense fallback={<div>로딩 중...</div>}>
+		<Suspense fallback={<VolunteerActivitySkeletonList />}>
 			<VolunteerActivityPageClientContent initialPage={initialPage} />
 		</Suspense>
 	)
