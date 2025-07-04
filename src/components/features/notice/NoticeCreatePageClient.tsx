@@ -14,7 +14,9 @@ const NoticeCreatePageClient = memo(() => {
 
 	const handleSubmit = useCallback(
 		async (data: { title: string; content: string }) => {
-			if (!checkAuthentication()) return
+			if (!checkAuthentication()) {
+				return
+			}
 
 			await createNoticeMutation.mutateAsync(data)
 		},
