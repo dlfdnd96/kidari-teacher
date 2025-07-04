@@ -21,12 +21,14 @@ import {
 } from '@/components/ui'
 import { BackButton, LoadingSpinner } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
+import { Enum } from '@/enums'
+import { useSession } from 'next-auth/react'
 
 export default function NoticeDetailPageClient({
 	noticeId,
-	isAdmin,
 }: NoticeDetailPageClientProps) {
 	const { showError } = useErrorModal()
+	const { data: session } = useSession()
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
 	const {
@@ -35,6 +37,7 @@ export default function NoticeDetailPageClient({
 		navigateToList,
 		checkAuthentication,
 	} = useNoticeActions()
+	const isAdmin = session?.user?.role === Enum.Role.ADMIN
 
 	const {
 		data: notice,

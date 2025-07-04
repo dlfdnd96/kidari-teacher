@@ -18,17 +18,18 @@ import { ErrorState } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
 import NoticeList from './NoticeList'
 import Pagination from '@/components/features/pagination/Pagination'
+import { Enum } from '@/enums'
+import { useSession } from 'next-auth/react'
 
-function NoticePageClientContent({
-	isAdmin,
-	initialPage = 1,
-}: NoticePageClientProps) {
+function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 	const searchParams = useSearchParams()
+	const { data: session } = useSession()
 	const { navigateToCreate } = useNoticeActions()
 
 	const [currentPage, setCurrentPage] = useState(initialPage)
 	const [isPageChanging, setIsPageChanging] = useState(false)
 	const pageSize = 10
+	const isAdmin = session?.user?.role === Enum.Role.ADMIN
 
 	useEffect(() => {
 		const pageFromUrl = parseInt(searchParams?.get('page') || '1', 10)
@@ -125,7 +126,13 @@ function NoticePageClientContent({
 	)
 
 	if (showLoading) {
-		return <NoticeSkeletonList showHeader={isAdmin} />
+		return (
+			<NoticeSkeletonList
+				count={3}
+				showHeader={isAdmin}
+				showPagination={false}
+			/>
+		)
 	}
 
 	if (isError) {
@@ -182,12 +189,11 @@ function NoticePageClientContent({
 }
 
 export default function NoticePageClient({
-	isAdmin,
 	initialPage,
 }: NoticePageClientProps) {
 	return (
 		<Suspense fallback={<NoticeSkeletonList />}>
-			<NoticePageClientContent isAdmin={isAdmin} initialPage={initialPage} />
+			<NoticePageClientContent initialPage={initialPage} />
 		</Suspense>
 	)
 }

@@ -5,8 +5,11 @@ export interface NoticePageProps {
 	searchParams: Promise<{ page?: string }>
 }
 
+export interface NoticeEditPageProps {
+	params: Promise<{ id: string }>
+}
+
 export interface NoticePageClientProps {
-	isAdmin: boolean
 	initialPage: number
 }
 
@@ -28,7 +31,6 @@ export interface NoticeDetailPageProps {
 
 export interface NoticeDetailPageClientProps {
 	noticeId: string
-	isAdmin: boolean
 }
 
 export interface NoticeEditPageClientProps {
@@ -45,25 +47,6 @@ export interface NoticeEditFormProps {
 	initialTitle: string
 	initialContent: string
 	onCancel: () => void
-}
-
-export interface LoadingSpinnerProps {
-	size?: 'sm' | 'md' | 'lg'
-	text?: string
-	className?: string
-}
-
-export interface ErrorStateProps {
-	title?: string
-	message?: string
-	onRetry?: () => void
-	className?: string
-}
-
-export interface BackButtonProps {
-	onClick: () => void
-	text?: string
-	className?: string
 }
 
 export interface NoticeSkeletonListProps {
