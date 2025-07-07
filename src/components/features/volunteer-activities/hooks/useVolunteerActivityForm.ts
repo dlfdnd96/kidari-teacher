@@ -1,10 +1,11 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { VolunteerActivityFormSchema } from '@/shared/schemas/volunteer-activity'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { handleClientError, isValidationError } from '@/utils/error'
 import { UseVolunteerActivityFormProps } from '@/types/volunteer-activity'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ZodType } from '@/shared/types'
 
 export const useVolunteerActivityForm = ({
 	activity,
@@ -15,23 +16,28 @@ export const useVolunteerActivityForm = ({
 
 	const form = useForm({
 		resolver: zodResolver(VolunteerActivityFormSchema),
-		defaultValues: {
-			title: activity?.title,
-			description: activity?.description,
-			startAt: activity?.startAt,
-			endAt: activity?.endAt,
-			location: activity?.location,
-			status: activity?.status,
-			applicationDeadline: activity?.applicationDeadline,
-			maxParticipants: activity?.maxParticipants,
-		},
+		mode: 'onTouched',
 	})
 
+	useEffect(() => {
+		if (activity) {
+			form.reset({
+				title: activity.title,
+				description: activity.description,
+				startAt: activity.startAt,
+				endAt: activity.endAt,
+				location: activity.location,
+				status: activity.status,
+				applicationDeadline: activity.applicationDeadline,
+				maxParticipants: activity.maxParticipants,
+			})
+		}
+	}, [activity, form])
+
 	const handleSubmit = useCallback(
-		async (data: unknown) => {
+		async (data: ZodType<typeof VolunteerActivityFormSchema>) => {
 			try {
-				const validatedData = VolunteerActivityFormSchema.parse(data)
-				await onSubmit(validatedData)
+				await onSubmit(data)
 				form.reset()
 				onSuccess()
 			} catch (error: unknown) {

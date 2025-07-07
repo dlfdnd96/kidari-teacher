@@ -104,6 +104,5 @@ export const useVolunteerActivityActions = () => {
 		navigateToList,
 		goBack,
 		checkAuthentication,
-		isAuthenticated: !!session?.user,
 	}
 }

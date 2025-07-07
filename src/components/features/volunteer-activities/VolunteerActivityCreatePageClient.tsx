@@ -24,7 +24,7 @@ const VolunteerActivityCreatePageClient = memo(() => {
 			}
 
 			await createVolunteerActivityMutation.mutateAsync(data)
-			showSuccess('봉사활동이 성공적으로 생성되었습니다!')
+			showSuccess('봉사활동이 생성되었습니다')
 		},
 		[checkAuthentication, createVolunteerActivityMutation, showSuccess],
 	)

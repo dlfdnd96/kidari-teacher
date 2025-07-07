@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useCallback, useMemo } from 'react'
+import React, { memo, useCallback } from 'react'
 import {
 	CalendarIcon,
 	Clock,
@@ -44,6 +44,7 @@ import {
 	useVolunteerActivityForm,
 } from '@/components/features/volunteer-activities/hooks'
 import { useToast } from '@/contexts/ToastContext'
+import { ZodType } from '@/shared/types'
 
 const VolunteerActivityForm = memo(
 	({ onSubmit, onSuccess, onCancel, activity }: VolunteerActivityFormProps) => {
@@ -91,248 +92,96 @@ const VolunteerActivityForm = memo(
 			}).open()
 		}, [setValue, showErrorToast])
 
-		const loading =
-			createVolunteerActivityMutation.isPending ||
-			updateVolunteerActivityMutation.isPending
+		const loading = activity
+			? updateVolunteerActivityMutation.isPending
+			: createVolunteerActivityMutation.isPending
 
-		const basicInfoSection = useMemo(
-			() => (
-				<div className="space-y-6">
-					{/* 활동명 */}
-					<div className="flex items-start gap-3">
-						<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-						<div className="flex-1">
-							<label
-								htmlFor="activity-title"
-								className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
-							>
-								활동명 *
-							</label>
-							<Input
-								id="activity-title"
-								{...register('title')}
-								placeholder="봉사활동명을 입력해주세요"
-								className="w-full h-12"
-								disabled={loading}
-								data-cy="volunteer-activity-form-title-input"
-							/>
-							<FieldError error={errors.title?.message} />
-						</div>
-					</div>
-
-					{/* 활동 내용 */}
-					<div className="flex items-start gap-3">
-						<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-						<div className="flex-1">
-							<label
-								htmlFor="activity-description"
-								className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
-							>
-								활동 내용 *
-							</label>
-							<Textarea
-								id="activity-description"
-								{...register('description')}
-								placeholder="봉사활동에 대한 자세한 설명을 입력해주세요"
-								rows={6}
-								className="w-full resize-none"
-								disabled={loading}
-								data-cy="volunteer-activity-form-content-input"
-							/>
-							<FieldError error={errors.description?.message} />
-						</div>
-					</div>
-
-					{/* 활동 장소 */}
-					<div className="flex items-start gap-3">
-						<MapPin className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-						<div className="flex-1">
-							<label
-								htmlFor="activity-location"
-								className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
-							>
-								활동 장소 *
-							</label>
-							<Input
-								id="activity-location"
-								{...register('location')}
-								placeholder="클릭하여 주소를 검색하세요"
-								disabled={loading}
-								readOnly
-								onClick={handleAddressSearch}
-								className="w-full h-12 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
-								data-cy="volunteer-activity-form-location-input"
-							/>
-							<FieldError error={errors.location?.message} />
-						</div>
+		const basicInfoSection = (
+			<div className="space-y-6">
+				{/* 활동명 */}
+				<div className="flex items-start gap-3">
+					<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+					<div className="flex-1">
+						<label
+							htmlFor="activity-title"
+							className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+						>
+							활동명 *
+						</label>
+						<Input
+							id="activity-title"
+							{...register('title')}
+							placeholder="봉사활동명을 입력해주세요"
+							className="w-full h-12"
+							disabled={loading}
+							data-cy="volunteer-activity-form-title-input"
+						/>
+						<FieldError error={errors.title?.message} />
 					</div>
 				</div>
-			),
-			[register, loading, handleAddressSearch, errors],
+
+				{/* 활동 내용 */}
+				<div className="flex items-start gap-3">
+					<FileText className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+					<div className="flex-1">
+						<label
+							htmlFor="activity-description"
+							className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+						>
+							활동 내용 *
+						</label>
+						<Textarea
+							id="activity-description"
+							{...register('description')}
+							placeholder="봉사활동에 대한 자세한 설명을 입력해주세요"
+							rows={6}
+							className="w-full resize-none"
+							disabled={loading}
+							data-cy="volunteer-activity-form-content-input"
+						/>
+						<FieldError error={errors.description?.message} />
+					</div>
+				</div>
+
+				{/* 활동 장소 */}
+				<div className="flex items-start gap-3">
+					<MapPin className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+					<div className="flex-1">
+						<label
+							htmlFor="activity-location"
+							className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+						>
+							활동 장소 *
+						</label>
+						<Input
+							id="activity-location"
+							{...register('location')}
+							placeholder="클릭하여 주소를 검색하세요"
+							disabled={loading}
+							readOnly
+							onClick={handleAddressSearch}
+							className="w-full h-12 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600/50"
+							data-cy="volunteer-activity-form-location-input"
+						/>
+						<FieldError error={errors.location?.message} />
+					</div>
+				</div>
+			</div>
 		)
 
-		const scheduleSection = useMemo(
-			() => (
-				<div className="space-y-6">
-					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-						일정 정보
-					</h3>
+		const scheduleSection = (
+			<div className="space-y-6">
+				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+					일정 정보
+				</h3>
 
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-						{/* 시작 일시 */}
-						<div className="flex items-start gap-3">
-							<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-							<div className="flex-1">
-								<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
-									시작 일시 *
-								</label>
-								<Popover>
-									<PopoverTrigger asChild>
-										<Button
-											variant="outline"
-											className={cn(
-												'w-full pl-4 text-left font-normal h-12',
-												!startAtValue && 'text-muted-foreground',
-											)}
-											disabled={loading}
-											data-cy="volunteer-activity-form-start-date-time-popover"
-										>
-											{startAtValue ? (
-												format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
-													locale: ko,
-												})
-											) : (
-												<span>시작 일시 선택</span>
-											)}
-											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-										</Button>
-									</PopoverTrigger>
-									<PopoverContent className="w-auto p-0" align="start">
-										<CalendarCustom
-											mode="single"
-											selected={startAtValue}
-											onSelect={(date) => {
-												if (date) {
-													setValue('startAt', date)
-												}
-											}}
-											disabled={(date) =>
-												startOfDay(date) <
-												startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
-											}
-											captionLayout="dropdown-months"
-											startMonth={new Date()}
-											locale={ko}
-										/>
-										<div className="p-3 border-t">
-											<Input
-												type="time"
-												value={
-													startAtValue ? format(startAtValue, 'HH:mm') : ''
-												}
-												onChange={(e) => {
-													const currentDate =
-														startAtValue ||
-														new TZDate(new Date(), TIME_ZONE.SEOUL)
-													if (e.target.value) {
-														const [hours, minutes] = e.target.value.split(':')
-														const newDate = new TZDate(
-															currentDate,
-															TIME_ZONE.SEOUL,
-														)
-														newDate.setHours(parseInt(hours), parseInt(minutes))
-														setValue('startAt', newDate)
-													}
-												}}
-												data-cy="volunteer-activity-form-start-date-time-input"
-											/>
-										</div>
-									</PopoverContent>
-								</Popover>
-								<FieldError error={errors.startAt?.message} />
-							</div>
-						</div>
-
-						{/* 종료 일시 */}
-						<div className="flex items-start gap-3">
-							<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-							<div className="flex-1">
-								<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
-									종료 일시 *
-								</label>
-								<Popover>
-									<PopoverTrigger asChild>
-										<Button
-											variant="outline"
-											className={cn(
-												'w-full pl-4 text-left font-normal h-12',
-												!endAtValue && 'text-muted-foreground',
-											)}
-											disabled={loading}
-											data-cy="volunteer-activity-form-end-date-time-popover"
-										>
-											{endAtValue ? (
-												format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
-													locale: ko,
-												})
-											) : (
-												<span>종료 일시 선택</span>
-											)}
-											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-										</Button>
-									</PopoverTrigger>
-									<PopoverContent className="w-auto p-0" align="start">
-										<CalendarCustom
-											mode="single"
-											selected={endAtValue}
-											onSelect={(date) =>
-												setValue(
-													'endAt',
-													date || new TZDate(new Date(), TIME_ZONE.SEOUL),
-												)
-											}
-											disabled={(date) =>
-												startOfDay(date) <
-												startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
-											}
-											captionLayout="dropdown-months"
-											startMonth={new Date()}
-											locale={ko}
-										/>
-										<div className="p-3 border-t">
-											<Input
-												type="time"
-												value={endAtValue ? format(endAtValue, 'HH:mm') : ''}
-												onChange={(e) => {
-													const currentDate =
-														endAtValue ||
-														new TZDate(new Date(), TIME_ZONE.SEOUL)
-													if (e.target.value) {
-														const [hours, minutes] = e.target.value.split(':')
-														const newDate = new TZDate(
-															currentDate,
-															TIME_ZONE.SEOUL,
-														)
-														newDate.setHours(parseInt(hours), parseInt(minutes))
-														setValue('endAt', newDate)
-													}
-												}}
-												data-cy="volunteer-activity-form-end-date-time-input"
-											/>
-										</div>
-									</PopoverContent>
-								</Popover>
-								<FieldError error={errors.endAt?.message} />
-							</div>
-						</div>
-					</div>
-
-					{/* 신청 마감일 */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					{/* 시작 일시 */}
 					<div className="flex items-start gap-3">
 						<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
 						<div className="flex-1">
 							<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
-								신청 마감일 *
+								시작 일시 *
 							</label>
 							<Popover>
 								<PopoverTrigger asChild>
@@ -340,17 +189,17 @@ const VolunteerActivityForm = memo(
 										variant="outline"
 										className={cn(
 											'w-full pl-4 text-left font-normal h-12',
-											!applicationDeadlineValue && 'text-muted-foreground',
+											!startAtValue && 'text-muted-foreground',
 										)}
 										disabled={loading}
-										data-cy="volunteer-activity-form-application-deadline-popover"
+										data-cy="volunteer-activity-form-start-date-time-popover"
 									>
-										{applicationDeadlineValue ? (
-											format(applicationDeadlineValue, 'yyyy년 M월 d일', {
+										{startAtValue ? (
+											format(startAtValue, 'yyyy년 M월 d일 HH:mm', {
 												locale: ko,
 											})
 										) : (
-											<span>신청 마감일 선택</span>
+											<span>시작 일시 선택</span>
 										)}
 										<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
 									</Button>
@@ -358,14 +207,11 @@ const VolunteerActivityForm = memo(
 								<PopoverContent className="w-auto p-0" align="start">
 									<CalendarCustom
 										mode="single"
-										selected={applicationDeadlineValue}
+										selected={startAtValue}
 										onSelect={(date) => {
-											const newDate = new TZDate(
-												date || new Date(),
-												TIME_ZONE.SEOUL,
-											)
-											newDate.setHours(23, 59, 59, 999)
-											setValue('applicationDeadline', newDate)
+											if (date) {
+												setValue('startAt', date)
+											}
 										}}
 										disabled={(date) =>
 											startOfDay(date) <
@@ -375,106 +221,238 @@ const VolunteerActivityForm = memo(
 										startMonth={new Date()}
 										locale={ko}
 									/>
+									<div className="p-3 border-t">
+										<Input
+											type="time"
+											value={startAtValue ? format(startAtValue, 'HH:mm') : ''}
+											onChange={(e) => {
+												const currentDate =
+													startAtValue ||
+													new TZDate(new Date(), TIME_ZONE.SEOUL)
+												if (e.target.value) {
+													const [hours, minutes] = e.target.value.split(':')
+													const newDate = new TZDate(
+														currentDate,
+														TIME_ZONE.SEOUL,
+													)
+													newDate.setHours(parseInt(hours), parseInt(minutes))
+													setValue('startAt', newDate)
+												}
+											}}
+											data-cy="volunteer-activity-form-start-date-time-input"
+										/>
+									</div>
 								</PopoverContent>
 							</Popover>
-							<FieldError error={errors.applicationDeadline?.message} />
+							<FieldError error={errors.startAt?.message} />
+						</div>
+					</div>
+
+					{/* 종료 일시 */}
+					<div className="flex items-start gap-3">
+						<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+						<div className="flex-1">
+							<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+								종료 일시 *
+							</label>
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button
+										variant="outline"
+										className={cn(
+											'w-full pl-4 text-left font-normal h-12',
+											!endAtValue && 'text-muted-foreground',
+										)}
+										disabled={loading}
+										data-cy="volunteer-activity-form-end-date-time-popover"
+									>
+										{endAtValue ? (
+											format(endAtValue, 'yyyy년 M월 d일 HH:mm', {
+												locale: ko,
+											})
+										) : (
+											<span>종료 일시 선택</span>
+										)}
+										<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className="w-auto p-0" align="start">
+									<CalendarCustom
+										mode="single"
+										selected={endAtValue}
+										onSelect={(date) =>
+											setValue(
+												'endAt',
+												date || new TZDate(new Date(), TIME_ZONE.SEOUL),
+											)
+										}
+										disabled={(date) =>
+											startOfDay(date) <
+											startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
+										}
+										captionLayout="dropdown-months"
+										startMonth={new Date()}
+										locale={ko}
+									/>
+									<div className="p-3 border-t">
+										<Input
+											type="time"
+											value={endAtValue ? format(endAtValue, 'HH:mm') : ''}
+											onChange={(e) => {
+												const currentDate =
+													endAtValue || new TZDate(new Date(), TIME_ZONE.SEOUL)
+												if (e.target.value) {
+													const [hours, minutes] = e.target.value.split(':')
+													const newDate = new TZDate(
+														currentDate,
+														TIME_ZONE.SEOUL,
+													)
+													newDate.setHours(parseInt(hours), parseInt(minutes))
+													setValue('endAt', newDate)
+												}
+											}}
+											data-cy="volunteer-activity-form-end-date-time-input"
+										/>
+									</div>
+								</PopoverContent>
+							</Popover>
+							<FieldError error={errors.endAt?.message} />
 						</div>
 					</div>
 				</div>
-			),
-			[
-				startAtValue,
-				loading,
-				endAtValue,
-				applicationDeadlineValue,
-				errors,
-				setValue,
-			],
+
+				{/* 신청 마감일 */}
+				<div className="flex items-start gap-3">
+					<Clock className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+					<div className="flex-1">
+						<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+							신청 마감일 *
+						</label>
+						<Popover>
+							<PopoverTrigger asChild>
+								<Button
+									variant="outline"
+									className={cn(
+										'w-full pl-4 text-left font-normal h-12',
+										!applicationDeadlineValue && 'text-muted-foreground',
+									)}
+									disabled={loading}
+									data-cy="volunteer-activity-form-application-deadline-popover"
+								>
+									{applicationDeadlineValue ? (
+										format(applicationDeadlineValue, 'yyyy년 M월 d일', {
+											locale: ko,
+										})
+									) : (
+										<span>신청 마감일 선택</span>
+									)}
+									<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent className="w-auto p-0" align="start">
+								<CalendarCustom
+									mode="single"
+									selected={applicationDeadlineValue}
+									onSelect={(date) => {
+										const newDate = new TZDate(
+											date || new Date(),
+											TIME_ZONE.SEOUL,
+										)
+										newDate.setHours(23, 59, 59, 999)
+										setValue('applicationDeadline', newDate)
+									}}
+									disabled={(date) =>
+										startOfDay(date) <
+										startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
+									}
+									captionLayout="dropdown-months"
+									startMonth={new Date()}
+									locale={ko}
+								/>
+							</PopoverContent>
+						</Popover>
+						<FieldError error={errors.applicationDeadline?.message} />
+					</div>
+				</div>
+			</div>
 		)
 
-		const additionalSettingsSection = useMemo(
-			() => (
-				<div className="space-y-6">
-					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-						추가 설정
-					</h3>
+		const additionalSettingsSection = (
+			<div className="space-y-6">
+				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+					추가 설정
+				</h3>
 
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-						{/* 모집 인원 */}
-						<div className="flex items-start gap-3">
-							<Users className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-							<div className="flex-1">
-								<label
-									htmlFor="max-participants"
-									className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
-								>
-									최대 모집 인원
-								</label>
-								<Input
-									id="max-participants"
-									type="number"
-									{...register('maxParticipants')}
-									placeholder="최대 모집 인원을 입력해주세요."
-									className="w-full h-12"
-									disabled={loading}
-									data-cy="volunteer-activity-form-recruitment-count-input"
-								/>
-								<p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-									비워두면 인원 제한이 없습니다
-								</p>
-							</div>
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					{/* 모집 인원 */}
+					<div className="flex items-start gap-3">
+						<Users className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+						<div className="flex-1">
+							<label
+								htmlFor="max-participants"
+								className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block"
+							>
+								최대 모집 인원
+							</label>
+							<Input
+								id="max-participants"
+								type="number"
+								{...register('maxParticipants')}
+								placeholder="최대 모집 인원을 입력해주세요."
+								className="w-full h-12"
+								disabled={loading}
+								data-cy="volunteer-activity-form-recruitment-count-input"
+							/>
+							<p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+								비워두면 인원 제한이 없습니다
+							</p>
 						</div>
+					</div>
 
-						{/* 상태 */}
-						<div className="flex items-start gap-3">
-							<Settings className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
-							<div className="flex-1">
-								<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
-									상태
-								</label>
-								<input
-									{...register('status')}
-									type="hidden"
-									value={
-										watch('status') || Enum.VolunteerActivityStatus.PLANNING
-									}
-									data-cy="volunteer-activity-form-status-input"
-								/>
-								<Select
-									value={
-										watch('status') || Enum.VolunteerActivityStatus.PLANNING
-									}
-									disabled={loading}
-									onValueChange={(value) =>
-										setValue(
-											'status',
-											ZodEnum.VolunteerActivityStatus.parse(value),
-										)
-									}
-									data-cy="volunteer-activity-form-status-select"
+					{/* 상태 */}
+					<div className="flex items-start gap-3">
+						<Settings className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+						<div className="flex-1">
+							<label className="font-semibold text-gray-900 dark:text-gray-100 mb-3 block">
+								상태
+							</label>
+							<input
+								{...register('status')}
+								type="hidden"
+								value={watch('status') || Enum.VolunteerActivityStatus.PLANNING}
+								data-cy="volunteer-activity-form-status-input"
+							/>
+							<Select
+								value={watch('status') || Enum.VolunteerActivityStatus.PLANNING}
+								disabled={loading}
+								onValueChange={(value) =>
+									setValue(
+										'status',
+										value as ZodType<typeof ZodEnum.VolunteerActivityStatus>,
+									)
+								}
+								data-cy="volunteer-activity-form-status-select"
+							>
+								<SelectTrigger
+									className="w-full h-12"
+									data-cy="volunteer-activity-form-status-trigger"
 								>
-									<SelectTrigger
-										className="w-full h-12"
-										data-cy="volunteer-activity-form-status-trigger"
-									>
-										<SelectValue placeholder="상태를 선택해주세요" />
-									</SelectTrigger>
-									<SelectContent data-cy="volunteer-activity-form-status-content">
-										{Object.entries(VOLUNTEER_ACTIVITY_STATUS_LABELS).map(
-											([value, label]) => (
-												<SelectItem key={value} value={value}>
-													{label}
-												</SelectItem>
-											),
-										)}
-									</SelectContent>
-								</Select>
-							</div>
+									<SelectValue placeholder="상태를 선택해주세요" />
+								</SelectTrigger>
+								<SelectContent data-cy="volunteer-activity-form-status-content">
+									{Object.entries(VOLUNTEER_ACTIVITY_STATUS_LABELS).map(
+										([value, label]) => (
+											<SelectItem key={value} value={value}>
+												{label}
+											</SelectItem>
+										),
+									)}
+								</SelectContent>
+							</Select>
 						</div>
 					</div>
 				</div>
-			),
-			[register, watch, setValue, loading],
+			</div>
 		)
 
 		return (
