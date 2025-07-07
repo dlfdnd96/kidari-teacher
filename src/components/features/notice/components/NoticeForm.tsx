@@ -21,8 +21,9 @@ const NoticeForm = memo(
 			formState: { errors },
 		} = useNoticeForm({ onSubmit, onSuccess, notice })
 
-		const loading =
-			createNoticeMutation.isPending || updateNoticeMutation.isPending
+		const loading = notice
+			? updateNoticeMutation.isPending
+			: createNoticeMutation.isPending
 
 		return (
 			<div className="min-h-screen">

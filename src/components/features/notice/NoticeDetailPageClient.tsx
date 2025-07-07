@@ -42,7 +42,9 @@ export default function NoticeDetailPageClient({
 	const { data: notice, isLoading, isError } = getNoticeQuery({ id })
 
 	const handleDeleteConfirm = useCallback(async () => {
-		if (!checkAuthentication() || !notice) return
+		if (!checkAuthentication() || !notice) {
+			return
+		}
 
 		try {
 			await deleteNoticeMutation.mutateAsync({ id: notice.id })
