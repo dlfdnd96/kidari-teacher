@@ -11,6 +11,10 @@ export const useNoticeActions = () => {
 	const { showError } = useErrorModal()
 	const utils = trpc.useUtils()
 
+	const getNoticeQuery = trpc.notice.getNotice.useQuery
+
+	const getNoticeListQuery = trpc.notice.getNoticeList.useQuery
+
 	const createNoticeMutation = trpc.notice.createNotice.useMutation({
 		onSuccess: async () => {
 			await utils.notice.getNoticeList.invalidate()
@@ -82,18 +86,16 @@ export const useNoticeActions = () => {
 	}, [session?.user, showError])
 
 	return {
-		// Mutations
+		getNoticeQuery,
+		getNoticeListQuery,
 		createNoticeMutation,
 		updateNoticeMutation,
 		deleteNoticeMutation,
-		// Navigation
 		navigateToCreate,
 		navigateToEdit,
 		navigateToDetail,
 		navigateToList,
 		goBack,
-		// Utils
 		checkAuthentication,
-		isAuthenticated: !!session?.user,
 	}
 }

@@ -4,19 +4,17 @@ import React, {
 	Suspense,
 	useCallback,
 	useEffect,
-	useState,
 	useMemo,
+	useState,
 } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
-import { trpc } from '@/components/providers/TrpcProvider'
 import { Button } from '@/components/ui'
 import { keepPreviousData } from '@tanstack/react-query'
 import { NoticePageClientProps } from '@/types/notice'
 import { CircleAlert, Plus, RefreshCw } from 'lucide-react'
-import { NoticeSkeletonList } from './components'
+import { NoticeList, NoticeSkeletonList } from './components'
 import { ErrorState } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
-import NoticeList from './NoticeList'
 import Pagination from '@/components/features/pagination/Pagination'
 import { Enum } from '@/enums'
 import { useSession } from 'next-auth/react'
@@ -24,7 +22,7 @@ import { useSession } from 'next-auth/react'
 function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 	const searchParams = useSearchParams()
 	const { data: session } = useSession()
-	const { navigateToCreate } = useNoticeActions()
+	const { getNoticeListQuery, navigateToCreate } = useNoticeActions()
 
 	const [currentPage, setCurrentPage] = useState(initialPage)
 	const [isPageChanging, setIsPageChanging] = useState(false)
@@ -47,8 +45,14 @@ function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 		}
 	}, [searchParams, currentPage])
 
-	const queryOptions = useMemo(
-		() => ({
+	const {
+		data: noticeData,
+		isLoading,
+		isError,
+		refetch,
+		isFetching,
+	} = getNoticeListQuery(
+		{
 			filter: {
 				isPublished: true,
 			},
@@ -59,21 +63,13 @@ function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 					createdAt: 'desc' as const,
 				},
 			},
-		}),
-		[currentPage, pageSize],
+		},
+		{
+			staleTime: 60 * 1000,
+			refetchOnWindowFocus: false,
+			placeholderData: keepPreviousData,
+		},
 	)
-
-	const {
-		data: noticeData,
-		isLoading,
-		isError,
-		refetch,
-		isFetching,
-	} = trpc.notice.getNoticeList.useQuery(queryOptions, {
-		staleTime: 60 * 1000,
-		refetchOnWindowFocus: false,
-		placeholderData: keepPreviousData,
-	})
 
 	const notices = noticeData?.noticeList || []
 	const totalCount = noticeData?.totalCount || notices.length

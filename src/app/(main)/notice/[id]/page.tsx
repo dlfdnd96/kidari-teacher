@@ -36,7 +36,7 @@ export default async function NoticeDetailPage({
 	return (
 		<main className="min-h-screen pt-20">
 			<section className="max-w-4xl mx-auto pb-12 sm:pb-20 px-4 sm:px-8">
-				<NoticeDetailPageClient noticeId={id} />
+				<NoticeDetailPageClient id={id} />
 			</section>
 		</main>
 	)

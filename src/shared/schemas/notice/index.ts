@@ -49,30 +49,26 @@ export const NoticeListFilterInputSchema = z.optional(
 )
 
 export const CreateNoticeInputSchema = z.strictObject({
-	title: z.string().check(z.minLength(1)),
-	content: z.string().check(z.minLength(1)),
+	title: z
+		.string()
+		.check(
+			z.minLength(1, '제목을 입력해주세요.'),
+			z.maxLength(255, '제목은 255자 이내로 입력해주세요.'),
+		),
+	content: z.string().check(z.minLength(1, '내용을 입력해주세요.')),
 })
 
 export const UpdateNoticeInputSchema = z.strictObject({
-	id: z.string().check(z.cuid()),
-	title: z.string().check(z.minLength(1)),
-	content: z.string().check(z.minLength(1)),
+	id: z.string().check(z.cuid('올바른 ID가 아닙니다')),
+	...CreateNoticeInputSchema.def.shape,
 })
 
 export const DeleteNoticeInputSchema = z.strictObject({
-	id: z.string().check(z.cuid()),
+	id: z.string().check(z.cuid('올바른 ID가 아닙니다')),
 })
 
 export const getNoticeInputSchema = z.strictObject({
-	id: z.string().check(z.cuid()),
+	id: z.string().check(z.cuid('올바른 ID가 아닙니다')),
 })
 
-export const NoticeFormSchema = z.strictObject({
-	title: z.string().check(z.minLength(1, '제목을 입력해주세요.')),
-	content: z.string().check(z.minLength(1, '내용을 입력해주세요.')),
-})
-
-export const NoticeEditFormSchema = z.strictObject({
-	title: z.string().check(z.minLength(1, '제목을 입력해주세요.')),
-	content: z.string().check(z.minLength(1, '내용을 입력해주세요.')),
-})
+export const NoticeFormSchema = CreateNoticeInputSchema

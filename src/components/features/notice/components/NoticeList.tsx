@@ -1,7 +1,7 @@
 'use client'
 
 import React, { memo } from 'react'
-import { NoticeCard } from './components'
+import { NoticeCard } from '.'
 import { NoticeListProps } from '@/types/notice'
 
 const NoticeList = memo(({ notices }: NoticeListProps) => {

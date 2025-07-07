@@ -1,5 +1,8 @@
 import { ZodType } from '@/shared/types'
-import { NoticePickAuthorEntitySchema } from '@/shared/schemas/notice'
+import {
+	NoticeFormSchema,
+	NoticePickAuthorEntitySchema,
+} from '@/shared/schemas/notice'
 
 export interface NoticePageProps {
 	searchParams: Promise<{ page?: string }>
@@ -30,11 +33,11 @@ export interface NoticeDetailPageProps {
 }
 
 export interface NoticeDetailPageClientProps {
-	noticeId: string
+	id: string
 }
 
 export interface NoticeEditPageClientProps {
-	noticeId: string
+	id: string
 }
 
 export interface NoticeCardProps {
@@ -56,8 +59,14 @@ export interface NoticeSkeletonListProps {
 }
 
 export interface UseNoticeFormProps {
-	initialTitle?: string
-	initialContent?: string
-	onSuccess?: () => void
-	onSubmit: (data: { title: string; content: string }) => Promise<void>
+	onSubmit: (data: ZodType<typeof NoticeFormSchema>) => Promise<void>
+	onSuccess: () => void
+	notice?: ZodType<typeof NoticePickAuthorEntitySchema>
+}
+
+export interface NoticeFormProps {
+	onSubmit: (data: ZodType<typeof NoticeFormSchema>) => Promise<void>
+	onSuccess: () => void
+	onCancel: () => void
+	notice?: ZodType<typeof NoticePickAuthorEntitySchema>
 }

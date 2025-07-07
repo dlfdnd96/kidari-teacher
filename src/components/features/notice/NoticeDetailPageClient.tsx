@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useCallback, useEffect, useState, useMemo } from 'react'
-import { trpc } from '@/components/providers/TrpcProvider'
 import { Edit, Trash, AlertTriangle, AlertCircle, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -25,13 +24,14 @@ import { Enum } from '@/enums'
 import { useSession } from 'next-auth/react'
 
 export default function NoticeDetailPageClient({
-	noticeId,
+	id,
 }: NoticeDetailPageClientProps) {
 	const { showError } = useErrorModal()
 	const { data: session } = useSession()
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
 	const {
+		getNoticeQuery,
 		deleteNoticeMutation,
 		navigateToEdit,
 		navigateToList,
@@ -39,11 +39,7 @@ export default function NoticeDetailPageClient({
 	} = useNoticeActions()
 	const isAdmin = session?.user?.role === Enum.Role.ADMIN
 
-	const {
-		data: notice,
-		isLoading,
-		isError,
-	} = trpc.notice.getNotice.useQuery({ id: noticeId })
+	const { data: notice, isLoading, isError } = getNoticeQuery({ id })
 
 	const handleDeleteConfirm = useCallback(async () => {
 		if (!checkAuthentication() || !notice) return
@@ -64,8 +60,8 @@ export default function NoticeDetailPageClient({
 	}, [])
 
 	const handleEdit = useCallback(() => {
-		navigateToEdit(noticeId)
-	}, [navigateToEdit, noticeId])
+		navigateToEdit(id)
+	}, [navigateToEdit, id])
 
 	const handleBack = useCallback(() => {
 		navigateToList()

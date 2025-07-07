@@ -18,7 +18,7 @@ export default async function NoticeEditPage({ params }: NoticeEditPageProps) {
 
 	return (
 		<main className="min-h-screen pt-20">
-			<NoticeEditPageClient noticeId={id} />
+			<NoticeEditPageClient id={id} />
 		</main>
 	)
 }

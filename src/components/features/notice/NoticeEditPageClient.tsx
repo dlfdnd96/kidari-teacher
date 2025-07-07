@@ -1,24 +1,42 @@
 'use client'
 
 import React, { memo, useCallback } from 'react'
-import { trpc } from '@/components/providers/TrpcProvider'
 import { NoticeEditPageClientProps } from '@/types/notice'
 import { BackButton, LoadingSpinner, ErrorState } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
-import NoticeEditForm from './NoticeEditForm'
+import { NoticeForm } from './components'
+import { ZodType } from '@/shared/types'
+import { NoticeFormSchema } from '@/shared/schemas/notice'
 
-const NoticeEditPageClient = memo(({ noticeId }: NoticeEditPageClientProps) => {
-	const { navigateToList, navigateToDetail } = useNoticeActions()
-
+const NoticeEditPageClient = memo(({ id }: NoticeEditPageClientProps) => {
 	const {
-		data: notice,
-		isLoading,
-		isError,
-	} = trpc.notice.getNotice.useQuery({ id: noticeId })
+		getNoticeQuery,
+		checkAuthentication,
+		updateNoticeMutation,
+		navigateToList,
+		navigateToDetail,
+	} = useNoticeActions()
+
+	const { data: notice, isLoading, isError } = getNoticeQuery({ id })
+
+	const handleSubmit = useCallback(
+		async (data: ZodType<typeof NoticeFormSchema>) => {
+			if (!checkAuthentication()) {
+				return
+			}
+
+			await updateNoticeMutation.mutateAsync({
+				id,
+				title: data.title,
+				content: data.content,
+			})
+		},
+		[checkAuthentication, updateNoticeMutation, id],
+	)
 
 	const handleCancel = useCallback(() => {
-		navigateToDetail(noticeId)
-	}, [navigateToDetail, noticeId])
+		navigateToDetail(id)
+	}, [navigateToDetail, id])
 
 	if (isLoading) {
 		return (
@@ -59,10 +77,10 @@ const NoticeEditPageClient = memo(({ noticeId }: NoticeEditPageClientProps) => {
 	return (
 		<div className="min-h-screen">
 			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
-				<NoticeEditForm
-					id={notice.id}
-					initialTitle={notice.title}
-					initialContent={notice.content}
+				<NoticeForm
+					notice={notice}
+					onSubmit={handleSubmit}
+					onSuccess={handleCancel}
 					onCancel={handleCancel}
 				/>
 			</div>

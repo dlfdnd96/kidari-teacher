@@ -1,33 +1,38 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { NoticeFormSchema, NoticeEditFormSchema } from '@/shared/schemas/notice'
+import { NoticeFormSchema } from '@/shared/schemas/notice'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { handleClientError, isValidationError } from '@/utils/error'
 import { UseNoticeFormProps } from '@/types/notice'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ZodType } from '@/shared/types'
 
 export const useNoticeForm = ({
-	initialTitle = '',
-	initialContent = '',
-	onSuccess,
+	notice,
 	onSubmit,
+	onSuccess,
 }: UseNoticeFormProps) => {
 	const { showError } = useErrorModal()
 
 	const form = useForm({
-		defaultValues: {
-			title: initialTitle,
-			content: initialContent,
-		},
+		resolver: zodResolver(NoticeFormSchema),
 	})
 
+	useEffect(() => {
+		if (notice) {
+			form.reset({
+				title: notice.title,
+				content: notice.content,
+			})
+		}
+	}, [notice, form])
+
 	const handleSubmit = useCallback(
-		async (data: unknown) => {
+		async (data: ZodType<typeof NoticeFormSchema>) => {
 			try {
-				const schema = initialTitle ? NoticeEditFormSchema : NoticeFormSchema
-				const validatedData = schema.parse(data)
-				await onSubmit(validatedData)
+				await onSubmit(data)
 				form.reset()
-				onSuccess?.()
+				onSuccess()
 			} catch (error: unknown) {
 				if (isValidationError(error)) {
 					handleClientError(error, showError, '입력 검증 오류')
@@ -36,7 +41,7 @@ export const useNoticeForm = ({
 				}
 			}
 		},
-		[form, onSubmit, onSuccess, showError, initialTitle],
+		[form, onSubmit, onSuccess, showError],
 	)
 
 	return {
