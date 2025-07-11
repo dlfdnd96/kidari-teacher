@@ -22,7 +22,7 @@ import { useFieldValidation } from '@/hooks/useFieldValidation'
 import { commonValidators } from '@/utils/validation'
 
 export default function ProfileSetupPage() {
-	const { data: session, status } = useSession()
+	const { data: session, status, update: updateSession } = useSession()
 	const router = useRouter()
 	const { showError } = useErrorModal()
 
@@ -128,6 +128,12 @@ export default function ProfileSetupPage() {
 					await initializeUserProfileMutation.mutateAsync(validatedData)
 
 				if (result) {
+					await updateSession({
+						user: {
+							...session?.user,
+							name: data.name,
+						},
+					})
 					router.push('/')
 				}
 			} catch (error: unknown) {

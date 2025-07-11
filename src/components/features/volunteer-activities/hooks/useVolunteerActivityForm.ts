@@ -16,7 +16,6 @@ export const useVolunteerActivityForm = ({
 
 	const form = useForm({
 		resolver: zodResolver(VolunteerActivityFormSchema),
-		mode: 'onTouched',
 	})
 
 	useEffect(() => {

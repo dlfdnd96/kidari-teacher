@@ -16,28 +16,48 @@ export async function POST(request: NextRequest) {
 			.tuple([z.string(), z.string(), ZodEnum.Role])
 			.parse([body.TEST_USER, body.TEST_EMAIL, role])
 
-		const testUser = await prisma.user.upsert({
-			where: { email },
-			update: { role },
-			create: {
-				email,
-				name: user,
-				role: parsedRole,
-				profiles: {
-					create: [
-						{
-							phone: '01012345678',
-						},
-					],
+		const testUser = await prisma.$transaction(async (tx) => {
+			await tx.userProfile.deleteMany()
+			await tx.userProfession.deleteMany()
+			return await prisma.user.upsert({
+				where: { email },
+				update: {
+					role,
+					profiles: {
+						create: [
+							{
+								phone: '01012345678',
+							},
+						],
+					},
+					professions: {
+						create: [
+							{
+								profession: Enum.Profession.ACCOUNTANT,
+							},
+						],
+					},
 				},
-				professions: {
-					create: [
-						{
-							profession: Enum.Profession.ACCOUNTANT,
-						},
-					],
+				create: {
+					email,
+					name: user,
+					role: parsedRole,
+					profiles: {
+						create: [
+							{
+								phone: '01012345678',
+							},
+						],
+					},
+					professions: {
+						create: [
+							{
+								profession: Enum.Profession.ACCOUNTANT,
+							},
+						],
+					},
 				},
-			},
+			})
 		})
 
 		// JWT 토큰 생성

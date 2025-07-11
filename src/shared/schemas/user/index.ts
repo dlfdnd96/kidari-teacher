@@ -18,8 +18,10 @@ export const UpdateUserInputSchema = z.object({
 		.string()
 		.check(
 			z.minLength(1, '이름을 입력해주세요'),
-			z.maxLength(100, '이름은 100자 이내로 입력해주세요'),
+			z.maxLength(20, '이름은 20자 이내로 입력해주세요'),
 		),
 })
+
+export const UserFormSchema = UpdateUserInputSchema
 
 export const GetUserResponseSchema = UserEntitySchema

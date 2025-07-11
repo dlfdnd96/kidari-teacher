@@ -1,28 +1,75 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
-import { trpc } from '@/components/providers/TrpcProvider'
-import ProfileCard from '@/components/features/profile/ProfileCard'
-import ProfileForm from '@/components/features/profile/ProfileForm'
-import ProfileStats from '@/components/features/profile/ProfileStats'
-import UserProfileCard from '@/components/features/profile/UserProfileCard'
-import UserProfileForm from '@/components/features/profile/UserProfileForm'
-import { Alert, AlertDescription, Button, Skeleton } from '@/components/ui'
+import React, { memo, useCallback, useState } from 'react'
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import type { ProfilePageClientProps } from '@/types/profile'
+import { Alert, AlertDescription, Button } from '@/components/ui'
+import type { ProfileEditState, ProfilePageClientProps } from '@/types/profile'
+import {
+	ProfileCard,
+	ProfileForm,
+	ProfileSkeleton,
+	ProfileStats,
+	UserProfileCard,
+	UserProfileForm,
+} from './components'
+import { useProfileActions, useUserProfileActions } from './hooks'
 
-export default function ProfilePageClient({
-	initialUser,
-}: ProfilePageClientProps) {
-	const [isEditing, setIsEditing] = useState(false)
-	const [isEditingUserProfile, setIsEditingUserProfile] = useState(false)
+const ProfileErrorState = memo(({ onRetry }: { onRetry: () => void }) => (
+	<div className="text-center py-16">
+		<div className="bg-white border border-gray-200 rounded-lg p-12 max-w-md mx-auto">
+			<div className="flex justify-center mb-6">
+				<div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
+					<AlertCircle className="w-8 h-8 text-red-500" />
+				</div>
+			</div>
+			<h3 className="text-lg font-semibold text-gray-900 mb-2">
+				프로필을 불러올 수 없습니다
+			</h3>
+			<div className="flex justify-center">
+				<Button
+					onClick={onRetry}
+					variant="outline"
+					className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
+				>
+					<RefreshCw className="w-4 h-4" />
+					<span>다시 시도</span>
+				</Button>
+			</div>
+		</div>
+	</div>
+))
+
+ProfileErrorState.displayName = 'ProfileErrorState'
+
+const StatsErrorAlert = memo(({ errorMessage }: { errorMessage: string }) => (
+	<div className="bg-white border border-red-200 rounded-lg p-6">
+		<Alert variant="destructive" className="border-0 bg-transparent">
+			<AlertCircle className="h-4 w-4" />
+			<AlertDescription>
+				활동 통계를 불러올 수 없습니다: {errorMessage}
+			</AlertDescription>
+		</Alert>
+	</div>
+))
+
+StatsErrorAlert.displayName = 'StatsErrorAlert'
+
+const ProfilePageClient = memo(({ initialUser }: ProfilePageClientProps) => {
+	const [editState, setEditState] = useState<ProfileEditState>({
+		isEditing: false,
+		isEditingUserProfile: false,
+	})
+
+	const { getUserQuery } = useProfileActions()
+	const { getUserProfileStatQuery, getUserProfileWithProfessionsQuery } =
+		useUserProfileActions()
 
 	const {
 		data: user,
 		isLoading: userLoading,
 		isError: userError,
 		refetch: refetchUser,
-	} = trpc.user.getUser.useQuery(undefined, {
+	} = getUserQuery(undefined, {
 		initialData: initialUser,
 		staleTime: 5 * 60 * 1000,
 	})
@@ -32,22 +79,34 @@ export default function ProfilePageClient({
 		isError: statsError,
 		error: statsErrorMsg,
 		refetch: refetchStats,
-	} = trpc.userProfile.getProfileStats.useQuery(undefined, {
+	} = getUserProfileStatQuery(undefined, {
 		staleTime: 5 * 60 * 1000,
 	})
 
 	const { data: userProfile, refetch: refetchUserProfile } =
-		trpc.userProfile.getUserProfileWithProfessions.useQuery(undefined, {
+		getUserProfileWithProfessionsQuery(undefined, {
 			staleTime: 5 * 60 * 1000,
 			retry: false,
 		})
 
 	const handleEdit = useCallback(() => {
-		setIsEditing(true)
+		setEditState((prev) => ({ ...prev, isEditing: true }))
 	}, [])
 
 	const handleCancelEdit = useCallback(() => {
-		setIsEditing(false)
+		setEditState((prev) => ({ ...prev, isEditing: false }))
+	}, [])
+
+	const handleEditUserProfile = useCallback(() => {
+		setEditState((prev) => ({ ...prev, isEditingUserProfile: true }))
+	}, [])
+
+	const handleCancelEditUserProfile = useCallback(() => {
+		setEditState((prev) => ({ ...prev, isEditingUserProfile: false }))
+	}, [])
+
+	const handleCreateUserProfile = useCallback(() => {
+		setEditState((prev) => ({ ...prev, isEditingUserProfile: true }))
 	}, [])
 
 	const handleRefresh = useCallback(() => {
@@ -56,107 +115,12 @@ export default function ProfilePageClient({
 		refetchUserProfile()
 	}, [refetchUser, refetchStats, refetchUserProfile])
 
-	const handleEditUserProfile = useCallback(() => {
-		setIsEditingUserProfile(true)
-	}, [])
-
-	const handleCancelEditUserProfile = useCallback(() => {
-		setIsEditingUserProfile(false)
-	}, [])
-
-	const handleCreateUserProfile = useCallback(() => {
-		setIsEditingUserProfile(true)
-	}, [])
-
 	if (userLoading) {
-		return (
-			<div className="space-y-6">
-				{/* 헤더 스켈레톤 */}
-				<div className="text-center mb-8">
-					<Skeleton className="h-8 w-48 mx-auto mb-2" />
-					<Skeleton className="h-4 w-64 mx-auto" />
-				</div>
-
-				{/* 프로필 카드 스켈레톤 */}
-				<div className="bg-white border border-gray-200 rounded-lg animate-pulse">
-					<div className="border-b border-gray-200 p-6">
-						<Skeleton className="h-6 w-40" />
-					</div>
-					<div className="p-6">
-						<div className="flex flex-col sm:flex-row items-start gap-6">
-							<Skeleton className="w-20 h-20 rounded-full" />
-							<div className="flex-1 space-y-4">
-								<Skeleton className="h-6 w-48" />
-								<Skeleton className="h-4 w-64" />
-								<Skeleton className="h-4 w-32" />
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* 통계 스켈레톤 */}
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-					{[1, 2, 3].map((i) => (
-						<div
-							key={i}
-							className="bg-white border border-gray-200 rounded-lg p-6 animate-pulse"
-						>
-							<div className="flex items-center justify-between mb-4">
-								<Skeleton className="w-12 h-12 rounded-lg" />
-								<div className="text-right">
-									<Skeleton className="h-8 w-12 mb-1" />
-									<Skeleton className="h-3 w-6" />
-								</div>
-							</div>
-							<Skeleton className="h-4 w-24 mb-1" />
-							<Skeleton className="h-3 w-32" />
-						</div>
-					))}
-				</div>
-
-				{/* 추가 프로필 스켈레톤 */}
-				<div className="bg-white border border-gray-200 rounded-lg animate-pulse">
-					<div className="border-b border-gray-200 p-6">
-						<Skeleton className="h-6 w-40" />
-					</div>
-					<div className="p-6">
-						<div className="space-y-4">
-							<Skeleton className="h-4 w-full" />
-							<Skeleton className="h-4 w-3/4" />
-							<Skeleton className="h-10 w-32" />
-						</div>
-					</div>
-				</div>
-			</div>
-		)
+		return <ProfileSkeleton />
 	}
 
 	if (userError || !user) {
-		return (
-			<div className="text-center py-16">
-				<div className="bg-white border border-gray-200 rounded-lg p-12 max-w-md mx-auto">
-					<div className="flex justify-center mb-6">
-						<div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
-							<AlertCircle className="w-8 h-8 text-red-500" />
-						</div>
-					</div>
-					<h3 className="text-lg font-semibold text-gray-900 mb-2">
-						프로필을 불러올 수 없습니다
-					</h3>
-					<p className="text-gray-500 mb-6">
-						네트워크 연결을 확인하고 다시 시도해주세요.
-					</p>
-					<Button
-						onClick={handleRefresh}
-						variant="outline"
-						className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-					>
-						<RefreshCw className="w-4 h-4" />
-						<span>다시 시도</span>
-					</Button>
-				</div>
-			</div>
-		)
+		return <ProfileErrorState onRetry={handleRefresh} />
 	}
 
 	return (
@@ -168,7 +132,7 @@ export default function ProfilePageClient({
 
 			{/* 프로필 정보 섹션 */}
 			<div>
-				{!isEditing ? (
+				{!editState.isEditing ? (
 					<ProfileCard user={user} onEdit={handleEdit} canEdit={true} />
 				) : (
 					<ProfileForm onCancel={handleCancelEdit} refetchUser={refetchUser} />
@@ -177,11 +141,11 @@ export default function ProfilePageClient({
 
 			{/* 추가 프로필 정보 섹션 */}
 			<div>
-				{isEditingUserProfile ? (
+				{editState.isEditingUserProfile ? (
 					<UserProfileForm
 						onCancel={handleCancelEditUserProfile}
 						isSetup={false}
-						initialData={userProfile}
+						userProfile={userProfile}
 					/>
 				) : (
 					<UserProfileCard
@@ -210,15 +174,14 @@ export default function ProfilePageClient({
 
 			{/* 통계 에러 상태 */}
 			{statsError && (
-				<div className="bg-white border border-red-200 rounded-lg p-6">
-					<Alert variant="destructive" className="border-0 bg-transparent">
-						<AlertCircle className="h-4 w-4" />
-						<AlertDescription>
-							활동 통계를 불러올 수 없습니다: {statsErrorMsg?.message}
-						</AlertDescription>
-					</Alert>
-				</div>
+				<StatsErrorAlert
+					errorMessage={statsErrorMsg?.message || '알 수 없는 오류'}
+				/>
 			)}
 		</div>
 	)
-}
+})
+
+ProfilePageClient.displayName = 'ProfilePageClient'
+
+export default ProfilePageClient

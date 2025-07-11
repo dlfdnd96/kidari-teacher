@@ -112,109 +112,89 @@ export async function DELETE(request: NextRequest) {
 
 // 공지사항 정리
 async function cleanupNotices(_testRunId: string): Promise<number> {
-	const result: Record<string, number> = {}
-	await prisma.$transaction(async (tx) => {
+	return await prisma.$transaction(async (tx) => {
 		const { count } = await tx.notice.deleteMany()
-		result.count = count
+		return count
 	})
-
-	return result.count
 }
 
 // 봉사활동 신청 정리
 async function cleanupApplications(
 	_testRunId: string,
 ): Promise<Record<string, number>> {
-	const results: Record<string, number> = {}
-	await prisma.$transaction(async (tx) => {
-		const volunteerApplicationsResult = await tx.application.deleteMany()
-		results.volunteerApplications = volunteerApplicationsResult.count
+	return await prisma.$transaction(async (tx) => {
+		const { count } = await tx.application.deleteMany()
+		return { volunteerApplications: count }
 	})
-
-	return results
 }
 
 // 봉사활동 정리
 async function cleanupVolunteerActivities(
 	_testRunId: string,
 ): Promise<Record<string, number>> {
-	const results: Record<string, number> = {}
-	await prisma.$transaction(async (tx) => {
-		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany()
-		results.volunteerActivities = volunteerActivitiesResult.count
+	return await prisma.$transaction(async (tx) => {
+		const { count } = await tx.volunteerActivity.deleteMany()
+		return { volunteerActivities: count }
 	})
-
-	return results
 }
 
 // 테스트 유저 프로필 정리
 async function cleanupTestUserProfiles(
 	_testRunId: string,
 ): Promise<Record<string, number>> {
-	const results: Record<string, number> = {}
-	await prisma.$transaction(async (tx) => {
+	return await prisma.$transaction(async (tx) => {
 		const userProfilesResult = await tx.userProfile.deleteMany()
-		results.userProfiles = userProfilesResult.count
-
 		const userProfessionsResult = await tx.userProfession.deleteMany()
-		results.userProfessions = userProfessionsResult.count
+		return {
+			userProfiles: userProfilesResult.count,
+			userProfessions: userProfessionsResult.count,
+		}
 	})
-
-	return results
 }
 
 // 테스트 사용자 정리
 async function cleanupTestUsers(_testRunId: string): Promise<number> {
-	const result: Record<string, number> = {}
-	await prisma.$transaction(async (tx) => {
+	return await prisma.$transaction(async (tx) => {
 		await tx.userProfile.deleteMany()
 		await tx.userProfession.deleteMany()
 		const { count } = await tx.user.deleteMany()
-		result.count = count
+		return count
 	})
-
-	return result.count
 }
 
 // 모든 테스트 데이터 정리
 async function cleanupAllTestData(
 	_testRunId: string,
 ): Promise<Record<string, number>> {
-	const results: Record<string, number> = {}
-	await prisma.$transaction(async (tx) => {
+	return await prisma.$transaction(async (tx) => {
 		const noticesResult = await tx.notice.deleteMany()
-		results.notices = noticesResult.count
-
 		const applicationsResult = await tx.application.deleteMany()
-		results.applications = applicationsResult.count
-
 		const volunteerActivitiesResult = await tx.volunteerActivity.deleteMany()
-		results.volunteerActivities = volunteerActivitiesResult.count
 
 		await tx.userProfile.deleteMany()
 		await tx.userProfession.deleteMany()
 		const usersResult = await tx.user.deleteMany()
-		results.users = usersResult.count
-	})
 
-	return results
+		return {
+			notices: noticesResult.count,
+			applications: applicationsResult.count,
+			volunteerActivities: volunteerActivitiesResult.count,
+			users: usersResult.count,
+		}
+	})
 }
 
 // 모든 데이터 정리 (주의: 프로덕션에서는 사용하지 말 것)
 async function cleanupAllData(): Promise<Record<string, number>> {
-	const results: Record<string, number> = {}
-
-	await prisma.$transaction(async (tx) => {
+	return await prisma.$transaction(async (tx) => {
 		// 순서 중요: 외래키 관계 고려하여 삭제
 		const sessionsResult = await tx.session.deleteMany()
-		results.sessions = sessionsResult.count
-
 		const noticesResult = await tx.notice.deleteMany()
-		results.notices = noticesResult.count
-
 		const usersResult = await tx.user.deleteMany()
-		results.users = usersResult.count
+		return {
+			sessions: sessionsResult.count,
+			notices: noticesResult.count,
+			users: usersResult.count,
+		}
 	})
-
-	return results
 }
