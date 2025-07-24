@@ -40,8 +40,38 @@ export interface MyApplicationListProps {
 	isLoading?: boolean
 }
 
+export interface MyApplicationCellProps {
+	application: MyApplicationListRowProps['application']
+	onRowClick: () => void
+}
+
+export interface MyApplicationCancelDialogProps {
+	isOpen: boolean
+	isPending: boolean
+	onOpenChange: (open: boolean) => void
+	onConfirm: () => void
+}
+
 export interface MyApplicationPageClientProps {
 	initialPage: number
+}
+
+export interface MyApplicationErrorStateProps {
+	onRetry: () => void
+}
+
+export interface MyApplicationHeaderProps {
+	totalCount: number
+}
+
+export interface MyApplicationLoadingIndicatorProps {
+	isFetching: boolean
+}
+
+export interface MyApplicationPaginationProps {
+	applications: ZodType<typeof ApplicationEntitySchema>[]
+	currentPage: number
+	totalPages: number
 }
 
 export const APPLICATION_STATUS_LABELS = {

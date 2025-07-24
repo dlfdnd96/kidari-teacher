@@ -28,6 +28,21 @@ export const useApplicationActions = () => {
 			},
 		})
 
+	const cancelApplicationMutation =
+		trpc.application.deleteApplication.useMutation({
+			onSuccess: async () => {
+				await Promise.all([
+					utils.application.getMyApplicationList.invalidate(),
+					utils.volunteerActivity.getVolunteerActivityList.invalidate(),
+					utils.application.getApplicationList.invalidate(),
+				])
+				router.refresh()
+			},
+			onError: (error) => {
+				handleClientError(error, showError, '봉사활동 신청 취소 오류')
+			},
+		})
+
 	const checkAuthentication = useCallback(() => {
 		if (!session?.user) {
 			handleClientError(
@@ -43,6 +58,7 @@ export const useApplicationActions = () => {
 	return {
 		getApplicationListQuery,
 		createApplicationMutation,
+		cancelApplicationMutation,
 		checkAuthentication,
 	}
 }
