@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import {
 	AlertCircle,
 	AlertTriangle,
-	ArrowLeft,
 	Calendar,
 	Clock,
 	Edit,
@@ -13,6 +12,7 @@ import {
 	FileText,
 	Mail,
 	MapPin,
+	MoreHorizontal,
 	Phone,
 	Trash2,
 	User,
@@ -47,6 +47,10 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
 	Select,
 	SelectContent,
 	SelectItem,
@@ -237,44 +241,6 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 		router.push(`/volunteer-activities/${id}/edit`)
 	}, [router, id])
 
-	const handleGoBack = useCallback(() => {
-		if (typeof window !== 'undefined') {
-			try {
-				const savedFilters = sessionStorage.getItem(
-					'volunteer-activities-filters',
-				)
-				if (savedFilters) {
-					const filters = JSON.parse(savedFilters)
-					const urlParams = new URLSearchParams()
-
-					if (filters.status) {
-						urlParams.set('status', filters.status)
-					}
-					if (filters.search) {
-						urlParams.set('search', filters.search)
-					}
-					if (filters.page) {
-						urlParams.set('page', filters.page.toString())
-					}
-
-					const queryString = urlParams.toString()
-					const targetUrl = queryString
-						? `/volunteer-activities?${queryString}`
-						: '/volunteer-activities'
-
-					sessionStorage.removeItem('volunteer-activities-filters')
-
-					router.push(targetUrl)
-					return
-				}
-			} catch (error) {
-				console.warn('필터 상태 복원 중 오류:', error)
-			}
-		}
-
-		router.push('/volunteer-activities')
-	}, [router])
-
 	useEffect(() => {
 		if (!isActivityLoading && !activity) {
 			handleClientError(
@@ -341,49 +307,6 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 
 	return (
 		<div className="min-h-screen bg-white dark:bg-gray-900">
-			{/* 상단 네비게이션 */}
-			<div className="pt-4">
-				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
-					<div className="flex items-center justify-between h-14">
-						<div className="py-4">
-							<Button
-								onClick={handleGoBack}
-								variant="outline"
-								className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
-								data-cy="back-button"
-							>
-								<ArrowLeft className="w-4 h-4" />
-								<span className="text-sm font-medium">뒤로가기</span>
-							</Button>
-						</div>
-
-						{/* 수정/삭제 버튼 */}
-						{(isManager || isWriter) && (
-							<div className="py-4 flex items-center gap-2">
-								<Button
-									onClick={handleEditClick}
-									variant="outline"
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-									data-cy="edit-button"
-								>
-									<Edit className="w-4 h-4" />
-									<span>수정</span>
-								</Button>
-								<Button
-									onClick={handleDeleteClick}
-									variant="outline"
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-									data-cy="delete-button"
-								>
-									<Trash2 className="w-4 h-4" />
-									<span>삭제</span>
-								</Button>
-							</div>
-						)}
-					</div>
-				</div>
-			</div>
-
 			{/* 메인 컨텐츠 */}
 			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
 				<div className="bg-white dark:bg-gray-800 p-6 sm:p-8">
@@ -401,24 +324,58 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 										{statusLabel}
 									</div>
 								</div>
-								<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 dark:text-gray-400">
-									<div className="flex items-center">
-										<User className="w-4 h-4 mr-2" />
-										<span className="text-sm font-medium">
-											{activity.manager?.name ?? '관리자'}
-										</span>
+								<div className="flex items-center justify-between">
+									<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 dark:text-gray-400">
+										<div className="flex items-center">
+											<User className="w-4 h-4 mr-2" />
+											<span className="text-sm font-medium">
+												{activity.manager?.name ?? '관리자'}
+											</span>
+										</div>
+										<div className="flex items-center">
+											<Calendar className="w-4 h-4 mr-2" />
+											<time className="text-sm">
+												{activity.createdAt.toLocaleDateString('ko-KR', {
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric',
+													weekday: 'short',
+												})}
+											</time>
+										</div>
 									</div>
-									<div className="flex items-center">
-										<Calendar className="w-4 h-4 mr-2" />
-										<time className="text-sm">
-											{activity.createdAt.toLocaleDateString('ko-KR', {
-												year: 'numeric',
-												month: 'long',
-												day: 'numeric',
-												weekday: 'short',
-											})}
-										</time>
-									</div>
+									{/* 더보기 메뉴 */}
+									{(isManager || isWriter) && (
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button
+													variant="ghost"
+													size="icon"
+													className="h-8 w-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+												>
+													<MoreHorizontal className="h-4 w-4" />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem
+													onClick={handleEditClick}
+													className="cursor-pointer"
+													data-cy="edit-button"
+												>
+													<Edit className="w-4 h-4 mr-2" />
+													수정하기
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													onClick={handleDeleteClick}
+													className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+													data-cy="delete-button"
+												>
+													<Trash2 className="w-4 h-4 mr-2" />
+													삭제하기
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									)}
 								</div>
 							</div>
 						</div>
@@ -545,7 +502,7 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 								<>
 									<div className="border-t border-gray-200 dark:border-gray-700"></div>
 									<div className="space-y-3">
-										{hasApplied ? (
+										{hasApplied && (
 											<div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
 												<div className="flex items-center">
 													<AlertCircle className="h-5 w-5 text-green-600 dark:text-green-400 mr-3" />
@@ -554,29 +511,35 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 													</span>
 												</div>
 											</div>
-										) : !canApply ? (
+										)}
+										{cannotApplyDueToProfession && !hasApplied && (
 											<div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
 												<div className="flex items-center">
 													<AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-3" />
 													<span className="text-red-800 dark:text-red-200 font-medium">
-														{isDeadlinePassed
-															? '신청 마감일이 지났습니다.'
-															: isFullyBooked
-																? '모집 정원이 마감되었습니다.'
-																: '현재 신청을 받지 않는 상태입니다.'}
-													</span>
-												</div>
-											</div>
-										) : (
-											<div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4">
-												<div className="flex items-center">
-													<AlertCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mr-3" />
-													<span className="text-emerald-800 dark:text-emerald-200 font-medium">
-														신청 버튼을 클릭하여 이 봉사활동에 참여 신청하세요.
+														{hasNoProfessions
+															? '프로필에 직업을 1개 이상 등록해야 신청할 수 있습니다.'
+															: '신청 가능한 직업이 없습니다. 이미 모든 직업으로 신청이 완료되었습니다.'}
 													</span>
 												</div>
 											</div>
 										)}
+										{!canApply &&
+											!hasApplied &&
+											!cannotApplyDueToProfession && (
+												<div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+													<div className="flex items-center">
+														<AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-3" />
+														<span className="text-red-800 dark:text-red-200 font-medium">
+															{isDeadlinePassed
+																? '신청 마감일이 지났습니다.'
+																: isFullyBooked
+																	? '모집 정원이 마감되었습니다.'
+																	: '현재 신청을 받지 않는 상태입니다.'}
+														</span>
+													</div>
+												</div>
+											)}
 									</div>
 								</>
 							)}
@@ -784,49 +747,6 @@ const VolunteerActivityDetailPageClient: FC<VolunteerActivityDetailProps> = ({
 											<span>신청하기</span>
 										</Button>
 									)}
-
-								{/* 이미 신청한 경우 */}
-								{hasApplied && (
-									<Button
-										type="button"
-										disabled
-										variant="outline"
-										className="flex items-center gap-2 px-3 py-2 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium cursor-not-allowed h-auto opacity-50"
-									>
-										<span>신청 완료</span>
-									</Button>
-								)}
-
-								{/* 직업 관련 이유로 신청 불가능한 경우 */}
-								{cannotApplyDueToProfession && !hasApplied && (
-									<Button
-										type="button"
-										disabled
-										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed border-0 h-auto"
-										title={
-											hasNoProfessions
-												? '프로필에 직업을 1개 이상 등록해야 신청할 수 있습니다.'
-												: '신청 가능한 직업이 없습니다. 이미 모든 직업으로 신청이 완료되었습니다.'
-										}
-									>
-										{hasNoProfessions ? '직업 등록 필요' : '신청 불가'}
-									</Button>
-								)}
-
-								{/* 기타 이유로 신청 불가능한 경우 (마감, 정원 초과 등) */}
-								{!canApply && !hasApplied && !cannotApplyDueToProfession && (
-									<Button
-										type="button"
-										disabled
-										className="bg-gray-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg opacity-50 cursor-not-allowed border-0 h-auto"
-									>
-										{isDeadlinePassed
-											? '마감됨'
-											: isFullyBooked
-												? '정원 마감'
-												: '신청 불가'}
-									</Button>
-								)}
 							</div>
 						</div>
 					)}
