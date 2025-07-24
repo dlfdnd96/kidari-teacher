@@ -11,7 +11,7 @@ import { notFound, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { keepPreviousData } from '@tanstack/react-query'
 import { NoticePageClientProps } from '@/types/notice'
-import { CircleAlert, Plus, RefreshCw } from 'lucide-react'
+import { Plus, RefreshCw } from 'lucide-react'
 import { NoticeList, NoticeSkeletonList } from './components'
 import { ErrorState } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
@@ -87,31 +87,19 @@ function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 
 	const showLoading = isLoading || isPageChanging || isFetching
 
-	const emptyState = useMemo(
-		() => (
-			<div className="text-center py-12">
-				<div className="flex justify-center mb-6">
-					<CircleAlert className="w-16 h-16 text-gray-400 dark:text-gray-500" />
-				</div>
-				<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-					아직 등록된 공지사항이 없습니다
-				</h3>
-				<p className="text-gray-500 dark:text-gray-400">
-					{isAdmin
-						? '첫 번째 공지사항을 작성해보세요!'
-						: '새로운 공지사항을 기다려주세요.'}
-				</p>
-			</div>
-		),
-		[isAdmin],
-	)
-
 	const loadingIndicator = useMemo(
 		() =>
 			isFetching && (
-				<div className="flex justify-center mb-4">
+				<div
+					className="flex justify-center mb-4"
+					role="status"
+					aria-live="polite"
+				>
 					<div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
-						<RefreshCw className="w-4 h-4 text-emerald-600 animate-spin" />
+						<RefreshCw
+							className="w-4 h-4 text-emerald-600 animate-spin"
+							aria-hidden="true"
+						/>
 						<span className="text-sm text-emerald-600 dark:text-emerald-400">
 							불러오는 중...
 						</span>
@@ -142,10 +130,9 @@ function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 	}
 
 	return (
-		<>
+		<main role="main" aria-label="공지사항 목록">
 			{/* 헤더 영역 - 생성 버튼 */}
-			<div className="mb-8">
-				{/* 우측 상단 생성 버튼 */}
+			<header className="mb-8">
 				{isAdmin && (
 					<div className="flex justify-end mb-4">
 						<Button
@@ -153,13 +140,14 @@ function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 							variant="outline"
 							className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
 							data-cy="create-notice-button"
+							aria-label="새 공지사항 작성"
 						>
-							<Plus className="w-4 h-4" />
+							<Plus className="w-4 h-4" aria-hidden="true" />
 							<span>공지사항 작성</span>
 						</Button>
 					</div>
 				)}
-			</div>
+			</header>
 
 			{/* 로딩 인디케이터 */}
 			{loadingIndicator}
@@ -169,18 +157,22 @@ function NoticePageClientContent({ initialPage = 1 }: NoticePageClientProps) {
 
 			{/* 페이지네이션 */}
 			{notices.length > 0 && totalPages > 1 && (
-				<div className="mt-8 sm:mt-12">
+				<nav className="mt-8 sm:mt-12" aria-label="공지사항 페이지네이션">
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
 						basePath="/notice"
 					/>
-				</div>
+				</nav>
 			)}
 
-			{/* 빈 상태 표시 */}
-			{notices.length === 0 && emptyState}
-		</>
+			{/* 스크린 리더용 현재 상태 정보 */}
+			<div className="sr-only" aria-live="polite">
+				{notices.length > 0
+					? `${totalCount}개의 공지사항 중 ${(currentPage - 1) * pageSize + 1}번째부터 ${Math.min(currentPage * pageSize, totalCount)}번째까지 표시 중입니다.`
+					: '등록된 공지사항이 없습니다.'}
+			</div>
+		</main>
 	)
 }
 
