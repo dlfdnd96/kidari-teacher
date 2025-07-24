@@ -11,6 +11,8 @@ export const useUserProfileActions = () => {
 	const { showError } = useErrorModal()
 	const utils = trpc.useUtils()
 
+	const getUserProfileQuery = trpc.userProfile.getUserProfile.useQuery
+
 	const getUserProfileStatQuery = trpc.userProfile.getProfileStats.useQuery
 
 	const getUserProfileWithProfessionsQuery =
@@ -57,6 +59,7 @@ export const useUserProfileActions = () => {
 	}, [session?.user, showError])
 
 	return {
+		getUserProfileQuery,
 		getUserProfileStatQuery,
 		getUserProfileWithProfessionsQuery,
 		createUserProfileMutation,

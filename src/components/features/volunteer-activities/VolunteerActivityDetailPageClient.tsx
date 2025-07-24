@@ -61,7 +61,8 @@ import dynamic from 'next/dynamic'
 import { useVolunteerActivityActions } from './hooks'
 
 const ApplicationModal = dynamic(
-	() => import('@/components/features/applications/ApplicationModal'),
+	() =>
+		import('@/components/features/applications/components/ApplicationModal'),
 	{
 		ssr: false,
 		loading: () => null,

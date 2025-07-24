@@ -1,19 +1,13 @@
-import { ZodType } from '@/shared/types'
-import { ApplicationEntitySchema } from '@/shared/schemas/application'
-import { Enum } from '@/enums'
-import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react'
-
-export interface MyApplicationsPageProps {
-	searchParams: Promise<{
-		page?: string
-		status?: string
-	}>
-}
+import type { ZodType } from '@/shared/types'
+import {
+	ApplicationEntitySchema,
+	ApplicationFormSchema,
+} from '@/shared/schemas/application'
 
 export interface ApplicationFormProps {
 	volunteerActivityId: string
+	onSubmit: (data: ZodType<typeof ApplicationFormSchema>) => Promise<void>
 	onCancel: () => void
-	onClose: () => void
 	onSuccess: () => void
 }
 
@@ -23,6 +17,18 @@ export interface ApplicationModalProps {
 	volunteerActivityId: string
 	volunteerActivityTitle: string
 	onSuccess: () => void
+}
+
+export interface UseApplicationFormProps {
+	onSubmit: (data: ZodType<typeof ApplicationFormSchema>) => Promise<void>
+	onSuccess: () => void
+}
+
+export interface MyApplicationsPageProps {
+	searchParams: Promise<{
+		page?: string
+		status?: string
+	}>
 }
 
 export interface MyApplicationListRowProps {
@@ -49,30 +55,3 @@ export const APPLICATION_STATUS_COLORS = {
 	SELECTED: 'bg-green-100 text-green-800',
 	REJECTED: 'bg-red-100 text-red-800',
 } as const
-
-export const MY_APPLICATION_FILTER_OPTIONS = [
-	{
-		value: 'all',
-		label: '전체',
-		icon: FileText,
-		color: 'bg-gray-500',
-	},
-	{
-		value: Enum.ApplicationStatus.WAITING,
-		label: '대기중',
-		icon: Clock,
-		color: 'bg-yellow-500',
-	},
-	{
-		value: Enum.ApplicationStatus.SELECTED,
-		label: '승인됨',
-		icon: CheckCircle,
-		color: 'bg-green-500',
-	},
-	{
-		value: Enum.ApplicationStatus.REJECTED,
-		label: '거절됨',
-		icon: XCircle,
-		color: 'bg-red-500',
-	},
-] as const
