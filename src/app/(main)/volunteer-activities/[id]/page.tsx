@@ -39,5 +39,9 @@ export default async function VolunteerActivityDetailPageRoute({
 		notFound()
 	}
 
-	return <VolunteerActivityDetailPageClient id={id} />
+	return (
+		<main className="min-h-screen">
+			<VolunteerActivityDetailPageClient id={id} />
+		</main>
+	)
 }

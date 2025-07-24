@@ -30,11 +30,15 @@ const VolunteerActivityCreatePageClient = memo(() => {
 	)
 
 	return (
-		<VolunteerActivityForm
-			onSubmit={handleSubmit}
-			onSuccess={navigateToList}
-			onCancel={goBack}
-		/>
+		<div className="min-h-screen">
+			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
+				<VolunteerActivityForm
+					onSubmit={handleSubmit}
+					onSuccess={navigateToList}
+					onCancel={goBack}
+				/>
+			</div>
+		</div>
 	)
 })
 

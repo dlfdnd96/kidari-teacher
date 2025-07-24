@@ -21,10 +21,8 @@ export const metadata: Metadata = {
 
 export default function VolunteerActivityCreatePage() {
 	return (
-		<main className="min-h-screen bg-gray-50 dark:bg-gray-900">
-			<section className="max-w-4xl mx-auto py-6 px-4 sm:px-6">
-				<VolunteerActivityCreatePageClient />
-			</section>
+		<main className="min-h-screen">
+			<VolunteerActivityCreatePageClient />
 		</main>
 	)
 }

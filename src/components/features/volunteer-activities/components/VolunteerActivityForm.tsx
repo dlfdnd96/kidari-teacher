@@ -38,7 +38,6 @@ import {
 	VOLUNTEER_ACTIVITY_STATUS_LABELS,
 	VolunteerActivityFormProps,
 } from '@/types/volunteer-activity'
-import { BackButton } from '@/components/common/ui'
 import {
 	useVolunteerActivityActions,
 	useVolunteerActivityForm,
@@ -51,11 +50,8 @@ const VolunteerActivityForm = memo(
 		const { data: session } = useSession()
 		const { showError: showErrorToast } = useToast()
 
-		const {
-			createVolunteerActivityMutation,
-			updateVolunteerActivityMutation,
-			goBack,
-		} = useVolunteerActivityActions()
+		const { createVolunteerActivityMutation, updateVolunteerActivityMutation } =
+			useVolunteerActivityActions()
 
 		const {
 			register,
@@ -464,17 +460,6 @@ const VolunteerActivityForm = memo(
 				/>
 
 				<div className="min-h-screen">
-					{/* 상단 네비게이션 */}
-					<div className="pt-4">
-						<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
-							<div className="flex items-center h-14">
-								<div className="py-4">
-									<BackButton onClick={goBack} />
-								</div>
-							</div>
-						</div>
-					</div>
-
 					{/* 메인 컨텐츠 */}
 					<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
 						<div className="p-6 sm:p-8">
