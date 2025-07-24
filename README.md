@@ -33,7 +33,7 @@
 - Language: TypeScript
 - UI Library: React
 - Styling: Tailwind CSS
-- UI Components: Radix UI + shadcn/ui
+- UI Components: shadcn/ui
 - Icons: Lucide React
 - Form: React Hook Form + Zod
 
