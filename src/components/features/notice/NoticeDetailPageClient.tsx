@@ -1,13 +1,19 @@
 'use client'
 
 import React, { memo, useCallback, useEffect, useState } from 'react'
-import { AlertCircle, AlertTriangle, Calendar, Edit, Trash } from 'lucide-react'
+import {
+	AlertCircle,
+	AlertTriangle,
+	Calendar,
+	Edit,
+	MoreHorizontal,
+	Trash,
+} from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useErrorModal } from '@/components/common/ErrorModal/ErrorModalContext'
 import { CLIENT_ERROR_KEY_MAPPING, handleClientError } from '@/utils/error'
 import {
-	NoticeAdminActionsProps,
 	NoticeDeleteDialogProps,
 	NoticeDetailContentProps,
 	NoticeDetailHeaderProps,
@@ -24,6 +30,10 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
 } from '@/components/ui'
 import { LoadingSpinner } from '@/components/common/ui'
 import { useNoticeActions } from './hooks'
@@ -41,37 +51,86 @@ const NoticePageLayout = memo(
 
 NoticePageLayout.displayName = 'NoticePageLayout'
 
-const NoticeDetailHeader = memo(({ notice }: NoticeDetailHeaderProps) => (
-	<header className="mb-8">
-		<div className="flex items-start justify-between mb-4">
-			<div className="flex-1 min-w-0">
-				<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3">
-					{notice.title}
-				</h1>
-				<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 dark:text-gray-400">
-					<div className="flex items-center">
-						<span className="text-sm font-medium">작성자:</span>
-						<span className="text-sm font-medium ml-1">
-							{notice.author?.name || '관리자'}
-						</span>
-					</div>
-					<div className="flex items-center">
-						<Calendar className="w-4 h-4 mr-2" aria-hidden="true" />
-						<time className="text-sm" dateTime={notice.createdAt.toISOString()}>
-							{format(notice.createdAt, 'yyyy년 MM월 dd일', {
-								locale: ko,
-							})}
-						</time>
+const NoticeDetailHeader = memo(
+	({
+		notice,
+		onEdit,
+		onDelete,
+		isAdmin,
+	}: NoticeDetailHeaderProps & {
+		onEdit?: () => void
+		onDelete?: () => void
+		isAdmin?: boolean
+	}) => (
+		<header className="mb-8">
+			<div className="flex items-start justify-between mb-4">
+				<div className="flex-1 min-w-0">
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3">
+						{notice.title}
+					</h1>
+					<div className="flex items-center justify-between">
+						<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 dark:text-gray-400">
+							<div className="flex items-center">
+								<span className="text-sm font-medium">작성자:</span>
+								<span className="text-sm font-medium ml-1">
+									{notice.author?.name || '관리자'}
+								</span>
+							</div>
+							<div className="flex items-center">
+								<Calendar className="w-4 h-4 mr-2" aria-hidden="true" />
+								<time
+									className="text-sm"
+									dateTime={notice.createdAt.toISOString()}
+								>
+									{format(notice.createdAt, 'yyyy년 MM월 dd일', {
+										locale: ko,
+									})}
+								</time>
+							</div>
+						</div>
+						{/* 더보기 메뉴 */}
+						{isAdmin && (
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="ghost"
+										size="icon"
+										className="h-8 w-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
+										aria-label="더보기 옵션"
+									>
+										<MoreHorizontal className="h-4 w-4" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									<DropdownMenuItem
+										onClick={onEdit}
+										className="cursor-pointer"
+										aria-label="공지사항 수정"
+									>
+										<Edit className="w-4 h-4 mr-2" aria-hidden="true" />
+										수정하기
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										onClick={onDelete}
+										className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+										aria-label="공지사항 삭제"
+									>
+										<Trash className="w-4 h-4 mr-2" aria-hidden="true" />
+										삭제하기
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						)}
 					</div>
 				</div>
 			</div>
-		</div>
-		<div
-			className="border-b border-gray-200 dark:border-gray-700"
-			aria-hidden="true"
-		/>
-	</header>
-))
+			<div
+				className="border-b border-gray-200 dark:border-gray-700"
+				aria-hidden="true"
+			/>
+		</header>
+	),
+)
 
 NoticeDetailHeader.displayName = 'NoticeDetailHeader'
 
@@ -90,41 +149,6 @@ const NoticeDetailContent = memo(({ content }: NoticeDetailContentProps) => (
 ))
 
 NoticeDetailContent.displayName = 'NoticeDetailContent'
-
-const NoticeAdminActions = memo(
-	({ onEdit, onDelete, isAdmin }: NoticeAdminActionsProps) => {
-		if (!isAdmin) return null
-
-		return (
-			<div
-				className="flex items-center gap-2 mt-8 pt-8 border-t border-gray-200 dark:border-gray-700"
-				role="group"
-				aria-label="관리자 액션"
-			>
-				<Button
-					onClick={onEdit}
-					variant="outline"
-					className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-					aria-label="공지사항 수정"
-				>
-					<Edit className="w-4 h-4" aria-hidden="true" />
-					<span>수정</span>
-				</Button>
-				<Button
-					onClick={onDelete}
-					variant="outline"
-					className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 text-sm font-medium cursor-pointer h-auto"
-					aria-label="공지사항 삭제"
-				>
-					<Trash className="w-4 h-4" aria-hidden="true" />
-					<span>삭제</span>
-				</Button>
-			</div>
-		)
-	},
-)
-
-NoticeAdminActions.displayName = 'NoticeAdminActions'
 
 const NoticeDeleteDialog = memo(
 	({
@@ -251,13 +275,13 @@ export default function NoticeDetailPageClient({
 		<>
 			<NoticePageLayout>
 				<div className="py-8">
-					<NoticeDetailHeader notice={notice} />
-					<NoticeDetailContent content={notice.content} />
-					<NoticeAdminActions
+					<NoticeDetailHeader
+						notice={notice}
 						onEdit={handleEdit}
 						onDelete={handleDeleteClick}
 						isAdmin={isAdmin}
 					/>
+					<NoticeDetailContent content={notice.content} />
 				</div>
 			</NoticePageLayout>
 
