@@ -11,7 +11,7 @@ import {
 	Users,
 	X,
 } from 'lucide-react'
-import { format, startOfDay } from 'date-fns'
+import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import Script from 'next/script'
 import { useSession } from 'next-auth/react'
@@ -209,12 +209,7 @@ const VolunteerActivityForm = memo(
 												setValue('startAt', date)
 											}
 										}}
-										disabled={(date) =>
-											startOfDay(date) <
-											startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
-										}
 										captionLayout="dropdown-months"
-										startMonth={new Date()}
 										locale={ko}
 									/>
 									<div className="p-3 border-t">
@@ -282,12 +277,7 @@ const VolunteerActivityForm = memo(
 												date || new TZDate(new Date(), TIME_ZONE.SEOUL),
 											)
 										}
-										disabled={(date) =>
-											startOfDay(date) <
-											startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
-										}
 										captionLayout="dropdown-months"
-										startMonth={new Date()}
 										locale={ko}
 									/>
 									<div className="p-3 border-t">
@@ -357,10 +347,6 @@ const VolunteerActivityForm = memo(
 										newDate.setHours(23, 59, 59, 999)
 										setValue('applicationDeadline', newDate)
 									}}
-									disabled={(date) =>
-										startOfDay(date) <
-										startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL))
-									}
 									captionLayout="dropdown-months"
 									startMonth={new Date()}
 									locale={ko}

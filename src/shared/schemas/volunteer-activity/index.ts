@@ -73,26 +73,8 @@ export const CreateVolunteerActivityInputSchema = z
 				z.minLength(1, '활동 내용을 입력해주세요'),
 				z.maxLength(2000, '활동 내용은 2000자 이내로 입력해주세요'),
 			),
-		startAt: z
-			.date('활동 시작일을 입력해주세요')
-			.check(
-				z.refine(
-					(date) =>
-						new TZDate(date, TIME_ZONE.UTC) >
-						new TZDate(new Date(), TIME_ZONE.UTC),
-					'시작 일시는 현재 시간보다 미래여야 합니다',
-				),
-			),
-		endAt: z
-			.date('활동 종료일을 입력해주세요')
-			.check(
-				z.refine(
-					(date) =>
-						new TZDate(date, TIME_ZONE.UTC) >
-						new TZDate(new Date(), TIME_ZONE.UTC),
-					'종료 일시는 현재 시간보다 미래여야 합니다',
-				),
-			),
+		startAt: z.date('활동 시작일을 입력해주세요'),
+		endAt: z.date('활동 종료일을 입력해주세요'),
 		location: z
 			.string('활동 장소를 입력해주세요')
 			.check(
@@ -100,16 +82,7 @@ export const CreateVolunteerActivityInputSchema = z
 				z.maxLength(500, '활동 장소는 500자 이내로 입력해주세요'),
 			),
 		status: ZodEnum.VolunteerActivityStatus,
-		applicationDeadline: z
-			.date('신청 마감일을 입력해주세요')
-			.check(
-				z.refine(
-					(date) =>
-						startOfDay(date) >=
-						startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)),
-					'신청 마감일은 어제 날짜보다 미래여야 합니다',
-				),
-			),
+		applicationDeadline: z.date('신청 마감일을 입력해주세요'),
 		maxParticipants: z.optional(
 			z.nullable(
 				z.pipe(
