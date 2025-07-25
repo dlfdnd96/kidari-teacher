@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react'
 import { KakaoTalkIcon, NaverCafeIcon } from '@/components/icons'
 import { openExternalLink } from '@/lib/utils'
 import { CONTACT_METHODS, PROCESS_STEPS, SITE_INFO } from '@/constants/homepage'
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import {
 	User,
 	Handshake,

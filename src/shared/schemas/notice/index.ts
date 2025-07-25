@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import { PageableSchema } from '@/shared/schemas'
 import { UserEntitySchema } from '@/shared/schemas/user'
 

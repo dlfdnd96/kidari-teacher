@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import { Enum, ZodEnum } from '@/enums'
 import { encode } from 'next-auth/jwt'
 

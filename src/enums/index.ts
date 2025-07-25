@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 
 export const Enum = {
 	Role: z.enum(['ADMIN', 'USER']).def.entries,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 import { ZodEnum } from '@/enums'
 
 export async function DELETE(request: NextRequest) {
