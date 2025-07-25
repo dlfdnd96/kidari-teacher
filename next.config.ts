@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
 	experimental: {
 		optimizePackageImports: ['lucide-react'],
 	},
+	productionBrowserSourceMaps: process.env.NODE_ENV === 'development',
 }
 
 export default nextConfig
