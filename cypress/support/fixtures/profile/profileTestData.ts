@@ -31,7 +31,7 @@ export class ProfileTestDataFactory {
 		return {
 			phone: '01012345678',
 			organization: `테스트 기관 ${timestamp}`,
-			professions: [Enum.Profession.ACCOUNTANT],
+			professions: [Enum.Profession.LAWYER],
 		}
 	}
 
@@ -40,7 +40,7 @@ export class ProfileTestDataFactory {
 		return {
 			phone: '01087654321',
 			organization: `수정된 테스트 기관 ${timestamp}`,
-			professions: [Enum.Profession.ACCOUNTANT, Enum.Profession.ACTUARY],
+			professions: [Enum.Profession.LAWYER, Enum.Profession.ACTUARY],
 		}
 	}
 
@@ -50,7 +50,7 @@ export class ProfileTestDataFactory {
 			name: `설정 테스트 사용자 ${timestamp.toString().slice(0, -6)}`,
 			phone: '01055555555',
 			organization: `설정 테스트 기관 ${timestamp}`,
-			professions: [Enum.Profession.ACCOUNTANT],
+			professions: [Enum.Profession.LAWYER],
 		}
 	}
 }

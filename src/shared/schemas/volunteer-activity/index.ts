@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import { TZDate } from '@date-fns/tz'
 import { PageableSchema } from '@/shared/schemas'
 import { ZodEnum } from '@/enums'
@@ -41,7 +41,7 @@ export const VolunteerActivityListResponseSchema = z.strictObject({
 })
 
 export const VolunteerActivityFilterInputSchema = z.strictObject({
-	id: z.string().check(z.cuid('올바른 활동 ID가 아닙니다')),
+	id: z.string().check(z.cuid('올바른 ID가 아닙니다')),
 })
 
 export const VolunteerActivityListFilterInputSchema = z.optional(
@@ -70,46 +70,19 @@ export const CreateVolunteerActivityInputSchema = z
 		description: z
 			.string()
 			.check(
-				z.minLength(1, '활동 설명을 입력해주세요'),
-				z.maxLength(2000, '활동 설명은 2000자 이내로 입력해주세요'),
+				z.minLength(1, '활동 내용을 입력해주세요'),
+				z.maxLength(2000, '활동 내용은 2000자 이내로 입력해주세요'),
 			),
-		startAt: z
-			.date()
-			.check(
-				z.refine(
-					(date) =>
-						new TZDate(date, TIME_ZONE.UTC) >
-						new TZDate(new Date(), TIME_ZONE.UTC),
-					'시작 일시는 현재 시간보다 미래여야 합니다',
-				),
-			),
-		endAt: z
-			.date()
-			.check(
-				z.refine(
-					(date) =>
-						new TZDate(date, TIME_ZONE.UTC) >
-						new TZDate(new Date(), TIME_ZONE.UTC),
-					'종료 일시는 현재 시간보다 미래여야 합니다',
-				),
-			),
+		startAt: z.date('활동 시작일을 입력해주세요'),
+		endAt: z.date('활동 종료일을 입력해주세요'),
 		location: z
-			.string()
+			.string('활동 장소를 입력해주세요')
 			.check(
 				z.minLength(1, '활동 장소를 입력해주세요'),
 				z.maxLength(500, '활동 장소는 500자 이내로 입력해주세요'),
 			),
 		status: ZodEnum.VolunteerActivityStatus,
-		applicationDeadline: z
-			.date()
-			.check(
-				z.refine(
-					(date) =>
-						startOfDay(date) >=
-						startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)),
-					'신청 마감일은 어제 날짜보다 미래여야 합니다',
-				),
-			),
+		applicationDeadline: z.date('신청 마감일을 입력해주세요'),
 		maxParticipants: z.optional(
 			z.nullable(
 				z.pipe(
@@ -136,70 +109,30 @@ export const CreateVolunteerActivityInputSchema = z
 		),
 	)
 
-export const UpdateVolunteerActivityInputSchema = z.strictObject({
-	id: z.string().check(z.cuid('올바른 활동 ID가 아닙니다')),
-	title: z
-		.string()
-		.check(
-			z.minLength(1, '활동명을 입력해주세요'),
-			z.maxLength(255, '활동명은 255자 이내로 입력해주세요'),
+export const UpdateVolunteerActivityInputSchema = z
+	.strictObject({
+		id: z.string().check(z.cuid('올바른 ID가 아닙니다')),
+		...CreateVolunteerActivityInputSchema.def.shape,
+	})
+	.check(
+		z.refine(
+			(data) =>
+				new TZDate(data.endAt, TIME_ZONE.UTC) >
+				new TZDate(data.startAt, TIME_ZONE.UTC),
+			'종료 일시는 시작 일시보다 늦어야 합니다',
 		),
-	description: z
-		.string()
-		.check(
-			z.minLength(1, '활동 설명을 입력해주세요'),
-			z.maxLength(2000, '활동 설명은 2000자 이내로 입력해주세요'),
+	)
+	.check(
+		z.refine(
+			(data) =>
+				startOfDay(data.applicationDeadline) <
+				startOfDay(new TZDate(data.startAt, TIME_ZONE.SEOUL)),
+			'신청 마감일은 활동 시작일보다 빨라야 합니다',
 		),
-	startAt: z
-		.date()
-		.check(
-			z.refine(
-				(date) =>
-					new TZDate(date, TIME_ZONE.UTC) >
-					new TZDate(new Date(), TIME_ZONE.UTC),
-				'시작 일시는 현재 시간보다 미래여야 합니다',
-			),
-		),
-	endAt: z
-		.date()
-		.check(
-			z.refine(
-				(date) =>
-					new TZDate(date, TIME_ZONE.UTC) >
-					new TZDate(new Date(), TIME_ZONE.UTC),
-				'종료 일시는 현재 시간보다 미래여야 합니다',
-			),
-		),
-	location: z
-		.string()
-		.check(
-			z.minLength(1, '활동 장소를 입력해주세요'),
-			z.maxLength(500, '활동 장소는 500자 이내로 입력해주세요'),
-		),
-	status: ZodEnum.VolunteerActivityStatus,
-	applicationDeadline: z
-		.date()
-		.check(
-			z.refine(
-				(date) =>
-					startOfDay(date) >=
-					startOfDay(new TZDate(new Date(), TIME_ZONE.SEOUL)),
-				'신청 마감일은 어제 날짜보다 미래여야 합니다',
-			),
-		),
-	maxParticipants: z.optional(
-		z.nullable(
-			z.pipe(
-				z.coerce.number(),
-				z.transform((count) => (count === 0 ? null : count)),
-			),
-		),
-	),
-})
+	)
 
 export const DeleteVolunteerActivityInputSchema = z.strictObject({
-	id: z.string().check(z.cuid('올바른 활동 ID가 아닙니다')),
+	id: z.string().check(z.cuid('올바른 ID가 아닙니다')),
 })
 
-export const VolunteerActivityEditFormSchema =
-	CreateVolunteerActivityInputSchema
+export const VolunteerActivityFormSchema = CreateVolunteerActivityInputSchema

@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server'
 import { Context } from '@/server/context'
-import { ZodError } from 'zod/v4'
-import { z } from 'zod/v4-mini'
+import { ZodError } from 'zod'
+import * as z from 'zod/mini'
 import superjson from 'superjson'
 import { getErrorMessage, logError } from '@/utils/error'
 

@@ -1,93 +1,100 @@
 'use client'
 
 import React, { memo, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import NoticeEditForm from '@/components/features/notice/NoticeEditForm'
-import { Button } from '@/components/ui'
-import { ArrowLeft } from 'lucide-react'
-import { trpc } from '@/components/providers/TrpcProvider'
-import { NoticeEditPageClientProps } from '@/types/notice'
+import {
+	NoticeEditPageClientProps,
+	NoticePageLayoutProps,
+} from '@/types/notice'
+import { ErrorState, LoadingSpinner } from '@/components/common/ui'
+import { useNoticeActions } from './hooks'
+import { NoticeForm } from './components'
+import { ZodType } from '@/shared/types'
+import { NoticeFormSchema } from '@/shared/schemas/notice'
 
-const NoticeEditPageClient = memo(({ noticeId }: NoticeEditPageClientProps) => {
-	const router = useRouter()
+const NoticePageLayout = memo(
+	({ children, className = '' }: NoticePageLayoutProps) => (
+		<div className={`min-h-screen ${className}`}>
+			{/* 메인 컨텐츠 */}
+			<main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">{children}</main>
+		</div>
+	),
+)
 
+NoticePageLayout.displayName = 'NoticePageLayout'
+
+const NoticeEditPageClient = memo(({ id }: NoticeEditPageClientProps) => {
 	const {
-		data: notice,
-		isLoading,
-		isError,
-	} = trpc.notice.getNotice.useQuery({ id: noticeId })
+		getNoticeQuery,
+		checkAuthentication,
+		updateNoticeMutation,
+		navigateToList,
+		navigateToDetail,
+	} = useNoticeActions()
+
+	const { data: notice, isLoading, isError } = getNoticeQuery({ id })
+
+	const handleSubmit = useCallback(
+		async (data: ZodType<typeof NoticeFormSchema>) => {
+			if (!checkAuthentication()) {
+				return
+			}
+
+			await updateNoticeMutation.mutateAsync({
+				id,
+				title: data.title,
+				content: data.content,
+			})
+		},
+		[checkAuthentication, updateNoticeMutation, id],
+	)
 
 	const handleCancel = useCallback(() => {
-		router.push(`/notice/${noticeId}`)
-	}, [router, noticeId])
+		navigateToDetail(id)
+	}, [navigateToDetail, id])
+
+	const handleSuccess = useCallback(() => {
+		navigateToDetail(id)
+	}, [navigateToDetail, id])
+
+	const handleBackToList = useCallback(() => {
+		navigateToList()
+	}, [navigateToList])
 
 	if (isLoading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-					<p className="text-gray-600 dark:text-gray-400">로딩 중...</p>
+			<NoticePageLayout>
+				<div className="min-h-screen flex items-center justify-center">
+					<LoadingSpinner size="lg" />
 				</div>
-			</div>
+			</NoticePageLayout>
 		)
 	}
 
 	if (isError || !notice) {
 		return (
-			<div className="min-h-screen">
-				{/* 상단 네비게이션 */}
-				<div>
-					<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
-						<div className="flex items-center justify-between h-14">
-							<div className="py-4">
-								<Button
-									onClick={() => router.push('/notice')}
-									variant="outline"
-									className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer border-0 h-auto"
-								>
-									<ArrowLeft className="w-4 h-4" />
-									<span className="text-sm font-medium">뒤로가기</span>
-								</Button>
-							</div>
-						</div>
-					</div>
+			<NoticePageLayout>
+				<div className="py-8">
+					<ErrorState
+						title="공지사항을 찾을 수 없습니다"
+						message="요청하신 공지사항이 존재하지 않거나 삭제되었습니다."
+						onRetry={handleBackToList}
+					/>
 				</div>
-
-				{/* 메인 컨텐츠 */}
-				<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-8">
-					<div className="p-6 sm:p-8">
-						<div className="text-center py-12">
-							<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-								공지사항을 찾을 수 없습니다
-							</h3>
-							<p className="text-gray-600 dark:text-gray-400 mb-6">
-								요청하신 공지사항이 존재하지 않거나 삭제되었습니다.
-							</p>
-							<Button
-								onClick={() => router.push('/notice')}
-								className="flex items-center gap-2 cursor-pointer"
-							>
-								<ArrowLeft className="w-4 h-4" />
-								목록으로 돌아가기
-							</Button>
-						</div>
-					</div>
-				</div>
-			</div>
+			</NoticePageLayout>
 		)
 	}
 
 	return (
-		<div className="min-h-screen">
-			<div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
-				<NoticeEditForm
-					id={notice.id}
-					initialTitle={notice.title}
-					initialContent={notice.content}
+		<NoticePageLayout>
+			<div className="py-8">
+				<NoticeForm
+					notice={notice}
+					onSubmit={handleSubmit}
+					onSuccess={handleSuccess}
 					onCancel={handleCancel}
 				/>
 			</div>
-		</div>
+		</NoticePageLayout>
 	)
 })
 

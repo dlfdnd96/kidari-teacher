@@ -2,10 +2,7 @@ import React from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import NoticeEditPageClient from '@/components/features/notice/NoticeEditPageClient'
-
-interface NoticeEditPageProps {
-	params: Promise<{ id: string }>
-}
+import { NoticeEditPageProps } from '@/types/notice'
 
 export const metadata: Metadata = {
 	title: '공지사항 수정 | 키다리 선생님',
@@ -20,8 +17,8 @@ export default async function NoticeEditPage({ params }: NoticeEditPageProps) {
 	}
 
 	return (
-		<main className="min-h-screen pt-20">
-			<NoticeEditPageClient noticeId={id} />
+		<main className="min-h-screen">
+			<NoticeEditPageClient id={id} />
 		</main>
 	)
 }

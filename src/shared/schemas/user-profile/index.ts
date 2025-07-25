@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import { ZodEnum } from '@/enums'
 
 export const UserProfileEntitySchema = z.strictObject({
@@ -37,22 +37,36 @@ export const InitialUserProfileInputSchema = z.strictObject({
 })
 
 export const CreateUserProfileInputSchema = z.strictObject({
-	phone: z.string().check(z.minLength(0), z.maxLength(11)),
-	professions: z.array(ZodEnum.Profession),
+	phone: z
+		.string()
+		.check(
+			z.minLength(8, '번호는 최소 8자리 이상으로 입력해주세요'),
+			z.maxLength(11, '번호는 최대 11자리 이내로 입력해주세요'),
+		),
+	professions: z
+		.array(ZodEnum.Profession, '올바른 직업을 선택해주세요')
+		.check(z.minLength(1, '직업을 최소 1개 이상 선택해주세요')),
 	organization: z.optional(
 		z.nullable(
 			z.pipe(
-				z.string().check(z.minLength(0), z.maxLength(255)),
+				z
+					.string()
+					.check(
+						z.minLength(0, '소속 기관을 입력해주세요'),
+						z.maxLength(255, '소속 기관은 최대 255자 이내로 입력해주세요'),
+					),
 				z.transform((organization) =>
 					organization.trim() === '' ? null : organization,
 				),
 			),
 		),
 	),
-	birthDate: z.optional(z.nullable(z.date())),
+	birthDate: z.optional(z.nullable(z.date('올바른 생년월일을 입력해주세요'))),
 })
 
 export const UpdateUserProfileInputSchema = CreateUserProfileInputSchema
+
+export const UserProfileFormSchema = CreateUserProfileInputSchema
 
 export const GetUserProfileResponseSchema = UserProfileEntitySchema
 

@@ -188,7 +188,7 @@ describe('봉사활동 CRUD 테스트', () => {
 			cy.get(errorSelectors.errorModal).should('be.visible')
 			cy.get(errorSelectors.errorModalTitle).should(
 				'contain',
-				'봉사활동 등록 오류',
+				'처리 중 오류가 발생했습니다',
 			)
 		})
 

@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
 
 export type ZodType<T extends z.ZodMiniType> = z.infer<T>

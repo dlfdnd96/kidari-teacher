@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import { ApplicationEntitySchema } from '@/shared/schemas/application'
 import { UserEntitySchema } from '@/shared/schemas/user'
 

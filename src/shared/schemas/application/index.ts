@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import * as z from 'zod/mini'
 import { ZodEnum } from '@/enums'
 import { UserEntitySchema } from '@/shared/schemas/user'
 import { VolunteerActivityEntitySchema } from '@/shared/schemas/volunteer-activity'

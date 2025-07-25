@@ -2,7 +2,7 @@ import type { NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
 import NaverProvider from 'next-auth/providers/naver'
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 import KakaoProvider from 'next-auth/providers/kakao'
 import GoogleProvider from 'next-auth/providers/google'
 

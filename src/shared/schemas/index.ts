@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 
 export const PageableSchema = z.object({
 	offset: z.optional(z.number().check(z.nonnegative())),

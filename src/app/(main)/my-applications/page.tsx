@@ -1,6 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
-import MyApplicationPageClient from '@/components/features/applications/MyApplicationPageClient'
+import { MyApplicationPageClient } from '@/components/features/applications/components'
 import { FileText } from 'lucide-react'
 import { MyApplicationsPageProps } from '@/types/application'
 

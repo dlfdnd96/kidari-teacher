@@ -2,6 +2,7 @@ import React from 'react'
 import { Metadata } from 'next'
 import VolunteerActivityPageClient from '@/components/features/volunteer-activities/VolunteerActivityPageClient'
 import { VolunteerActivitiesPageProps } from '@/types/volunteer-activity'
+import { notFound } from 'next/navigation'
 
 export async function generateMetadata({
 	searchParams,
@@ -42,6 +43,10 @@ export default async function VolunteerActivitiesPage({
 	const resolvedSearchParams = await searchParams
 	const pageParam = resolvedSearchParams.page
 	const page = pageParam ? parseInt(pageParam, 10) : 1
+
+	if (pageParam && (isNaN(page) || page < 1)) {
+		notFound()
+	}
 
 	return (
 		<main className="min-h-screen bg-white dark:bg-gray-900">

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { z } from 'zod/v4-mini'
+import { z } from 'zod/mini'
 
 /**
  * Tailwind CSS 클래스를 안전하게 합치는 유틸리티 함수

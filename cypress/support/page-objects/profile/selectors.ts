@@ -20,6 +20,7 @@ export const profileSelectors = {
 	userProfileProfessionComboBox:
 		'[data-cy="user-profile-profession-combo-box"]',
 	userProfileProfessionSelector: '[data-cy="user-profile-profession-selector"]',
+	userProfileProfessionList: '[data-cy="selected-user-profile-professions"]',
 
 	// User Profile Form
 	userProfileForm: '[data-cy="user-profile-form"]',

@@ -7,6 +7,7 @@ export const FieldError: React.FC<FieldErrorProps> = ({
 	error,
 	className,
 	showIcon = false,
+	id,
 }) => {
 	if (!error || error.trim() === '') {
 		return null
@@ -14,6 +15,7 @@ export const FieldError: React.FC<FieldErrorProps> = ({
 
 	return (
 		<div
+			id={id}
 			className={cn(
 				'flex items-center mt-2 text-sm text-red-600 dark:text-red-400 animate-in slide-in-from-top-1 duration-200',
 				className,

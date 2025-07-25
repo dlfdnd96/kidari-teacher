@@ -40,5 +40,9 @@ export default async function VolunteerActivityEditPage({
 		notFound()
 	}
 
-	return <VolunteerActivityEditPageClient id={id} />
+	return (
+		<main className="min-h-screen">
+			<VolunteerActivityEditPageClient id={id} />
+		</main>
+	)
 }

@@ -19,6 +19,7 @@ export interface FieldErrorProps {
 	error?: string | null
 	className?: string
 	showIcon?: boolean
+	id?: string
 }
 
 export interface FieldErrorListProps {
