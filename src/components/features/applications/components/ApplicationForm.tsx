@@ -90,7 +90,10 @@ const ApplicationForm = memo<ApplicationFormProps>(
 		)
 
 		const isLoading = createApplicationMutation.isPending
-		const userProfessions = userProfileWithProfessions?.professions || []
+		const userProfessions = useMemo(
+			() => userProfileWithProfessions?.professions || [],
+			[userProfileWithProfessions?.professions],
+		)
 		const hasNoProfessions = userProfessions.length === 0
 
 		const usedProfessions = useMemo(
