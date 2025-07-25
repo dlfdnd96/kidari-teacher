@@ -4,6 +4,7 @@ import {
 	NoticePickAuthorEntitySchema,
 } from '@/shared/schemas/notice'
 import { ReactNode } from 'react'
+import type { UseFormRegisterReturn } from 'react-hook-form'
 
 export interface NoticePageProps {
 	searchParams: Promise<{ page?: string }>
@@ -56,13 +57,6 @@ export interface NoticeCardMetaProps {
 	createdAt: Date
 }
 
-export interface NoticeEditFormProps {
-	id: string
-	initialTitle: string
-	initialContent: string
-	onCancel: () => void
-}
-
 export interface NoticeSkeletonListProps {
 	count?: number
 	showHeader?: boolean
@@ -92,12 +86,12 @@ export interface NoticeFormFieldProps {
 	label: string
 	placeholder: string
 	icon: ReactNode
+	register: UseFormRegisterReturn<string>
 	required?: boolean
 	error?: string
 	disabled?: boolean
 	type?: 'input' | 'textarea'
 	rows?: number
-	register: any
 	dataCy?: string
 }
 
@@ -134,12 +128,6 @@ export interface NoticeDetailHeaderProps {
 
 export interface NoticeDetailContentProps {
 	content: string
-}
-
-export interface NoticeAdminActionsProps {
-	onEdit: () => void
-	onDelete: () => void
-	isAdmin: boolean
 }
 
 export interface NoticeDeleteDialogProps {

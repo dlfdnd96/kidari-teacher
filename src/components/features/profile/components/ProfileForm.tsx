@@ -6,11 +6,12 @@ import { useSession } from 'next-auth/react'
 import { Button, FieldError, Input } from '@/components/ui'
 import type { ProfileFormProps } from '@/types/profile'
 import {
-	useProfileForm,
 	useProfileActions,
+	useProfileForm,
 } from '@/components/features/profile/hooks'
 import { ZodType } from '@/shared/types'
 import { UserFormSchema } from '@/shared/schemas/user'
+import type { UseFormRegister } from 'react-hook-form'
 
 const LoadingSpinner = memo(() => (
 	<div className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-400 rounded-full animate-spin" />
@@ -82,7 +83,7 @@ const NameField = memo(
 		defaultValue,
 		disabled,
 	}: {
-		register: any
+		register: UseFormRegister<{ name: string }>
 		error?: string
 		defaultValue?: string | null
 		disabled?: boolean

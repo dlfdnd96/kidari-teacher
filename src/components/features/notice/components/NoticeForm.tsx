@@ -210,10 +210,10 @@ const NoticeForm = memo(
 									label="제목"
 									placeholder="공지사항 제목을 입력하세요"
 									icon={<Type className="h-5 w-5" />}
+									register={register('title')}
 									required
 									error={errors.title?.message}
 									disabled={loading}
-									register={register('title')}
 									dataCy="notice-form-title-input"
 								/>
 
@@ -222,12 +222,12 @@ const NoticeForm = memo(
 									label="내용"
 									placeholder="공지사항 내용을 작성하세요..."
 									icon={<FileText className="h-5 w-5" />}
+									register={register('content')}
 									required
 									error={errors.content?.message}
 									disabled={loading}
 									type="textarea"
 									rows={12}
-									register={register('content')}
 									dataCy="notice-form-content-input"
 								/>
 							</fieldset>

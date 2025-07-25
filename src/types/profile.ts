@@ -1,5 +1,6 @@
 import { ZodType } from '@/shared/types'
 import { UserEntitySchema, UserFormSchema } from '@/shared/schemas/user'
+import React from 'react'
 
 export interface ProfilePageClientProps {
 	initialUser?: ZodType<typeof UserEntitySchema>
