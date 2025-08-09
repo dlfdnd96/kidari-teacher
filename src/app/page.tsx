@@ -187,7 +187,7 @@ export default function Home() {
 			<section className="max-w-5xl mx-auto mb-12 sm:mb-16 px-4 sm:px-8">
 				<div className="text-center mb-6 sm:mb-8">
 					<h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-						2024년 최신 활동 현황
+						2025년 최신 활동 현황
 					</h2>
 					<div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
 				</div>
@@ -200,40 +200,40 @@ export default function Home() {
 								<span className="text-lg sm:text-xl text-white">📅</span>
 							</div>
 							<h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200">
-								최근 활동 (2024년)
+								최근 활동 (2025년)
 							</h3>
 						</div>
 						<ul className="space-y-2 sm:space-y-3">
 							{[
 								{
-									date: '2024-12-27',
+									date: '2025-07-11',
+									school: '보성고',
+									location: '서울특별시 송파구',
+								},
+								{
+									date: '2025-07-04',
 									school: '자양고',
 									location: '서울특별시 광진구',
 								},
 								{
-									date: '2024-12-22',
-									school: '연탄봉사',
-									location: '서울특별시 강남구 구룡마을',
-								},
-								{
-									date: '2024-09-07',
-									school: '대원여고',
-									location: '서울특별시 광진구',
-								},
-								{
-									date: '2024-08-17',
-									school: '구현고',
-									location: '서울특별시 구로구',
-								},
-								{
-									date: '2024-07-13',
-									school: '풍생고',
-									location: '경기도 성남시',
-								},
-								{
-									date: '2024-07-12',
-									school: '보성고',
+									date: '2025-05-31',
+									school: '문현고',
 									location: '서울특별시 송파구',
+								},
+								{
+									date: '2025-05-30',
+									school: '배명고',
+									location: '서울특별시 송파구',
+								},
+								{
+									date: '2025-05-23',
+									school: '예일여고',
+									location: '서울특별시 은평구',
+								},
+								{
+									date: '2025-05-09',
+									school: '대원고',
+									location: '서울특별시 광진구',
 								},
 							].map((activity, index) => (
 								<li
