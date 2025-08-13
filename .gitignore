@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.sample
 
 # vercel
 .vercel
@@ -42,3 +43,20 @@ next-env.d.ts
 
 # cursor
 .cursor/
+
+# prisma
+prisma/migrations
+/src/generated/prisma
+
+# webstorm
+.idea/
+
+# test
+cypress.env.json
+cypress/screenshots
+
+# gemini
+.gemini
+
+# claude code
+.claude/**/*.local.json
