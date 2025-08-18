@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import React from 'react'
+import { QueryProvider } from '@/providers/QueryProvider'
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -16,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
 	title: '키다리 선생님',
 	description: '전문직 봉사 동아리',
+	icons: {
+		icon: '/images/logo.png',
+	},
 }
 
 export default function RootLayout({
@@ -28,7 +32,7 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				{children}
+				<QueryProvider>{children}</QueryProvider>
 			</body>
 		</html>
 	)
