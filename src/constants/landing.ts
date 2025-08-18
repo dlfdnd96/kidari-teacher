@@ -38,13 +38,14 @@ export const PROFESSION_TAGS: ProfessionTag[] = [
 	{ id: '8', label: '행정사', variant: 'primary', size: 'xl' },
 	{ id: '9', label: '감정평가사', variant: 'primary', size: 'xl' },
 	{ id: '10', label: 'IT 개발자', variant: 'primary', size: 'xl' },
-	{ id: '11', label: '의학연구자', variant: 'primary', size: 'xl' },
-	{ id: '12', label: '보험계리사', variant: 'primary', size: 'xl' },
-	{ id: '13', label: '약사', variant: 'primary', size: 'xl' },
-	{ id: '14', label: '변리사', variant: 'primary', size: 'xl' },
-	{ id: '15', label: '생명공학', variant: 'primary', size: 'xl' },
-	{ id: '16', label: '기계공학', variant: 'primary', size: 'xl' },
-	{ id: '17', label: '산업공학', variant: 'primary', size: 'xl' },
+	{ id: '11', label: 'IT 기획자', variant: 'primary', size: 'xl' },
+	{ id: '12', label: '의학연구자', variant: 'primary', size: 'xl' },
+	{ id: '13', label: '보험계리사', variant: 'primary', size: 'xl' },
+	{ id: '14', label: '약사', variant: 'primary', size: 'xl' },
+	{ id: '15', label: '변리사', variant: 'primary', size: 'xl' },
+	{ id: '16', label: '생명공학', variant: 'primary', size: 'xl' },
+	{ id: '17', label: '기계공학', variant: 'primary', size: 'xl' },
+	{ id: '18', label: '산업공학', variant: 'primary', size: 'xl' },
 ]
 
 export const SCHOOL_LOGOS: SchoolLogo[] = [

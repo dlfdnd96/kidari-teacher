@@ -17,8 +17,8 @@ export function PurposeSection() {
 							활동 목적
 						</LinearH2>
 						<LinearText className="text-xl text-white/90 leading-loose tracking-wide max-w-3xl mx-auto">
-							대학 진학을 앞둔 학생들에게 20~30대 전문직 종사자들이 직접
-							진로·적성·직업 경험을 나누며, 올바른 진로 선택을 돕습니다
+							대학 진학을 앞둔 학생들에게 20~30대 전문직 종사자들이 직접 진로,
+							적성, 직업 경험을 나누며 올바른 진로 선택을 돕습니다
 						</LinearText>
 					</div>
 
@@ -30,7 +30,7 @@ export function PurposeSection() {
 								</LinearH4>
 								<LinearTextSecondary className="leading-loose tracking-wide text-white/80">
 									학생들이 자신의 진로를 체계적으로 탐색할 수 있도록 전문직
-									종사자들의 실제 경험과 조언을 제공합니다
+									종사자들의 실제 경험과 조언을 제공
 								</LinearTextSecondary>
 							</div>
 
@@ -40,7 +40,7 @@ export function PurposeSection() {
 								</LinearH4>
 								<LinearTextSecondary className="leading-loose tracking-wide text-white/80">
 									의사, 변호사, 회계사, IT개발자 등 다양한 전문직의 생생한 현장
-									경험과 업무 내용을 직접 전달합니다
+									경험과 업무 내용을 직접 전달
 								</LinearTextSecondary>
 							</div>
 
@@ -50,7 +50,7 @@ export function PurposeSection() {
 								</LinearH4>
 								<LinearTextSecondary className="leading-loose tracking-wide text-white/80">
 									학생들이 현명하고 올바른 진로 결정을 내릴 수 있도록 개인별
-									상담과 체계적인 가이드를 제공합니다
+									상담과 체계적인 가이드를 제공
 								</LinearTextSecondary>
 							</div>
 						</div>
@@ -61,7 +61,7 @@ export function PurposeSection() {
 							키다리 선생님은 전문직 멘토링을 통해 학생들이 자신만의 꿈을 찾고
 							실현할 수 있도록 돕는 것을 목표로 합니다.
 							<br />
-							단순한 정보 전달을 넘어서, 학생들이 진정으로 원하는 삶의 방향을
+							단순한 정보 전달을 넘어서 학생들이 진정으로 원하는 삶의 방향을
 							설정할 수 있도록 지원합니다.
 						</LinearText>
 					</div>

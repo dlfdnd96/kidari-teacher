@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { LinearH4 } from '@/components/ui/linear/linear-typography'
+import { LinearH3 } from '@/components/ui/linear/linear-typography'
 import { LinearTestimonials } from '@/components/ui/linear/linear-testimonials'
 import { SCHOOL_FEEDBACKS } from '@/constants/landing'
 
@@ -11,9 +11,9 @@ export function SchoolFeedbackSection() {
 			<div className="max-w-7xl mx-auto">
 				{/* Header */}
 				<div className="text-center mb-16">
-					<LinearH4 className="text-2xl font-semibold text-center">
+					<LinearH3 className="text-2xl font-semibold text-center">
 						현장 반응
-					</LinearH4>
+					</LinearH3>
 				</div>
 
 				{/* Testimonials Grid */}

@@ -1,15 +1,15 @@
-import { useMemo, useState, useCallback, useEffect, JSX } from 'react'
+import { JSX, useCallback, useEffect, useMemo, useState } from 'react'
 import * as z from 'zod/mini'
 import { ArrowRight } from 'lucide-react'
-import { LinearH4, LinearText } from '@/components/ui/linear/linear-typography'
+import { LinearH3, LinearText } from '@/components/ui/linear/linear-typography'
 import { LinearButton } from '@/components/ui/linear/linear-button'
 import {
 	LinearModal,
+	LinearModalBody,
 	LinearModalContent,
+	LinearModalFooter,
 	LinearModalHeader,
 	LinearModalTitle,
-	LinearModalBody,
-	LinearModalFooter,
 } from '@/components/ui/linear/linear-modal'
 import type { RecentActivitiesTableProps } from '@/types/landing'
 import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
@@ -200,9 +200,9 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 	return (
 		<div className="mt-16 max-w-6xl mx-auto">
 			<div className="mb-8">
-				<LinearH4 className="text-2xl font-semibold text-center">
+				<LinearH3 className="text-2xl font-semibold text-center">
 					최근 활동 내역
-				</LinearH4>
+				</LinearH3>
 			</div>
 
 			<div className="overflow-x-auto">
