@@ -41,7 +41,7 @@ const ANIMATION_CONFIG = {
 	durations: {
 		fast: 1,
 		slow: 2,
-		wave: 20,
+		wave: 3,
 	},
 	delays: {
 		subtitle: 0.5,
@@ -86,7 +86,6 @@ const WavePattern = memo(() => {
 				}}
 				transition={{
 					duration: ANIMATION_CONFIG.durations.wave,
-					repeat: Infinity,
 					repeatType: 'reverse',
 					ease: 'easeInOut',
 				}}
