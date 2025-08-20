@@ -1,7 +1,0 @@
-export { default as HeroSection } from '@/components/features/homepage/HeroSection'
-export { default as ProfessionSection } from '@/components/features/homepage/ProfessionSection'
-export { default as FeedbackSection } from '@/components/features/homepage/FeedbackSection'
-export { default as ActivitySection } from '@/components/features/homepage/ActivitySection'
-export { default as ImpactSection } from '@/components/features/homepage/ImpactSection'
-export { default as ContactSection } from '@/components/features/homepage/ContactSection'
-export { default as GallerySection } from '@/components/features/homepage/GallerySection'

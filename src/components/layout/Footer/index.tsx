@@ -1,6 +1,5 @@
 import { memo } from 'react'
 import Link from 'next/link'
-import { SITE_INFO } from '@/constants/homepage'
 import { GraduationCap, Shield } from 'lucide-react'
 
 const Footer = memo(() => {
@@ -25,10 +24,10 @@ const Footer = memo(() => {
 				</div>
 
 				<div className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
-					{SITE_INFO.copyright}
+					temp
 				</div>
 				<div className="text-gray-500 dark:text-gray-500 text-xs mt-2">
-					{SITE_INFO.mission}
+					temp
 				</div>
 			</div>
 		</footer>

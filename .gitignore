@@ -57,3 +57,6 @@ cypress/screenshots
 
 # gemini
 .gemini
+
+# claude code
+.claude/**/*.local.json

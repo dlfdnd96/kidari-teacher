@@ -1,8 +1,11 @@
 import { ZodType } from '@/shared/types'
-import type { FeedbackProps } from '@/types/homepage'
 import { ZodEnum } from '@/enums'
 
-export interface ExtendedFeedbackProps extends FeedbackProps {
+export interface ExtendedFeedbackProps {
+	content: string
+	borderColor: string
+	quoteColor: string
+	bgGradient: string
 	className?: string
 }
 
