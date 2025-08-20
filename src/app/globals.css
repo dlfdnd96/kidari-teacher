@@ -1,484 +1,71 @@
-@import 'tailwindcss';
-
-@plugin 'tailwindcss-animate';
-
-@custom-variant dark (&:is(.dark *));
-
-@theme {
-	--color-border: hsl(var(--border));
-	--color-input: hsl(var(--input));
-	--color-ring: hsl(var(--ring));
-	--color-background: hsl(var(--background));
-	--color-foreground: hsl(var(--foreground));
-
-	--color-primary: hsl(var(--primary));
-	--color-primary-foreground: hsl(var(--primary-foreground));
-
-	--color-secondary: hsl(var(--secondary));
-	--color-secondary-foreground: hsl(var(--secondary-foreground));
-
-	--color-destructive: hsl(var(--destructive));
-	--color-destructive-foreground: hsl(var(--destructive-foreground));
-
-	--color-muted: hsl(var(--muted));
-	--color-muted-foreground: hsl(var(--muted-foreground));
-
-	--color-accent: hsl(var(--accent));
-	--color-accent-foreground: hsl(var(--accent-foreground));
-
-	--color-popover: hsl(var(--popover));
-	--color-popover-foreground: hsl(var(--popover-foreground));
-
-	--color-card: hsl(var(--card));
-	--color-card-foreground: hsl(var(--card-foreground));
-
-	--color-chart-1: hsl(var(--chart-1));
-	--color-chart-2: hsl(var(--chart-2));
-	--color-chart-3: hsl(var(--chart-3));
-	--color-chart-4: hsl(var(--chart-4));
-	--color-chart-5: hsl(var(--chart-5));
-
-	--radius-lg: var(--radius);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-sm: calc(var(--radius) - 4px);
-
-	--animate-accordion-down: accordion-down 0.2s ease-out;
-	--animate-accordion-up: accordion-up 0.2s ease-out;
-
-	@keyframes accordion-down {
-		from {
-			height: 0;
-		}
-		to {
-			height: var(--radix-accordion-content-height);
-		}
-	}
-	@keyframes accordion-up {
-		from {
-			height: var(--radix-accordion-content-height);
-		}
-		to {
-			height: 0;
-		}
-	}
-}
-
-@utility container {
-	margin-inline: auto;
-	padding-inline: 2rem;
-	@media (width >= --theme(--breakpoint-sm)) {
-		max-width: none;
-	}
-	@media (width >= 1400px) {
-		max-width: 1400px;
-	}
-}
-
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-	*,
-	::after,
-	::before,
-	::backdrop,
-	::file-selector-button {
-		border-color: var(--color-gray-200, currentcolor);
-	}
-}
-
-@layer base {
-	:root {
-		/* 폰트 변수 추가 */
-		--font-geist-sans:
-			ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-			Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-			'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-			'Noto Color Emoji';
-
-		--font-geist-mono:
-			ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono',
-			Menlo, monospace;
-
-		--background: 0 0% 100%;
-
-		--foreground: 0 0% 3.9%;
-
-		--card: 0 0% 100%;
-
-		--card-foreground: 0 0% 3.9%;
-
-		--popover: 0 0% 100%;
-
-		--popover-foreground: 0 0% 3.9%;
-
-		--primary: 0 0% 9%;
-
-		--primary-foreground: 0 0% 98%;
-
-		--secondary: 0 0% 96.1%;
-
-		--secondary-foreground: 0 0% 9%;
-
-		--muted: 0 0% 96.1%;
-
-		--muted-foreground: 0 0% 45.1%;
-
-		--accent: 0 0% 96.1%;
-
-		--accent-foreground: 0 0% 9%;
-
-		--destructive: 0 84.2% 60.2%;
-
-		--destructive-foreground: 0 0% 98%;
-
-		--border: 0 0% 89.8%;
-
-		--input: 0 0% 89.8%;
-
-		--ring: 0 0% 3.9%;
-
-		--chart-1: 12 76% 61%;
-
-		--chart-2: 173 58% 39%;
-
-		--chart-3: 197 37% 24%;
-
-		--chart-4: 43 74% 66%;
-
-		--chart-5: 27 87% 67%;
-
-		--radius: 0.5rem;
-	}
-	.dark {
-		--background: 0 0% 3.9%;
-
-		--foreground: 0 0% 98%;
-
-		--card: 0 0% 3.9%;
-
-		--card-foreground: 0 0% 98%;
-
-		--popover: 0 0% 3.9%;
-
-		--popover-foreground: 0 0% 98%;
-
-		--primary: 0 0% 98%;
-
-		--primary-foreground: 0 0% 9%;
-
-		--secondary: 0 0% 14.9%;
-
-		--secondary-foreground: 0 0% 98%;
-
-		--muted: 0 0% 14.9%;
-
-		--muted-foreground: 0 0% 63.9%;
-
-		--accent: 0 0% 14.9%;
-
-		--accent-foreground: 0 0% 98%;
-
-		--destructive: 0 62.8% 30.6%;
-
-		--destructive-foreground: 0 0% 98%;
-
-		--border: 0 0% 14.9%;
-
-		--input: 0 0% 14.9%;
-
-		--ring: 0 0% 83.1%;
-
-		--chart-1: 220 70% 50%;
-
-		--chart-2: 160 60% 45%;
-
-		--chart-3: 30 80% 55%;
-
-		--chart-4: 280 65% 60%;
-
-		--chart-5: 340 75% 55%;
-	}
-}
-
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-		@apply !min-w-full;
-		/* 기본 폰트 패밀리 적용 */
-		font-family: var(--font-geist-sans);
-	}
-
-	/* 폰트 유틸리티 클래스 */
-	.font-sans {
-		font-family: var(--font-geist-sans);
-	}
-
-	.font-mono {
-		font-family: var(--font-geist-mono);
-	}
-
-	/* NoticeList에서 사용할 fadeInUp 애니메이션 */
-	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	/* 유틸리티 클래스 */
-	.animate-fadeInUp {
-		animation: fadeInUp 0.6s ease-out forwards;
-	}
-
-	/* 지연 애니메이션용 CSS 변수 */
-	.animate-fadeInUp-delay-1 {
-		animation: fadeInUp 0.6s ease-out 100ms forwards;
-	}
-
-	.animate-fadeInUp-delay-2 {
-		animation: fadeInUp 0.6s ease-out 200ms forwards;
-	}
-
-	.animate-fadeInUp-delay-3 {
-		animation: fadeInUp 0.6s ease-out 300ms forwards;
-	}
-
-	/* 스크롤 동작 최적화 */
-	html {
-		@apply overflow-x-hidden;
-		scroll-behavior: smooth;
-	}
-
-	/* App Router 페이지 전환 최적화 */
-	.page-transition {
-		transition: opacity 0.2s ease-in-out;
-	}
-
-	.page-transition-enter {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes modal-scale-in {
+	from {
 		opacity: 0;
+		transform: translate(-50%, -50%) scale(0.8);
 	}
-
-	.page-transition-enter-active {
+	to {
 		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
 	}
+}
 
-	/* 포커스 접근성 개선 */
-	.focus-visible {
-		outline: 2px solid rgb(59 130 246);
-		outline-offset: 2px;
+@keyframes modal-scale-out {
+	from {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
 	}
+	to {
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(0.8);
+	}
+}
 
-	/* 다크모드 전환 애니메이션 */
-	* {
-		transition:
-			background-color 0.2s ease-in-out,
-			border-color 0.2s ease-in-out,
-			color 0.2s ease-in-out;
-	}
+/* Custom Scrollbar */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
 
-	/* 토스트 컨테이너 z-index */
-	.toaster {
-		z-index: 9999 !important;
-	}
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+	background: #0a0b0d;
+	border-radius: 0;
+}
 
-	/* 토스트 기본 스타일 개선 */
-	[data-sonner-toast] {
-		background: white !important;
-		border: 2px solid #e5e7eb !important;
-		border-radius: 12px !important;
-		box-shadow:
-			0 20px 25px -5px rgba(0, 0, 0, 0.1),
-			0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-		font-family: var(--font-geist-sans, ui-sans-serif, system-ui) !important;
-		min-width: 380px !important;
-		max-width: 480px !important;
-	}
+/* Dark theme scrollbar */
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.3);
+	border-radius: 4px;
+	border: none;
+}
 
-	/* 다크모드 토스트 */
-	.dark [data-sonner-toast] {
-		background: #1f2937 !important;
-		border-color: #374151 !important;
-		color: #f9fafb !important;
-	}
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.5);
+}
 
-	/* 에러 토스트 색상 */
-	[data-sonner-toast][data-type='error'] {
-		border-color: #fca5a5 !important;
-		background: #fef2f2 !important;
-	}
+/* Firefox scrollbar */
+html {
+	scrollbar-width: auto;
+	scrollbar-color: rgba(255, 255, 255, 0.3) #0a0b0d;
+}
 
-	[data-sonner-toast][data-type='error'] [data-title] {
-		color: #991b1b !important;
-	}
+body {
+	scrollbar-width: auto;
+	scrollbar-color: rgba(255, 255, 255, 0.3) #0a0b0d;
+}
 
-	[data-sonner-toast][data-type='error'] [data-description] {
-		color: #b91c1c !important;
-	}
-
-	.dark [data-sonner-toast][data-type='error'] {
-		border-color: #dc2626 !important;
-		background: #7f1d1d !important;
-	}
-
-	.dark [data-sonner-toast][data-type='error'] [data-title] {
-		color: #fecaca !important;
-	}
-
-	.dark [data-sonner-toast][data-type='error'] [data-description] {
-		color: #f87171 !important;
-	}
-
-	/* 성공 토스트 색상 */
-	[data-sonner-toast][data-type='success'] {
-		border-color: #86efac !important;
-		background: #f0fdf4 !important;
-	}
-
-	[data-sonner-toast][data-type='success'] [data-title] {
-		color: #14532d !important;
-	}
-
-	[data-sonner-toast][data-type='success'] [data-description] {
-		color: #166534 !important;
-	}
-
-	.dark [data-sonner-toast][data-type='success'] {
-		border-color: #16a34a !important;
-		background: #14532d !important;
-	}
-
-	.dark [data-sonner-toast][data-type='success'] [data-title] {
-		color: #bbf7d0 !important;
-	}
-
-	.dark [data-sonner-toast][data-type='success'] [data-description] {
-		color: #86efac !important;
-	}
-
-	/* 경고 토스트 색상 */
-	[data-sonner-toast][data-type='warning'] {
-		border-color: #fbbf24 !important;
-		background: #fffbeb !important;
-	}
-
-	.dark [data-sonner-toast][data-type='warning'] {
-		border-color: #d97706 !important;
-		background: #78350f !important;
-	}
-
-	/* 정보 토스트 색상 */
-	[data-sonner-toast][data-type='info'] {
-		border-color: #93c5fd !important;
-		background: #eff6ff !important;
-	}
-
-	.dark [data-sonner-toast][data-type='info'] {
-		border-color: #3b82f6 !important;
-		background: #1e3a8a !important;
-	}
-
-	/* 토스트 내용 스타일 */
-	[data-sonner-toast] [data-title] {
-		font-weight: 700 !important;
-		font-size: 17px !important;
-		line-height: 1.3 !important;
-		color: #1f2937 !important;
-	}
-
-	[data-sonner-toast] [data-description] {
-		font-size: 15px !important;
-		line-height: 1.4 !important;
-		margin-top: 6px !important;
-		font-weight: 500 !important;
-		color: #4b5563 !important;
-	}
-
-	/* 다크모드 텍스트 색상 */
-	.dark [data-sonner-toast] [data-title] {
-		color: #f9fafb !important;
-	}
-
-	.dark [data-sonner-toast] [data-description] {
-		color: #d1d5db !important;
-	}
-
-	/* 취소(닫기) 버튼 스타일 */
-	[data-sonner-toast] [data-cancel] {
-		position: absolute !important;
-		top: 12px !important;
-		right: 12px !important;
-		margin: 0 !important;
-		padding: 6px !important;
-		border-radius: 6px !important;
-		background: transparent !important;
-		border: none !important;
-		cursor: pointer !important;
-		transition: all 0.2s ease !important;
-		display: flex !important;
-		align-items: center !important;
-		justify-content: center !important;
-		min-width: 28px !important;
-		height: 28px !important;
-	}
-
-	[data-sonner-toast] [data-cancel]:hover {
-		background: rgba(0, 0, 0, 0.05) !important;
-		transform: scale(1.05) !important;
-	}
-
-	.dark [data-sonner-toast] [data-cancel] {
-		background: transparent !important;
-	}
-
-	.dark [data-sonner-toast] [data-cancel]:hover {
-		background: rgba(255, 255, 255, 0.1) !important;
-	}
-
-	/* 에러 토스트 취소 버튼 */
-	[data-sonner-toast][data-type='error'] [data-cancel] {
-		background: transparent !important;
-		color: #dc2626 !important;
-	}
-
-	[data-sonner-toast][data-type='error'] [data-cancel]:hover {
-		background: rgba(220, 38, 38, 0.1) !important;
-	}
-
-	.dark [data-sonner-toast][data-type='error'] [data-cancel] {
-		background: transparent !important;
-		color: #fca5a5 !important;
-	}
-
-	.dark [data-sonner-toast][data-type='error'] [data-cancel]:hover {
-		background: rgba(220, 38, 38, 0.2) !important;
-	}
-
-	/* 부드러운 애니메이션 */
-	[data-sonner-toast] {
-		animation: slide-in 0.3s ease-out !important;
-	}
-
-	@keyframes slide-in {
-		from {
-			opacity: 0;
-			transform: translateY(-20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
+* {
+	scrollbar-width: auto;
+	scrollbar-color: rgba(255, 255, 255, 0.3) #0a0b0d;
 }
