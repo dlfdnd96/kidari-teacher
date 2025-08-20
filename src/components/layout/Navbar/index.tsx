@@ -12,7 +12,6 @@ import { signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import LoginModal from '@/components/features/auth/LoginModal'
-import { SITE_INFO } from '@/constants/homepage'
 import {
 	CircleUserRound,
 	Menu,
@@ -173,7 +172,7 @@ const Navbar = memo(() => {
 				<div className="flex-1 flex items-center justify-center">
 					<Link href="/" className="flex items-center">
 						<span className="text-lg sm:text-xl font-bold bg-gradient-to-r whitespace-nowrap">
-							{SITE_INFO.title}
+							temp
 						</span>
 					</Link>
 				</div>
