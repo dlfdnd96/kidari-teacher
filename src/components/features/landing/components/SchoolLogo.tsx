@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { LinearH3, LinearText } from '@/components/ui/linear/linear-typography'
+import { LinearH3, LinearText } from '@/components/ui/typography'
 import type { SchoolLogo } from '@/types/landing'
 import { SCHOOL_LOGOS } from '@/constants/landing'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { LinearContainer, LinearH2, LinearText } from '@/components/ui/linear'
+import { LinearContainer, LinearH2, LinearText } from '@/components/ui'
 import { ActivityStatistics } from './ActivityStatistics'
 import { RecentActivity } from './RecentActivity'
 import { SchoolLogo } from './SchoolLogo'

@@ -1,16 +1,16 @@
 import { JSX, useCallback, useEffect, useMemo, useState } from 'react'
 import * as z from 'zod/mini'
 import { ArrowRight } from 'lucide-react'
-import { LinearH3, LinearText } from '@/components/ui/linear/linear-typography'
-import { LinearButton } from '@/components/ui/linear/linear-button'
+import { LinearH3, LinearText } from '@/components/ui/typography'
+import { Button } from '@/components/ui/button'
 import {
-	LinearModal,
+	Modal,
 	LinearModalBody,
 	LinearModalContent,
 	LinearModalFooter,
 	LinearModalHeader,
 	LinearModalTitle,
-} from '@/components/ui/linear/linear-modal'
+} from '@/components/ui/modal'
 import type { RecentActivitiesTableProps } from '@/types/landing'
 import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
 import { createDateStringFormat } from '@/utils/date'
@@ -278,17 +278,17 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 			</div>
 
 			<div className="mt-6 flex justify-end">
-				<LinearButton
+				<Button
 					variant="secondary"
 					size="sm"
 					onClick={handleModalOpen}
 					className="flex items-center gap-2"
 				>
 					전체 활동 내역 보기 <ArrowRight className="h-4 w-4" />
-				</LinearButton>
+				</Button>
 			</div>
 
-			<LinearModal isOpen={isModalOpen} onClose={handleModalClose} size="xl">
+			<Modal isOpen={isModalOpen} onClose={handleModalClose} size="xl">
 				<LinearModalContent>
 					<LinearModalHeader>
 						<LinearModalTitle>전체 봉사활동 내역</LinearModalTitle>
@@ -297,14 +297,14 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 						<div className="mb-4">
 							<div className="flex gap-2 flex-wrap">
 								{availableYears.map((year) => (
-									<LinearButton
+									<Button
 										key={year}
 										variant={selectedYear === year ? 'primary' : 'secondary'}
 										size="sm"
 										onClick={() => handleYearSelect(year)}
 									>
 										{year}년
-									</LinearButton>
+									</Button>
 								))}
 							</div>
 						</div>
@@ -376,12 +376,12 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 						</div>
 					</LinearModalBody>
 					<LinearModalFooter>
-						<LinearButton variant="secondary" onClick={handleModalClose}>
+						<Button variant="secondary" onClick={handleModalClose}>
 							닫기
-						</LinearButton>
+						</Button>
 					</LinearModalFooter>
 				</LinearModalContent>
-			</LinearModal>
+			</Modal>
 		</div>
 	)
 }

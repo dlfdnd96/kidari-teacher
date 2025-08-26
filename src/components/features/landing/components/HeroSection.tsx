@@ -1,5 +1,5 @@
 import * as z from 'zod/mini'
-import { LinearHero } from '@/components/ui/linear/linear-hero'
+import { Hero } from '@/components/ui/hero'
 import { handleEmailContact } from '@/utils/email'
 import { BRAND_INFO } from '@/constants/landing'
 
@@ -7,7 +7,7 @@ export function HeroSection() {
 	const email = z.email().parse(process.env.NEXT_PUBLIC_CONTACT_EMAIL)
 
 	return (
-		<LinearHero
+		<Hero
 			animated={true}
 			title={BRAND_INFO.NAME}
 			subtitle={BRAND_INFO.SUBTITLE}

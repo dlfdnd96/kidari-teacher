@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { LinearH2, LinearText } from '@/components/ui/linear/linear-typography'
+import { LinearH2, LinearText } from '@/components/ui/typography'
 import { COLLABORATION_STEPS, SECTION_IDS } from '@/constants/landing'
-import { LinearTimeline } from '@/components/ui/linear/linear-timeline'
+import { Timeline } from '@/components/ui/timeline'
 
 export function HowToCollaborateSection() {
 	return (
@@ -17,7 +17,7 @@ export function HowToCollaborateSection() {
 				</div>
 
 				{/* Collaboration Process */}
-				<LinearTimeline
+				<Timeline
 					data={COLLABORATION_STEPS.map((step) => {
 						return {
 							title: step.title,

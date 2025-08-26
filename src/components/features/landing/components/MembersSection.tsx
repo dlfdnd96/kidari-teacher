@@ -1,6 +1,6 @@
-import { LinearContainer } from '@/components/ui/linear/linear-navigation'
-import { LinearH2, LinearText } from '@/components/ui/linear/linear-typography'
-import { LinearTagCloud } from '@/components/ui/linear/linear-tag-cloud'
+import { LinearContainer } from '@/components/ui/navigation'
+import { LinearH2, LinearText } from '@/components/ui/typography'
+import { TagCloud } from '@/components/ui/tag-cloud'
 import { PROFESSION_TAGS, SECTION_IDS } from '@/constants/landing'
 
 export function MembersSection() {
@@ -17,7 +17,7 @@ export function MembersSection() {
 				</div>
 
 				<div className="max-w-4xl mx-auto px-8">
-					<LinearTagCloud
+					<TagCloud
 						tags={PROFESSION_TAGS}
 						spacing="normal"
 						className="justify-center"

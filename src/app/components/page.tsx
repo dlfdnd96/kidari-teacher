@@ -1,20 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
-import { LinearButton } from '@/components/ui/linear/linear-button'
+import { Button } from '@/components/ui/button'
 import {
-	LinearCard,
+	Card,
 	LinearCardContent,
 	LinearCardDescription,
 	LinearCardFooter,
 	LinearCardHeader,
 	LinearCardTitle,
-} from '@/components/ui/linear/linear-card'
-import {
-	LinearInput,
-	LinearLabel,
-	LinearTextarea,
-} from '@/components/ui/linear/linear-input'
+} from '@/components/ui/card'
+import { Input, LinearLabel, LinearTextarea } from '@/components/ui/input'
 import {
 	LinearCode,
 	LinearH1,
@@ -25,38 +21,35 @@ import {
 	LinearText,
 	LinearTextMuted,
 	LinearTextSecondary,
-} from '@/components/ui/linear/linear-typography'
+} from '@/components/ui/typography'
 import {
 	LinearContainer,
 	LinearDivider,
-	LinearNavigation,
+	Navigation,
 	LinearNavigationActions,
 	LinearNavigationBrand,
 	LinearNavigationItem,
 	LinearNavigationMenu,
-} from '@/components/ui/linear/linear-navigation'
-import { LinearCarousel } from '@/components/ui/linear/linear-carousel'
+} from '@/components/ui/navigation'
+import { Carousel } from '@/components/ui/carousel'
 import {
 	LinearHeroImageCard,
-	LinearImageCard,
+	ImageCard,
 	LinearImageGallery,
-} from '@/components/ui/linear/linear-image-card'
-import { LinearNavbar } from '@/components/ui/linear/linear-navbar'
-import { LinearSimpleFooter } from '@/components/ui/linear/linear-footer'
+} from '@/components/ui/image-card'
+import { Navbar } from '@/components/ui/navbar'
+import { LinearSimpleFooter } from '@/components/ui/footer'
+import { LinearFeatureHero, Hero } from '@/components/ui/hero'
+import { Testimonials } from '@/components/ui/testimonials'
 import {
-	LinearFeatureHero,
-	LinearHero,
-} from '@/components/ui/linear/linear-hero'
-import { LinearTestimonials } from '@/components/ui/linear/linear-testimonials'
-import {
-	LinearDialog,
+	Dialog,
 	LinearDialogBody,
 	LinearDialogCloseButton,
 	LinearDialogContent,
 	LinearDialogFooter,
 	LinearDialogHeader,
 	LinearDialogTitle,
-	LinearModal,
+	Modal,
 	LinearModalBody,
 	LinearModalCloseButton,
 	LinearModalContent,
@@ -65,11 +58,11 @@ import {
 	LinearModalHeader,
 	LinearModalTitle,
 	LinearTag,
-	LinearTagCloud,
-	LinearTimeline,
-} from '@/components/ui/linear'
+	TagCloud,
+	Timeline,
+} from '@/components/ui'
 import type { TestimonialItem } from '@/types/landing'
-import type { LinearTimelineEntry } from '@/components/ui/linear/linear-timeline'
+import type { LinearTimelineEntry } from '@/components/ui/timeline'
 
 export default function ComponentsPage() {
 	const [inputValue, setInputValue] = useState('')
@@ -174,7 +167,7 @@ export default function ComponentsPage() {
 	return (
 		<div className="min-h-screen bg-[#08090A]">
 			{/* Navigation Demo */}
-			<LinearNavigation>
+			<Navigation>
 				<LinearNavigationBrand>
 					<LinearH4>Linear UI</LinearH4>
 				</LinearNavigationBrand>
@@ -184,14 +177,14 @@ export default function ComponentsPage() {
 					<LinearNavigationItem>Contact</LinearNavigationItem>
 				</LinearNavigationMenu>
 				<LinearNavigationActions>
-					<LinearButton variant="secondary" size="sm">
+					<Button variant="secondary" size="sm">
 						Login
-					</LinearButton>
-					<LinearButton variant="primary" size="sm">
+					</Button>
+					<Button variant="primary" size="sm">
 						Sign Up
-					</LinearButton>
+					</Button>
 				</LinearNavigationActions>
-			</LinearNavigation>
+			</Navigation>
 
 			{/* Main Content */}
 			<LinearContainer className="pt-24 pb-12">
@@ -211,7 +204,7 @@ export default function ComponentsPage() {
 					{/* Typography Section */}
 					<div className="space-y-8">
 						<LinearH2>Typography</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Text Styles</LinearCardTitle>
 								<LinearCardDescription>
@@ -250,13 +243,13 @@ export default function ComponentsPage() {
 									</LinearText>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Buttons Section */}
 					<div className="space-y-8">
 						<LinearH2>Buttons</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Button Variants</LinearCardTitle>
 								<LinearCardDescription>
@@ -267,63 +260,63 @@ export default function ComponentsPage() {
 								<div className="space-y-3">
 									<LinearH4>Primary Variants</LinearH4>
 									<div className="flex flex-wrap gap-3">
-										<LinearButton variant="primary">Primary</LinearButton>
-										<LinearButton variant="secondary">Secondary</LinearButton>
-										<LinearButton variant="ghost">Ghost</LinearButton>
+										<Button variant="primary">Primary</Button>
+										<Button variant="secondary">Secondary</Button>
+										<Button variant="ghost">Ghost</Button>
 									</div>
 								</div>
 
 								<div className="space-y-3">
 									<LinearH4>Semantic Variants</LinearH4>
 									<div className="flex flex-wrap gap-3">
-										<LinearButton variant="success">Success</LinearButton>
-										<LinearButton variant="warning">Warning</LinearButton>
-										<LinearButton variant="error">Error</LinearButton>
-										<LinearButton variant="info">Info</LinearButton>
+										<Button variant="success">Success</Button>
+										<Button variant="warning">Warning</Button>
+										<Button variant="error">Error</Button>
+										<Button variant="info">Info</Button>
 									</div>
 								</div>
 
 								<div className="space-y-3">
 									<LinearH4>Sizes</LinearH4>
 									<div className="flex items-center flex-wrap gap-3">
-										<LinearButton variant="primary" size="sm">
+										<Button variant="primary" size="sm">
 											Small
-										</LinearButton>
-										<LinearButton variant="primary" size="default">
+										</Button>
+										<Button variant="primary" size="default">
 											Default
-										</LinearButton>
-										<LinearButton variant="primary" size="lg">
+										</Button>
+										<Button variant="primary" size="lg">
 											Large
-										</LinearButton>
-										<LinearButton variant="primary" size="icon">
+										</Button>
+										<Button variant="primary" size="icon">
 											✦
-										</LinearButton>
+										</Button>
 									</div>
 								</div>
 
 								<div className="space-y-3">
 									<LinearH4>States</LinearH4>
 									<div className="flex flex-wrap gap-3">
-										<LinearButton variant="primary" disabled>
+										<Button variant="primary" disabled>
 											Disabled
-										</LinearButton>
-										<LinearButton
+										</Button>
+										<Button
 											variant="primary"
 											loading={loading}
 											onClick={handleLoadingDemo}
 										>
 											{loading ? 'Loading...' : 'Click for Loading'}
-										</LinearButton>
+										</Button>
 									</div>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Form Inputs Section */}
 					<div className="space-y-8">
 						<LinearH2>Form Controls</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Input Components</LinearCardTitle>
 								<LinearCardDescription>
@@ -334,7 +327,7 @@ export default function ComponentsPage() {
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<div className="space-y-2">
 										<LinearLabel htmlFor="email">Email Address</LinearLabel>
-										<LinearInput
+										<Input
 											id="email"
 											type="email"
 											placeholder="Enter your email"
@@ -345,7 +338,7 @@ export default function ComponentsPage() {
 
 									<div className="space-y-2">
 										<LinearLabel htmlFor="password">Password</LinearLabel>
-										<LinearInput
+										<Input
 											id="password"
 											type="password"
 											placeholder="Enter your password"
@@ -357,7 +350,7 @@ export default function ComponentsPage() {
 									<LinearLabel htmlFor="error-input">
 										Input with Error
 									</LinearLabel>
-									<LinearInput
+									<Input
 										id="error-input"
 										placeholder="This input has an error state"
 										error={true}
@@ -378,21 +371,21 @@ export default function ComponentsPage() {
 									<LinearLabel htmlFor="disabled-input">
 										Disabled Input
 									</LinearLabel>
-									<LinearInput
+									<Input
 										id="disabled-input"
 										placeholder="This input is disabled"
 										disabled
 									/>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Cards Section */}
 					<div className="space-y-8">
 						<LinearH2>Cards</LinearH2>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							<LinearCard>
+							<Card>
 								<LinearCardHeader>
 									<LinearCardTitle>Basic Card</LinearCardTitle>
 									<LinearCardDescription>
@@ -405,9 +398,9 @@ export default function ComponentsPage() {
 										theme design system.
 									</LinearText>
 								</LinearCardContent>
-							</LinearCard>
+							</Card>
 
-							<LinearCard>
+							<Card>
 								<LinearCardHeader>
 									<LinearCardTitle>Interactive Card</LinearCardTitle>
 									<LinearCardDescription>
@@ -421,16 +414,16 @@ export default function ComponentsPage() {
 									</LinearText>
 								</LinearCardContent>
 								<LinearCardFooter>
-									<LinearButton variant="primary" size="sm">
+									<Button variant="primary" size="sm">
 										Action
-									</LinearButton>
-									<LinearButton variant="secondary" size="sm">
+									</Button>
+									<Button variant="secondary" size="sm">
 										Cancel
-									</LinearButton>
+									</Button>
 								</LinearCardFooter>
-							</LinearCard>
+							</Card>
 
-							<LinearCard>
+							<Card>
 								<LinearCardHeader>
 									<LinearCardTitle>Feature Card</LinearCardTitle>
 									<LinearCardDescription>
@@ -445,7 +438,7 @@ export default function ComponentsPage() {
 										<LinearText>✓ TypeScript support</LinearText>
 									</div>
 								</LinearCardContent>
-							</LinearCard>
+							</Card>
 						</div>
 					</div>
 
@@ -457,24 +450,24 @@ export default function ComponentsPage() {
 							<div className="space-y-4">
 								<LinearH3>Basic Image Cards</LinearH3>
 								<LinearImageGallery columns={3}>
-									<LinearImageCard
+									<ImageCard
 										src="/images/lecture_001.png"
 										alt="Modern workspace"
 										title="Modern Workspace"
 										description="A clean and organized workspace setup for maximum productivity"
 										footer={
 											<div className="flex gap-2">
-												<LinearButton variant="primary" size="sm">
+												<Button variant="primary" size="sm">
 													View
-												</LinearButton>
-												<LinearButton variant="secondary" size="sm">
+												</Button>
+												<Button variant="secondary" size="sm">
 													Share
-												</LinearButton>
+												</Button>
 											</div>
 										}
 									/>
 
-									<LinearImageCard
+									<ImageCard
 										src="/images/lecture_002.png"
 										alt="Creative design"
 										title="Creative Design"
@@ -482,15 +475,15 @@ export default function ComponentsPage() {
 										aspectRatio="square"
 									/>
 
-									<LinearImageCard
+									<ImageCard
 										src="/images/lecture_003.png"
 										alt="Data visualization"
 										title="Data Analytics"
 										description="Advanced analytics and data visualization tools for business insights"
 										footer={
-											<LinearButton variant="info" size="sm">
+											<Button variant="info" size="sm">
 												Learn More
-											</LinearButton>
+											</Button>
 										}
 									/>
 								</LinearImageGallery>
@@ -500,7 +493,7 @@ export default function ComponentsPage() {
 							<div className="space-y-4">
 								<LinearH3>Overlay Style Cards</LinearH3>
 								<LinearImageGallery columns={2}>
-									<LinearImageCard
+									<ImageCard
 										src="/images/lecture_001.png"
 										alt="Team collaboration"
 										title="Team Collaboration"
@@ -509,7 +502,7 @@ export default function ComponentsPage() {
 										aspectRatio="video"
 									/>
 
-									<LinearImageCard
+									<ImageCard
 										src="/images/lecture_002.png"
 										alt="Innovation lab"
 										title="Innovation Lab"
@@ -537,7 +530,7 @@ export default function ComponentsPage() {
 					{/* Carousel Section */}
 					<div className="space-y-8">
 						<LinearH2>Carousel</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Interactive Carousel</LinearCardTitle>
 								<LinearCardDescription>
@@ -549,12 +542,12 @@ export default function ComponentsPage() {
 								{/* Basic Carousel */}
 								<div className="space-y-4">
 									<LinearH4>Basic Carousel (Auto-play)</LinearH4>
-									<LinearCarousel
+									<Carousel
 										className="group"
 										autoPlay={true}
 										autoPlayDelay={4000}
 										items={[
-											<LinearImageCard
+											<ImageCard
 												key="carousel-1"
 												src="/images/lecture_001.png"
 												alt="Technology landscape"
@@ -563,7 +556,7 @@ export default function ComponentsPage() {
 												overlay={true}
 												aspectRatio="video"
 											/>,
-											<LinearImageCard
+											<ImageCard
 												key="carousel-2"
 												src="/images/lecture_002.png"
 												alt="Digital innovation"
@@ -572,7 +565,7 @@ export default function ComponentsPage() {
 												overlay={true}
 												aspectRatio="video"
 											/>,
-											<LinearImageCard
+											<ImageCard
 												key="carousel-3"
 												src="/images/lecture_003.png"
 												alt="Startup culture"
@@ -588,12 +581,12 @@ export default function ComponentsPage() {
 								{/* Multi-item Carousel */}
 								<div className="space-y-4">
 									<LinearH4>Multi-item Carousel</LinearH4>
-									<LinearCarousel
+									<Carousel
 										className="group"
 										itemsPerView={3}
 										gap={16}
 										items={Array.from({ length: 6 }, (_, i) => (
-											<LinearCard key={`multi-${i}`}>
+											<Card key={`multi-${i}`}>
 												<LinearCardHeader>
 													<LinearCardTitle>Feature {i + 1}</LinearCardTitle>
 													<LinearCardDescription>
@@ -607,11 +600,11 @@ export default function ComponentsPage() {
 													</LinearText>
 												</LinearCardContent>
 												<LinearCardFooter>
-													<LinearButton variant="secondary" size="sm">
+													<Button variant="secondary" size="sm">
 														Learn More
-													</LinearButton>
+													</Button>
 												</LinearCardFooter>
-											</LinearCard>
+											</Card>
 										))}
 									/>
 								</div>
@@ -619,10 +612,10 @@ export default function ComponentsPage() {
 								{/* Content Carousel */}
 								<div className="space-y-4">
 									<LinearH4>Content Carousel</LinearH4>
-									<LinearCarousel
+									<Carousel
 										autoPlay={false}
 										items={[
-											<LinearCard
+											<Card
 												key="content-1"
 												className="h-64 flex items-center justify-center"
 											>
@@ -632,12 +625,10 @@ export default function ComponentsPage() {
 														A comprehensive design system for modern
 														applications
 													</LinearText>
-													<LinearButton variant="primary">
-														Get Started
-													</LinearButton>
+													<Button variant="primary">Get Started</Button>
 												</div>
-											</LinearCard>,
-											<LinearCard
+											</Card>,
+											<Card
 												key="content-2"
 												className="h-64 flex items-center justify-center"
 											>
@@ -646,12 +637,10 @@ export default function ComponentsPage() {
 													<LinearText>
 														TypeScript-first components with excellent DX
 													</LinearText>
-													<LinearButton variant="success">
-														View Docs
-													</LinearButton>
+													<Button variant="success">View Docs</Button>
 												</div>
-											</LinearCard>,
-											<LinearCard
+											</Card>,
+											<Card
 												key="content-3"
 												className="h-64 flex items-center justify-center"
 											>
@@ -661,14 +650,14 @@ export default function ComponentsPage() {
 														Optimized for dark interfaces with beautiful
 														glassmorphism
 													</LinearText>
-													<LinearButton variant="info">Explore</LinearButton>
+													<Button variant="info">Explore</Button>
 												</div>
-											</LinearCard>,
+											</Card>,
 										]}
 									/>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Layout Components Section */}
@@ -678,7 +667,7 @@ export default function ComponentsPage() {
 						{/* Navbar Demo */}
 						<div className="space-y-4">
 							<LinearH3>Navbar</LinearH3>
-							<LinearCard>
+							<Card>
 								<LinearCardHeader>
 									<LinearCardTitle>Navigation Components</LinearCardTitle>
 									<LinearCardDescription>
@@ -690,7 +679,7 @@ export default function ComponentsPage() {
 									<div className="space-y-3">
 										<LinearH4>Basic Navbar</LinearH4>
 										<div className="border border-white/8 rounded-lg overflow-hidden">
-											<LinearNavbar
+											<Navbar
 												logoText="My App"
 												menuItems={[
 													{
@@ -713,7 +702,7 @@ export default function ComponentsPage() {
 										<LinearH4>Transparent Navbar</LinearH4>
 										<div className="relative border border-white/8 rounded-lg overflow-hidden">
 											<div className="h-32 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-											<LinearNavbar
+											<Navbar
 												logoText="Transparent"
 												menuItems={[
 													{
@@ -732,13 +721,13 @@ export default function ComponentsPage() {
 										</div>
 									</div>
 								</LinearCardContent>
-							</LinearCard>
+							</Card>
 						</div>
 
 						{/* Hero Demo */}
 						<div className="space-y-4">
 							<LinearH3>Hero Sections</LinearH3>
-							<LinearCard>
+							<Card>
 								<LinearCardHeader>
 									<LinearCardTitle>Hero Components</LinearCardTitle>
 									<LinearCardDescription>
@@ -750,7 +739,7 @@ export default function ComponentsPage() {
 									<div className="space-y-3">
 										<LinearH4>Basic Hero</LinearH4>
 										<div className="border border-white/8 rounded-lg overflow-hidden">
-											<LinearHero
+											<Hero
 												title="Build Something Amazing"
 												description="Create beautiful, responsive applications with our comprehensive component library and design system."
 												primaryAction={{
@@ -770,7 +759,7 @@ export default function ComponentsPage() {
 									<div className="space-y-3">
 										<LinearH4>Hero with Background Image</LinearH4>
 										<div className="border border-white/8 rounded-lg overflow-hidden">
-											<LinearHero
+											<Hero
 												title="Next Generation Platform"
 												subtitle="🚀 Now in Beta"
 												description="Experience the future of development with our cutting-edge tools and seamless workflow."
@@ -788,7 +777,7 @@ export default function ComponentsPage() {
 									<div className="space-y-3">
 										<LinearH4>Animated Hero with Geometric Shapes</LinearH4>
 										<div className="border border-white/8 rounded-lg overflow-hidden">
-											<LinearHero
+											<Hero
 												animated={true}
 												title="Elevate Your Digital Vision"
 												subtitle="Design Collective"
@@ -884,13 +873,13 @@ export default function ComponentsPage() {
 										</div>
 									</div>
 								</LinearCardContent>
-							</LinearCard>
+							</Card>
 						</div>
 
 						{/* Footer Demo */}
 						<div className="space-y-4">
 							<LinearH3>Footer</LinearH3>
-							<LinearCard>
+							<Card>
 								<LinearCardHeader>
 									<LinearCardTitle>Footer Components</LinearCardTitle>
 									<LinearCardDescription>
@@ -907,14 +896,14 @@ export default function ComponentsPage() {
 										</div>
 									</div>
 								</LinearCardContent>
-							</LinearCard>
+							</Card>
 						</div>
 					</div>
 
 					{/* Testimonials Section */}
 					<div className="space-y-8">
 						<LinearH2>Testimonials</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>User Feedback</LinearCardTitle>
 								<LinearCardDescription>
@@ -926,7 +915,7 @@ export default function ComponentsPage() {
 								{/* Default Grid Layout */}
 								<div className="space-y-4">
 									<LinearH4>Default Grid Layout</LinearH4>
-									<LinearTestimonials
+									<Testimonials
 										testimonials={sampleTestimonials}
 										columns={3}
 										variant="default"
@@ -936,7 +925,7 @@ export default function ComponentsPage() {
 								{/* Two Column Layout */}
 								<div className="space-y-4">
 									<LinearH4>Two Column Layout</LinearH4>
-									<LinearTestimonials
+									<Testimonials
 										testimonials={sampleTestimonials.slice(0, 2)}
 										columns={2}
 										variant="default"
@@ -946,19 +935,19 @@ export default function ComponentsPage() {
 								{/* Minimal Layout */}
 								<div className="space-y-4">
 									<LinearH4>Minimal Layout</LinearH4>
-									<LinearTestimonials
+									<Testimonials
 										testimonials={[sampleTestimonials[0]]}
 										variant="minimal"
 									/>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Tag Cloud Section */}
 					<div className="space-y-8">
 						<LinearH2>Tag Cloud</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Tag Components</LinearCardTitle>
 								<LinearCardDescription>
@@ -991,7 +980,7 @@ export default function ComponentsPage() {
 								{/* Tag Cloud - Skills */}
 								<div className="space-y-3">
 									<LinearH4>Skills Tag Cloud</LinearH4>
-									<LinearTagCloud
+									<TagCloud
 										tags={[
 											{
 												id: '1',
@@ -1056,7 +1045,7 @@ export default function ComponentsPage() {
 								{/* Tag Cloud - Categories */}
 								<div className="space-y-3">
 									<LinearH4>Category Tags</LinearH4>
-									<LinearTagCloud
+									<TagCloud
 										tags={[
 											{
 												id: '1',
@@ -1102,7 +1091,7 @@ export default function ComponentsPage() {
 								{/* Compact Tag Cloud */}
 								<div className="space-y-3">
 									<LinearH4>Compact Tag Cloud</LinearH4>
-									<LinearTagCloud
+									<TagCloud
 										tags={[
 											{ id: '1', label: 'Web Dev', size: 'sm' },
 											{
@@ -1150,13 +1139,13 @@ export default function ComponentsPage() {
 									/>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Timeline Section */}
 					<div className="space-y-8">
 						<LinearH2>Timeline</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Timeline Components</LinearCardTitle>
 								<LinearCardDescription>
@@ -1168,7 +1157,7 @@ export default function ComponentsPage() {
 								{/* Project Development Timeline */}
 								<div className="space-y-4">
 									<LinearH4>Project Development Timeline</LinearH4>
-									<LinearTimeline
+									<Timeline
 										data={[
 											{
 												title: '2024',
@@ -1180,7 +1169,7 @@ export default function ComponentsPage() {
 															integration.
 														</LinearText>
 														<div className="grid grid-cols-2 gap-4">
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_001.png"
 																alt="startup template"
 																title="Component Library"
@@ -1188,7 +1177,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_002.png"
 																alt="design system"
 																title="Design System"
@@ -1196,7 +1185,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_003.png"
 																alt="documentation"
 																title="Documentation"
@@ -1204,7 +1193,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_001.png"
 																alt="typescript support"
 																title="TypeScript DX"
@@ -1226,7 +1215,7 @@ export default function ComponentsPage() {
 															modern web standards.
 														</LinearText>
 														<div className="grid grid-cols-2 gap-4">
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_001.png"
 																alt="mobile first"
 																title="Mobile-First Design"
@@ -1234,7 +1223,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_002.png"
 																alt="accessibility"
 																title="WCAG 2.1 Compliance"
@@ -1242,7 +1231,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_003.png"
 																alt="touch interactions"
 																title="Touch Interactions"
@@ -1250,7 +1239,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_001.png"
 																alt="performance"
 																title="Performance"
@@ -1288,7 +1277,7 @@ export default function ComponentsPage() {
 															</LinearText>
 														</div>
 														<div className="grid grid-cols-2 gap-4">
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_001.png"
 																alt="timeline components"
 																title="Timeline Components"
@@ -1296,7 +1285,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_002.png"
 																alt="form builders"
 																title="Form Builders"
@@ -1304,7 +1293,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_003.png"
 																alt="data visualization"
 																title="Data Visualization"
@@ -1312,7 +1301,7 @@ export default function ComponentsPage() {
 																aspectRatio="video"
 																overlay={true}
 															/>
-															<LinearImageCard
+															<ImageCard
 																src="/images/lecture_001.png"
 																alt="animation system"
 																title="Animation System"
@@ -1331,7 +1320,7 @@ export default function ComponentsPage() {
 								{/* Product Roadmap Timeline */}
 								<div className="space-y-4">
 									<LinearH4>Product Roadmap</LinearH4>
-									<LinearTimeline
+									<Timeline
 										data={[
 											{
 												title: 'Q1 2024 - Foundation',
@@ -1418,7 +1407,7 @@ export default function ComponentsPage() {
 								{/* Daily Schedule Timeline */}
 								<div className="space-y-4">
 									<LinearH4>Daily Schedule</LinearH4>
-									<LinearTimeline
+									<Timeline
 										data={[
 											{
 												title: '9:00 AM - Team Standup',
@@ -1472,7 +1461,7 @@ export default function ComponentsPage() {
 								{/* Error Recovery Timeline */}
 								<div className="space-y-4">
 									<LinearH4>Issue Resolution Timeline</LinearH4>
-									<LinearTimeline
+									<Timeline
 										data={[
 											{
 												title: 'Issue Identification',
@@ -1526,16 +1515,16 @@ export default function ComponentsPage() {
 								{/* Company Timeline Demo */}
 								<div className="space-y-4">
 									<LinearH4>Linear UI Development Timeline</LinearH4>
-									<LinearTimeline data={timelineData} />
+									<Timeline data={timelineData} />
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Dialogs Section */}
 					<div className="space-y-8">
 						<LinearH2>Dialogs</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Dialog Components</LinearCardTitle>
 								<LinearCardDescription>
@@ -1547,28 +1536,28 @@ export default function ComponentsPage() {
 								<div className="space-y-3">
 									<LinearH4>Basic Dialog</LinearH4>
 									<div className="flex gap-3">
-										<LinearButton
+										<Button
 											variant="primary"
 											onClick={() => setIsDialogOpen(true)}
 										>
 											Open Basic Dialog
-										</LinearButton>
-										<LinearButton
+										</Button>
+										<Button
 											variant="warning"
 											onClick={() => setIsConfirmDialogOpen(true)}
 										>
 											Open Confirmation Dialog
-										</LinearButton>
+										</Button>
 									</div>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Modals Section */}
 					<div className="space-y-8">
 						<LinearH2>Modals</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Modal Components</LinearCardTitle>
 								<LinearCardDescription>
@@ -1581,34 +1570,34 @@ export default function ComponentsPage() {
 								<div className="space-y-3">
 									<LinearH4>Modal Variants</LinearH4>
 									<div className="flex flex-wrap gap-3">
-										<LinearButton
+										<Button
 											variant="primary"
 											onClick={() => setIsModalOpen(true)}
 										>
 											Basic Modal
-										</LinearButton>
-										<LinearButton
+										</Button>
+										<Button
 											variant="info"
 											onClick={() => setIsFormModalOpen(true)}
 										>
 											Form Modal
-										</LinearButton>
-										<LinearButton
+										</Button>
+										<Button
 											variant="secondary"
 											onClick={() => setIsLargeModalOpen(true)}
 										>
 											Large Modal
-										</LinearButton>
+										</Button>
 									</div>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 
 					{/* Theme Colors Section */}
 					<div className="space-y-8">
 						<LinearH2>Theme Colors</LinearH2>
-						<LinearCard>
+						<Card>
 							<LinearCardHeader>
 								<LinearCardTitle>Color Palette</LinearCardTitle>
 								<LinearCardDescription>
@@ -1648,13 +1637,13 @@ export default function ComponentsPage() {
 									</div>
 								</div>
 							</LinearCardContent>
-						</LinearCard>
+						</Card>
 					</div>
 				</div>
 			</LinearContainer>
 
 			{/* Dialog Components */}
-			<LinearDialog
+			<Dialog
 				isOpen={isDialogOpen}
 				onClose={() => setIsDialogOpen(false)}
 				size="default"
@@ -1675,18 +1664,15 @@ export default function ComponentsPage() {
 						</LinearText>
 					</LinearDialogBody>
 					<LinearDialogFooter>
-						<LinearButton
-							variant="secondary"
-							onClick={() => setIsDialogOpen(false)}
-						>
+						<Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
 							Close
-						</LinearButton>
-						<LinearButton variant="primary">Confirm</LinearButton>
+						</Button>
+						<Button variant="primary">Confirm</Button>
 					</LinearDialogFooter>
 				</LinearDialogContent>
-			</LinearDialog>
+			</Dialog>
 
-			<LinearDialog
+			<Dialog
 				isOpen={isConfirmDialogOpen}
 				onClose={() => setIsConfirmDialogOpen(false)}
 				size="sm"
@@ -1705,24 +1691,24 @@ export default function ComponentsPage() {
 						</LinearText>
 					</LinearDialogBody>
 					<LinearDialogFooter>
-						<LinearButton
+						<Button
 							variant="secondary"
 							onClick={() => setIsConfirmDialogOpen(false)}
 						>
 							Cancel
-						</LinearButton>
-						<LinearButton
+						</Button>
+						<Button
 							variant="error"
 							onClick={() => setIsConfirmDialogOpen(false)}
 						>
 							Delete
-						</LinearButton>
+						</Button>
 					</LinearDialogFooter>
 				</LinearDialogContent>
-			</LinearDialog>
+			</Dialog>
 
 			{/* Modal Components */}
-			<LinearModal
+			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				size="default"
@@ -1756,18 +1742,15 @@ export default function ComponentsPage() {
 						</div>
 					</LinearModalBody>
 					<LinearModalFooter>
-						<LinearButton
-							variant="secondary"
-							onClick={() => setIsModalOpen(false)}
-						>
+						<Button variant="secondary" onClick={() => setIsModalOpen(false)}>
 							Close
-						</LinearButton>
-						<LinearButton variant="primary">Get Started</LinearButton>
+						</Button>
+						<Button variant="primary">Get Started</Button>
 					</LinearModalFooter>
 				</LinearModalContent>
-			</LinearModal>
+			</Modal>
 
-			<LinearModal
+			<Modal
 				isOpen={isFormModalOpen}
 				onClose={() => setIsFormModalOpen(false)}
 				size="lg"
@@ -1785,30 +1768,20 @@ export default function ComponentsPage() {
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div className="space-y-2">
 									<LinearLabel htmlFor="firstName">First Name</LinearLabel>
-									<LinearInput
-										id="firstName"
-										placeholder="Enter your first name"
-									/>
+									<Input id="firstName" placeholder="Enter your first name" />
 								</div>
 								<div className="space-y-2">
 									<LinearLabel htmlFor="lastName">Last Name</LinearLabel>
-									<LinearInput
-										id="lastName"
-										placeholder="Enter your last name"
-									/>
+									<Input id="lastName" placeholder="Enter your last name" />
 								</div>
 							</div>
 							<div className="space-y-2">
 								<LinearLabel htmlFor="email">Email Address</LinearLabel>
-								<LinearInput
-									id="email"
-									type="email"
-									placeholder="Enter your email"
-								/>
+								<Input id="email" type="email" placeholder="Enter your email" />
 							</div>
 							<div className="space-y-2">
 								<LinearLabel htmlFor="subject">Subject</LinearLabel>
-								<LinearInput id="subject" placeholder="What's this about?" />
+								<Input id="subject" placeholder="What's this about?" />
 							</div>
 							<div className="space-y-2">
 								<LinearLabel htmlFor="message">Message</LinearLabel>
@@ -1821,18 +1794,18 @@ export default function ComponentsPage() {
 						</div>
 					</LinearModalBody>
 					<LinearModalFooter>
-						<LinearButton
+						<Button
 							variant="secondary"
 							onClick={() => setIsFormModalOpen(false)}
 						>
 							Cancel
-						</LinearButton>
-						<LinearButton variant="primary">Send Message</LinearButton>
+						</Button>
+						<Button variant="primary">Send Message</Button>
 					</LinearModalFooter>
 				</LinearModalContent>
-			</LinearModal>
+			</Modal>
 
-			<LinearModal
+			<Modal
 				isOpen={isLargeModalOpen}
 				onClose={() => setIsLargeModalOpen(false)}
 				size="xl"
@@ -1862,7 +1835,7 @@ export default function ComponentsPage() {
 							<div>
 								<LinearH4>Key Features</LinearH4>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-									<LinearCard>
+									<Card>
 										<LinearCardHeader>
 											<LinearCardTitle>TypeScript First</LinearCardTitle>
 										</LinearCardHeader>
@@ -1872,8 +1845,8 @@ export default function ComponentsPage() {
 												and type safety.
 											</LinearText>
 										</LinearCardContent>
-									</LinearCard>
-									<LinearCard>
+									</Card>
+									<Card>
 										<LinearCardHeader>
 											<LinearCardTitle>Dark Theme</LinearCardTitle>
 										</LinearCardHeader>
@@ -1883,7 +1856,7 @@ export default function ComponentsPage() {
 												glassmorphism effects.
 											</LinearText>
 										</LinearCardContent>
-									</LinearCard>
+									</Card>
 								</div>
 							</div>
 
@@ -1906,17 +1879,17 @@ export default function ComponentsPage() {
 						</div>
 					</LinearModalBody>
 					<LinearModalFooter>
-						<LinearButton
+						<Button
 							variant="secondary"
 							onClick={() => setIsLargeModalOpen(false)}
 						>
 							Close
-						</LinearButton>
-						<LinearButton variant="info">Documentation</LinearButton>
-						<LinearButton variant="primary">Get Started</LinearButton>
+						</Button>
+						<Button variant="info">Documentation</Button>
+						<Button variant="primary">Get Started</Button>
 					</LinearModalFooter>
 				</LinearModalContent>
-			</LinearModal>
+			</Modal>
 		</div>
 	)
 }

@@ -1,5 +1,4 @@
 import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
-import { prisma } from '@/lib/prisma'
 import { CreateContextOptions } from '@/shared/types'
 
 function isPagesRouterContext(
@@ -12,12 +11,10 @@ export function createTRPCContext(opts: CreateContextOptions) {
 	if (isPagesRouterContext(opts)) {
 		return {
 			...opts,
-			prisma,
 		}
 	} else {
 		return {
 			req: opts.req,
-			prisma,
 		}
 	}
 }

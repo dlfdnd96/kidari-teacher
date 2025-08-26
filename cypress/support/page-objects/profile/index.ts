@@ -1,5 +1,0 @@
-export { ProfilePage } from './ProfilePage'
-export { ProfileFormPage } from './ProfileFormPage'
-export { UserProfileFormPage } from './UserProfileFormPage'
-export { SetupPage } from './SetupPage'
-export { profileSelectors } from './selectors'

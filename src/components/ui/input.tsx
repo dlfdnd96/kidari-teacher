@@ -1,21 +1,86 @@
-import * as React from 'react'
+'use client'
 
+import React, {
+	forwardRef,
+	type InputHTMLAttributes,
+	type TextareaHTMLAttributes,
+} from 'react'
 import { cn } from '@/lib/utils'
 
-function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
-	return (
-		<input
-			type={type}
-			data-slot="input"
-			className={cn(
-				'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-				'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-				'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
-				className,
-			)}
-			{...props}
-		/>
-	)
+const baseInputStyles = [
+	'flex w-full rounded-lg border px-3 py-2 text-sm',
+	'bg-white/5 border-white/8 text-[#F7F8F8] placeholder:text-[#8A8F98]',
+	'transition-all duration-150 ease-out',
+	'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:border-white/20',
+	'disabled:cursor-not-allowed disabled:opacity-50',
+] as const
+
+const errorStyles =
+	'border-[#F44336] focus-visible:border-[#F44336] focus-visible:ring-[#F44336]/20'
+
+export interface LinearInputProps
+	extends InputHTMLAttributes<HTMLInputElement> {
+	error?: boolean
 }
 
-export { Input }
+export interface LinearTextareaProps
+	extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+	error?: boolean
+	resizable?: boolean
+	minHeight?: number
+}
+
+const Input = forwardRef<HTMLInputElement, LinearInputProps>(
+	({ className, type = 'text', error = false, ...props }, ref) => (
+		<input
+			type={type}
+			className={cn(
+				baseInputStyles,
+				'h-10',
+				'file:border-0 file:bg-transparent file:text-sm file:font-medium',
+				error && errorStyles,
+				className,
+			)}
+			ref={ref}
+			{...props}
+		/>
+	),
+)
+Input.displayName = 'Input'
+
+const LinearTextarea = forwardRef<HTMLTextAreaElement, LinearTextareaProps>(
+	(
+		{ className, error = false, resizable = false, minHeight = 80, ...props },
+		ref,
+	) => (
+		<textarea
+			className={cn(
+				baseInputStyles,
+				`min-h-[${minHeight}px]`,
+				resizable ? 'resize-y' : 'resize-none',
+				error && errorStyles,
+				className,
+			)}
+			ref={ref}
+			{...props}
+		/>
+	),
+)
+LinearTextarea.displayName = 'LinearTextarea'
+
+const LinearLabel = forwardRef<
+	HTMLLabelElement,
+	React.LabelHTMLAttributes<HTMLLabelElement>
+>(({ className, ...props }, ref) => (
+	<label
+		ref={ref}
+		className={cn(
+			'text-sm font-medium text-[#F7F8F8] leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+			className,
+		)}
+		{...props}
+	/>
+))
+LinearLabel.displayName = 'LinearLabel'
+
+export { Input, LinearTextarea, LinearLabel }

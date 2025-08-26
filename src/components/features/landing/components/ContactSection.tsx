@@ -1,9 +1,9 @@
 'use client'
 
 import { Mail } from 'lucide-react'
-import { LinearContainer } from '@/components/ui/linear/linear-navigation'
-import { LinearButton } from '@/components/ui/linear/linear-button'
-import { LinearH2, LinearText } from '@/components/ui/linear/linear-typography'
+import { LinearContainer } from '@/components/ui/navigation'
+import { Button } from '@/components/ui/button'
+import { LinearH2, LinearText } from '@/components/ui/typography'
 import { SECTION_IDS } from '@/constants/landing'
 import * as z from 'zod/mini'
 import { handleEmailContact } from '@/utils/email'
@@ -23,7 +23,7 @@ export function ContactSection() {
 							<LinearText className="text-xl text-white/90 leading-loose tracking-wide">
 								전문직 진로에 대해 궁금하다면?
 							</LinearText>
-							<LinearButton
+							<Button
 								variant="primary"
 								size="lg"
 								className="px-8 py-4 text-base font-medium tracking-tight rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/90 hover:text-[#08090A] hover:border-white hover:shadow-lg hover:shadow-white/10 transition-all duration-200 hover:-translate-y-0.5"
@@ -31,7 +31,7 @@ export function ContactSection() {
 							>
 								<Mail className="w-5 h-5" />
 								문의하기
-							</LinearButton>
+							</Button>
 						</div>
 					</div>
 				</div>

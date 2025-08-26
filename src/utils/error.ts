@@ -16,18 +16,6 @@ export const ERROR_MESSAGES = {
 		'알 수 없는 오류가 발생했습니다. 문제가 지속되면 관리자에게 문의해주세요.',
 } as const
 
-export const CLIENT_ERROR_KEY_MAPPING = {
-	NETWORK_ERROR: 'NETWORK_ERROR',
-	VALIDATION_ERROR: 'VALIDATION_ERROR',
-	AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
-	AUTHORIZATION_ERROR: 'AUTHORIZATION_ERROR',
-	NOT_FOUND_ERROR: 'NOT_FOUND_ERROR',
-	CONFLICT_ERROR: 'CONFLICT_ERROR',
-	RATE_LIMIT_ERROR: 'RATE_LIMIT_ERROR',
-	SERVER_ERROR: 'SERVER_ERROR',
-	UNKNOWN_ERROR: 'UNKNOWN_ERROR',
-}
-
 export const TRPC_ERROR_MAPPING = {
 	BAD_REQUEST: ERROR_MESSAGES.VALIDATION_ERROR,
 	UNAUTHORIZED: ERROR_MESSAGES.AUTHENTICATION_ERROR,
@@ -96,24 +84,6 @@ export function getErrorMessage(error: any): string {
 	return ERROR_MESSAGES.UNKNOWN_ERROR
 }
 
-export function handleClientError(
-	error: any,
-	showError: (message: string, title?: string) => void,
-	title: string = '오류',
-): void {
-	const safeMessage = getErrorMessage(error)
-
-	if (process.env.NODE_ENV === 'development') {
-		console.error(`Client Error [${title}]:`, {
-			message: error?.message,
-			code: error?.code,
-			timestamp: formatISO(new TZDate(new Date(), TIME_ZONE.UTC)),
-		})
-	}
-
-	showError(safeMessage, title)
-}
-
 export function logError(error: any, context: string): void {
 	const timestamp = formatISO(new TZDate(new Date(), TIME_ZONE.UTC))
 	const sanitizedError = {
@@ -132,12 +102,4 @@ export function logError(error: any, context: string): void {
 	})
 
 	console.error(`[ERROR] ${context}:`, logEntry)
-}
-
-export function isValidationError(error: any): boolean {
-	return (
-		error?.name === 'ZodError' ||
-		error?.code === 'BAD_REQUEST' ||
-		error?.message?.includes('validation')
-	)
 }

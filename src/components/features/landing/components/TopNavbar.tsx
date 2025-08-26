@@ -1,10 +1,10 @@
 import Image from 'next/image'
-import { LinearNavbar } from '@/components/ui/linear/linear-navbar'
+import { Navbar } from '@/components/ui/navbar'
 import { BRAND_INFO, MENU_ITEMS } from '@/constants/landing'
 
 export function TopNavbar() {
 	return (
-		<LinearNavbar
+		<Navbar
 			logo={
 				<Image
 					src={BRAND_INFO.LOGO_PATH}

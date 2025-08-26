@@ -1,143 +1,268 @@
 'use client'
 
-import * as React from 'react'
-import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { XIcon } from 'lucide-react'
-
+import React, {
+	type DialogHTMLAttributes,
+	forwardRef,
+	type ReactNode,
+	useCallback,
+	useEffect,
+} from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { X } from 'lucide-react'
 
-function Dialog({
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) {
-	return <DialogPrimitive.Root data-slot="dialog" {...props} />
+const linearDialogVariants = cva([
+	'fixed inset-0 z-[9999]',
+	'bg-black/50 backdrop-blur-sm',
+	'data-[state=open]:animate-in data-[state=closed]:animate-out',
+	'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+])
+
+const linearDialogContentVariants = cva(
+	[
+		'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-h-[90vh] p-4',
+		'bg-[#0A0B0D] border border-[#1C1D20] rounded-lg shadow-lg',
+		'data-[state=open]:animate-in data-[state=closed]:animate-out',
+		'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+		'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+	],
+	{
+		variants: {
+			size: {
+				sm: 'max-w-sm',
+				default: 'max-w-md',
+				lg: 'max-w-lg',
+				xl: 'max-w-xl',
+				full: 'max-w-full',
+			},
+		},
+		defaultVariants: {
+			size: 'default',
+		},
+	},
+)
+
+export interface LinearDialogProps
+	extends Omit<DialogHTMLAttributes<HTMLDivElement>, 'open'>,
+		VariantProps<typeof linearDialogContentVariants> {
+	isOpen?: boolean
+	onClose?: () => void
+	children: ReactNode
+	closeOnEscape?: boolean
+	closeOnOverlayClick?: boolean
 }
 
-function DialogTrigger({
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-	return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+export interface LinearDialogContentProps
+	extends React.HTMLAttributes<HTMLDivElement> {
+	children: ReactNode
 }
 
-function DialogPortal({
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-	return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+export interface LinearDialogHeaderProps
+	extends React.HTMLAttributes<HTMLDivElement> {
+	children: ReactNode
 }
 
-function DialogClose({
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
-	return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+export interface LinearDialogTitleProps
+	extends React.HTMLAttributes<HTMLHeadingElement> {
+	children: ReactNode
 }
 
-function DialogOverlay({
-	className,
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
-	return (
-		<DialogPrimitive.Overlay
-			data-slot="dialog-overlay"
-			className={cn(
-				'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
-				className,
-			)}
-			{...props}
-		/>
-	)
+export interface LinearDialogDescriptionProps
+	extends React.HTMLAttributes<HTMLParagraphElement> {
+	children: ReactNode
 }
 
-function DialogContent({
-	className,
-	children,
-	showCloseButton = true,
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-	showCloseButton?: boolean
-}) {
-	return (
-		<DialogPortal data-slot="dialog-portal">
-			<DialogOverlay />
-			<DialogPrimitive.Content
-				data-slot="dialog-content"
-				className={cn(
-					'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg',
-					className,
-				)}
+export interface LinearDialogFooterProps
+	extends React.HTMLAttributes<HTMLDivElement> {
+	children: ReactNode
+}
+
+export interface LinearDialogCloseButtonProps
+	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+	label?: string
+}
+
+const Dialog = forwardRef<HTMLDivElement, LinearDialogProps>(
+	(
+		{
+			className,
+			size,
+			isOpen = false,
+			onClose,
+			children,
+			closeOnEscape = true,
+			closeOnOverlayClick = true,
+			...props
+		},
+		ref,
+	) => {
+		const handleOverlayClick = useCallback(() => {
+			if (closeOnOverlayClick && onClose) {
+				onClose()
+			}
+		}, [closeOnOverlayClick, onClose])
+
+		const handleContentClick = useCallback((e: React.MouseEvent) => {
+			e.stopPropagation()
+		}, [])
+
+		useEffect(() => {
+			if (!closeOnEscape || !isOpen || !onClose) return
+
+			const handleKeyDown = (e: KeyboardEvent) => {
+				if (e.key === 'Escape') {
+					onClose()
+				}
+			}
+
+			document.addEventListener('keydown', handleKeyDown)
+			return () => document.removeEventListener('keydown', handleKeyDown)
+		}, [closeOnEscape, isOpen, onClose])
+
+		if (!isOpen) {
+			return null
+		}
+
+		return (
+			<div
+				className={cn(linearDialogVariants({ className }))}
+				data-state={isOpen ? 'open' : 'closed'}
+				onClick={handleOverlayClick}
+				ref={ref}
+				role="dialog"
+				aria-modal="true"
 				{...props}
 			>
-				{children}
-				{showCloseButton && (
-					<DialogPrimitive.Close
-						data-slot="dialog-close"
-						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-					>
-						<XIcon />
-						<span className="sr-only">Close</span>
-					</DialogPrimitive.Close>
-				)}
-			</DialogPrimitive.Content>
-		</DialogPortal>
-	)
-}
+				<div
+					className={cn(linearDialogContentVariants({ size }))}
+					onClick={handleContentClick}
+				>
+					{children}
+				</div>
+			</div>
+		)
+	},
+)
 
-function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
-	return (
-		<div
-			data-slot="dialog-header"
-			className={cn('flex flex-col gap-2 text-center sm:text-left', className)}
-			{...props}
-		/>
-	)
-}
+const LinearDialogContent = forwardRef<
+	HTMLDivElement,
+	LinearDialogContentProps
+>(({ className, children, ...props }, ref) => (
+	<div
+		className={cn('flex flex-col overflow-hidden', className)}
+		ref={ref}
+		{...props}
+	>
+		{children}
+	</div>
+))
 
-function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
-	return (
+const LinearDialogHeader = forwardRef<HTMLDivElement, LinearDialogHeaderProps>(
+	({ className, children, ...props }, ref) => (
 		<div
-			data-slot="dialog-footer"
 			className={cn(
-				'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
+				'flex items-center justify-between p-6 border-b border-[#1C1D20] flex-shrink-0',
 				className,
 			)}
+			ref={ref}
 			{...props}
-		/>
-	)
-}
+		>
+			{children}
+		</div>
+	),
+)
 
-function DialogTitle({
-	className,
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
-	return (
-		<DialogPrimitive.Title
-			data-slot="dialog-title"
-			className={cn('text-lg leading-none font-semibold', className)}
-			{...props}
-		/>
-	)
-}
+const LinearDialogTitle = forwardRef<
+	HTMLHeadingElement,
+	LinearDialogTitleProps
+>(({ className, children, ...props }, ref) => (
+	<h2
+		className={cn(
+			'text-lg font-semibold text-[#F7F8F8] leading-none tracking-tight',
+			className,
+		)}
+		ref={ref}
+		{...props}
+	>
+		{children}
+	</h2>
+))
 
-function DialogDescription({
-	className,
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
-	return (
-		<DialogPrimitive.Description
-			data-slot="dialog-description"
-			className={cn('text-muted-foreground text-sm', className)}
+const LinearDialogDescription = forwardRef<
+	HTMLParagraphElement,
+	LinearDialogDescriptionProps
+>(({ className, children, ...props }, ref) => (
+	<p className={cn('text-sm text-[#8A8F98]', className)} ref={ref} {...props}>
+		{children}
+	</p>
+))
+
+const LinearDialogBody = forwardRef<
+	HTMLDivElement,
+	React.HTMLAttributes<HTMLDivElement>
+>(({ className, children, ...props }, ref) => (
+	<div
+		className={cn('flex-1 overflow-y-auto p-6 min-h-0', className)}
+		ref={ref}
+		{...props}
+	>
+		{children}
+	</div>
+))
+
+const LinearDialogFooter = forwardRef<HTMLDivElement, LinearDialogFooterProps>(
+	({ className, children, ...props }, ref) => (
+		<div
+			className={cn(
+				'flex items-center justify-end gap-3 p-6 border-t border-[#1C1D20] flex-shrink-0',
+				className,
+			)}
+			ref={ref}
 			{...props}
-		/>
-	)
-}
+		>
+			{children}
+		</div>
+	),
+)
+
+const LinearDialogCloseButton = forwardRef<
+	HTMLButtonElement,
+	LinearDialogCloseButtonProps
+>(({ className, onClick, label = '닫기', ...props }, ref) => (
+	<button
+		type="button"
+		className={cn(
+			'absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity',
+			'hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2',
+			'disabled:pointer-events-none',
+			className,
+		)}
+		onClick={onClick}
+		ref={ref}
+		aria-label={label}
+		{...props}
+	>
+		<X className="h-4 w-4 text-[#8A8F98]" />
+		<span className="sr-only">{label}</span>
+	</button>
+))
+
+Dialog.displayName = 'Dialog'
+LinearDialogContent.displayName = 'LinearDialogContent'
+LinearDialogHeader.displayName = 'LinearDialogHeader'
+LinearDialogTitle.displayName = 'LinearDialogTitle'
+LinearDialogDescription.displayName = 'LinearDialogDescription'
+LinearDialogBody.displayName = 'LinearDialogBody'
+LinearDialogFooter.displayName = 'LinearDialogFooter'
+LinearDialogCloseButton.displayName = 'LinearDialogCloseButton'
 
 export {
 	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogOverlay,
-	DialogPortal,
-	DialogTitle,
-	DialogTrigger,
+	LinearDialogContent,
+	LinearDialogHeader,
+	LinearDialogTitle,
+	LinearDialogDescription,
+	LinearDialogBody,
+	LinearDialogFooter,
+	LinearDialogCloseButton,
 }

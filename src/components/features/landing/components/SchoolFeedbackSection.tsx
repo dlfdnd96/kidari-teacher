@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { LinearH3 } from '@/components/ui/linear/linear-typography'
-import { LinearTestimonials } from '@/components/ui/linear/linear-testimonials'
+import { LinearH3 } from '@/components/ui/typography'
+import { Testimonials } from '@/components/ui/testimonials'
 import { SCHOOL_FEEDBACKS } from '@/constants/landing'
 
 export function SchoolFeedbackSection() {
@@ -17,7 +17,7 @@ export function SchoolFeedbackSection() {
 				</div>
 
 				{/* Testimonials Grid */}
-				<LinearTestimonials
+				<Testimonials
 					testimonials={SCHOOL_FEEDBACKS}
 					columns={3}
 					variant="default"
