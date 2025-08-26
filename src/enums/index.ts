@@ -1,16 +1,6 @@
 import { z } from 'zod/mini'
 
 export const Enum = {
-	Role: z.enum(['ADMIN', 'USER']).def.entries,
-	VolunteerActivityStatus: z.enum([
-		'PLANNING',
-		'RECRUITING',
-		'SELECTED',
-		'IN_PROGRESS',
-		'COMPLETED',
-		'CANCELLED',
-	]).def.entries,
-	ApplicationStatus: z.enum(['WAITING', 'SELECTED', 'REJECTED']).def.entries,
 	Profession: z.enum([
 		'KOREAN_MEDICINE_DOCTOR',
 		'DENTIST',
@@ -32,31 +22,9 @@ export const Enum = {
 		'MECHANICAL_ENGINEERING_PHD',
 		'INDUSTRIAL_ENGINEERING_PHD',
 	]).def.entries,
-
-	ToastPosition: z.enum([
-		'top-left',
-		'top-center',
-		'top-right',
-		'bottom-left',
-		'bottom-center',
-		'bottom-right',
-	]).def.entries,
-
-	TestDataType: z.enum(['notices', 'users', 'sessions', 'all', 'test-data']).def
-		.entries,
 }
 
 export const ZodEnum = {
-	Role: z.enum(['ADMIN', 'USER']),
-	VolunteerActivityStatus: z.enum([
-		'PLANNING',
-		'RECRUITING',
-		'SELECTED',
-		'IN_PROGRESS',
-		'COMPLETED',
-		'CANCELLED',
-	]),
-	ApplicationStatus: z.enum(['WAITING', 'SELECTED', 'REJECTED']),
 	Profession: z.enum([
 		'KOREAN_MEDICINE_DOCTOR',
 		'DENTIST',
@@ -77,25 +45,5 @@ export const ZodEnum = {
 		'PATENT_ATTORNEY',
 		'MECHANICAL_ENGINEERING_PHD',
 		'INDUSTRIAL_ENGINEERING_PHD',
-	]),
-
-	ToastPosition: z.enum([
-		'top-left',
-		'top-center',
-		'top-right',
-		'bottom-left',
-		'bottom-center',
-		'bottom-right',
-	]),
-
-	TestDataType: z.enum([
-		'notices',
-		'applications',
-		'volunteer-activities',
-		'users',
-		'user-profiles',
-		'sessions',
-		'all',
-		'test-data',
 	]),
 }
