@@ -47,14 +47,4 @@ export {
 	LinearDialogFooter,
 	LinearDialogCloseButton,
 } from './dialog'
-export {
-	Modal,
-	LinearModalContent,
-	LinearModalHeader,
-	LinearModalTitle,
-	LinearModalDescription,
-	LinearModalBody,
-	LinearModalFooter,
-	LinearModalCloseButton,
-} from './modal'
 export { Timeline } from './timeline'

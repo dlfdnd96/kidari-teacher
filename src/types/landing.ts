@@ -5,10 +5,6 @@ export interface ActivityStatisticsProps {
 	activityData: ZodType<typeof ActivityRecordSchema> | null
 }
 
-export interface RecentActivitiesTableProps {
-	activityData: ZodType<typeof ActivityRecordSchema> | null
-}
-
 export interface ProfessionTag {
 	id: string
 	label: string
