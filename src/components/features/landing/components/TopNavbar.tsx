@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Navbar } from '@/components/ui/navbar'
+import { Navbar } from '@/components/ui/linear/navbar'
 import { BRAND_INFO, MENU_ITEMS } from '@/constants/landing'
 
 export function TopNavbar() {

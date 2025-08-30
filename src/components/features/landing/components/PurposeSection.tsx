@@ -1,10 +1,10 @@
-import { LinearContainer } from '@/components/ui/navigation'
+import { LinearContainer } from '@/components/ui/linear/navigation'
 import {
 	LinearH2,
 	LinearH4,
 	LinearText,
 	LinearTextSecondary,
-} from '@/components/ui/typography'
+} from '@/components/ui/linear/typography'
 import { SECTION_IDS } from '@/constants/landing'
 
 export function PurposeSection() {

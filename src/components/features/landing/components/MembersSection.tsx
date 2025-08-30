@@ -1,6 +1,6 @@
-import { LinearContainer } from '@/components/ui/navigation'
-import { LinearH2, LinearText } from '@/components/ui/typography'
-import { TagCloud } from '@/components/ui/tag-cloud'
+import { LinearContainer } from '@/components/ui/linear/navigation'
+import { LinearH2, LinearText } from '@/components/ui/linear/typography'
+import { TagCloud } from '@/components/ui/linear/tag-cloud'
 import { PROFESSION_TAGS, SECTION_IDS } from '@/constants/landing'
 
 export function MembersSection() {

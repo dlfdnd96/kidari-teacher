@@ -1,6 +1,6 @@
 'use client'
 
-import { Footer } from '@/components/ui/footer'
+import { Footer } from '@/components/ui/linear/footer'
 
 export function FooterSection() {
 	return (

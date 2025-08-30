@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { LinearH2, LinearText } from '@/components/ui/typography'
+import { LinearH2, LinearText } from '@/components/ui/linear/typography'
 import { COLLABORATION_STEPS, SECTION_IDS } from '@/constants/landing'
-import { Timeline } from '@/components/ui/timeline'
+import { Timeline } from '@/components/ui/linear/timeline'
 
 export function HowToCollaborateSection() {
 	return (

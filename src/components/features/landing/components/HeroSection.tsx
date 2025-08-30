@@ -1,5 +1,5 @@
 import * as z from 'zod/mini'
-import { Hero } from '@/components/ui/hero'
+import { Hero } from '@/components/ui/linear/hero'
 import { handleEmailContact } from '@/utils/email'
 import { BRAND_INFO } from '@/constants/landing'
 

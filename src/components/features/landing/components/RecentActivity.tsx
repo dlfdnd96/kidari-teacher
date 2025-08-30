@@ -1,8 +1,8 @@
 import { JSX, useCallback, useEffect, useMemo, useState } from 'react'
 import * as z from 'zod/mini'
 import { ArrowRight } from 'lucide-react'
-import { LinearH3, LinearText } from '@/components/ui/typography'
-import { Button } from '@/components/ui/button'
+import { LinearH3, LinearText } from '@/components/ui/linear/typography'
+import { Button } from '@/components/ui/linear/button'
 import {
 	Modal,
 	LinearModalBody,
@@ -10,7 +10,7 @@ import {
 	LinearModalFooter,
 	LinearModalHeader,
 	LinearModalTitle,
-} from '@/components/ui/modal'
+} from '@/components/ui/linear/modal'
 import type { RecentActivitiesTableProps } from '@/types/landing'
 import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
 import { createDateStringFormat } from '@/utils/date'

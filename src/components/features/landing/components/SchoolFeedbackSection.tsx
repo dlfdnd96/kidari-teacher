@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { LinearH3 } from '@/components/ui/typography'
-import { Testimonials } from '@/components/ui/testimonials'
+import { LinearH3 } from '@/components/ui/linear/typography'
+import { Testimonials } from '@/components/ui/linear/testimonials'
 import { SCHOOL_FEEDBACKS } from '@/constants/landing'
 
 export function SchoolFeedbackSection() {

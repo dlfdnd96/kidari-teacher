@@ -1,9 +1,9 @@
 'use client'
 
 import { Mail } from 'lucide-react'
-import { LinearContainer } from '@/components/ui/navigation'
-import { Button } from '@/components/ui/button'
-import { LinearH2, LinearText } from '@/components/ui/typography'
+import { LinearContainer } from '@/components/ui/linear/navigation'
+import { Button } from '@/components/ui/linear/button'
+import { LinearH2, LinearText } from '@/components/ui/linear/typography'
 import { SECTION_IDS } from '@/constants/landing'
 import * as z from 'zod/mini'
 import { handleEmailContact } from '@/utils/email'
