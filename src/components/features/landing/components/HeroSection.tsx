@@ -1,7 +1,6 @@
 import * as z from 'zod/mini'
 import { handleEmailContact } from '@/utils/email'
 import { BRAND_INFO } from '@/constants/landing'
-import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { Circle, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/linear'
@@ -113,11 +112,7 @@ export function HeroSection() {
 	const email = z.email().parse(process.env.NEXT_PUBLIC_CONTACT_EMAIL)
 
 	return (
-		<section
-			className={cn(
-				'relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[var(--theme-primary,#030303)]',
-			)}
-		>
+		<section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[var(--theme-primary,#030303)]">
 			<div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
 
 			<div className="absolute inset-0 overflow-hidden">

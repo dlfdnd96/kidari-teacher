@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 import { LinearH4, LinearText } from '@/components/ui/linear/typography'
-import type { ActivityStatisticsProps } from '@/types/landing'
 import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
+import { ZodType } from '@/shared/types'
+import { ActivityRecordSchema } from '@/shared/schemas/landing'
+
+interface ActivityStatisticsProps {
+	activityData: ZodType<typeof ActivityRecordSchema> | null
+}
 
 export function ActivityStatistics({ activityData }: ActivityStatisticsProps) {
 	const completedActivitiesCount = useMemo(() => {

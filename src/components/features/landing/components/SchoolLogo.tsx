@@ -1,7 +1,13 @@
 import Image from 'next/image'
 import { LinearH3, LinearText } from '@/components/ui/linear/typography'
-import type { SchoolLogo } from '@/types/landing'
 import { SCHOOL_LOGOS } from '@/constants/landing'
+
+interface SchoolLogo {
+	src: string
+	alt: string
+	width: number
+	height: number
+}
 
 const LOGO_COMMON_CLASS =
 	'opacity-60 hover:opacity-100 transition-opacity duration-300 filter brightness-0 invert'
@@ -34,16 +40,6 @@ export function SchoolLogo() {
 						e.currentTarget.style.display = 'none'
 					}}
 				/>
-			</div>
-		)
-	}
-
-	if (SCHOOL_LOGOS.length === 0) {
-		return (
-			<div className="max-w-6xl mx-auto mt-24 text-center">
-				<LinearText className="text-white/60">
-					협력 학교 정보를 불러올 수 없습니다.
-				</LinearText>
 			</div>
 		)
 	}

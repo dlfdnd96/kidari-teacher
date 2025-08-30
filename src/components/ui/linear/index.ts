@@ -21,7 +21,6 @@ export {
 } from './typography'
 export { Carousel, LinearCarouselItem } from './carousel'
 export { Testimonials, LinearTestimonialCard } from './testimonials'
-export { LinearTag, TagCloud, linearTagVariants } from './tag-cloud'
 export {
 	Dialog,
 	LinearDialogContent,
