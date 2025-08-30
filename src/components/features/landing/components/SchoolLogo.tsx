@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { LinearH3, LinearText } from '@/components/ui/linear/typography'
 import { SCHOOL_LOGOS } from '@/constants/landing'
 
 interface SchoolLogo {
@@ -47,13 +46,13 @@ export function SchoolLogo() {
 	return (
 		<div className="max-w-6xl mx-auto mt-24">
 			<div className="text-center mb-16">
-				<LinearH3 className="text-2xl font-semibold text-center">
+				<h3 className="text-2xl font-semibold text-slate-50 text-center leading-relaxed tracking-tight">
 					협력 학교
-				</LinearH3>
-				<LinearText className="text-lg leading-loose tracking-wide text-white/80 max-w-4xl mx-auto mt-4">
+				</h3>
+				<p className="text-lg leading-loose tracking-wide text-white/80 max-w-4xl mx-auto mt-4">
 					다양한 학교에서 지속적인 진로 멘토링을 통해
 					<br />더 많은 학생들이 진로에 대해 함께 고민할 수 있도록 돕고 있습니다
-				</LinearText>
+				</p>
 			</div>
 
 			<div

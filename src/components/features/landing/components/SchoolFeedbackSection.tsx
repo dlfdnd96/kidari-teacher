@@ -39,7 +39,7 @@ export function SchoolFeedbackSection() {
 		<section className="py-20 px-4">
 			<div className="max-w-7xl mx-auto">
 				<div className="text-center mb-16">
-					<h3 className="text-2xl font-semibold text-center leading-relaxed tracking-tight text-slate-50">
+					<h3 className="text-2xl font-semibold text-slate-50 text-center leading-relaxed tracking-tight">
 						현장 반응
 					</h3>
 				</div>

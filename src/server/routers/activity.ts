@@ -2,7 +2,7 @@ import { createTRPCRouter } from '@/server/api/trpc'
 import { procedure } from '@/server/trpc'
 import * as z from 'zod/mini'
 import { TRPCError } from '@trpc/server'
-import { ActivityRecordSchema } from '@/shared/schemas/landing'
+import { ActivityRecordSchema } from '@/schemas/landing'
 import { createSupabaseClient } from '@/server/api/supabase'
 import { ERROR_MESSAGE } from '@/constants/error'
 

@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React, { useCallback, useMemo, useState } from 'react'
 import { MenuIcon } from 'lucide-react'
 import { BRAND_INFO, MENU_ITEMS } from '@/constants/landing'
-import { Button } from '@/components/ui/linear'
+import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
 
 interface MenuItem {
@@ -105,7 +105,6 @@ export function TopNavbar() {
 
 					{/* Mobile Menu Button */}
 					<Button
-						variant="ghost"
 						size="icon"
 						className="md:hidden"
 						onClick={toggleMenu}

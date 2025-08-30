@@ -3,7 +3,7 @@ import { handleEmailContact } from '@/utils/email'
 import { BRAND_INFO } from '@/constants/landing'
 import { motion } from 'framer-motion'
 import { Circle, Mail } from 'lucide-react'
-import { Button } from '@/components/ui/linear'
+import { Button } from '@/components/ui/button'
 import React, { memo, useCallback } from 'react'
 
 interface HeroAction {
@@ -13,7 +13,6 @@ interface HeroAction {
 
 interface ActionButtonProps {
 	action: HeroAction
-	variant: 'primary' | 'secondary'
 }
 
 const WAVE_PATTERN_STYLES = {
@@ -78,7 +77,7 @@ const WavePattern = memo(() => {
 
 WavePattern.displayName = 'WavePattern'
 
-const ActionButton = memo(({ action, variant }: ActionButtonProps) => {
+const ActionButton = memo(({ action }: ActionButtonProps) => {
 	const handleClick = useCallback(() => {
 		if (action.onClick) {
 			action.onClick()
@@ -86,7 +85,6 @@ const ActionButton = memo(({ action, variant }: ActionButtonProps) => {
 	}, [action])
 
 	const baseProps = {
-		variant,
 		size: 'lg' as const,
 		onClick: handleClick,
 	}
@@ -94,7 +92,7 @@ const ActionButton = memo(({ action, variant }: ActionButtonProps) => {
 	return (
 		<Button
 			{...baseProps}
-			className="px-8 py-4 text-base font-medium tracking-tight rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/90 hover:text-[#08090A] hover:border-white hover:shadow-lg hover:shadow-white/10"
+			className="px-8 py-4 text-base font-medium tracking-tight rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/90 hover:text-[#08090A] hover:border-white hover:shadow-lg hover:shadow-white/10 cursor-pointer"
 		>
 			<Mail className="w-5 h-5" />
 			{sanitizeText(action.label)}
@@ -186,7 +184,6 @@ export function HeroSection() {
 								label: '문의하기',
 								onClick: () => handleEmailContact(email),
 							}}
-							variant="primary"
 						/>
 					</motion.div>
 				</div>

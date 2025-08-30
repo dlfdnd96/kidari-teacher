@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import * as z from 'zod/mini'
 import { ArrowRight } from 'lucide-react'
-import { LinearH3, LinearText } from '@/components/ui/linear/typography'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -21,11 +20,11 @@ import {
 } from '@/components/ui/dialog'
 import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
 import { createDateStringFormat } from '@/utils/date'
-import { ZodType } from '@/shared/types'
+import { ZodType } from '@/types'
 import {
 	ActivityRecordHistorySchema,
 	ActivityRecordSchema,
-} from '@/shared/schemas/landing'
+} from '@/schemas/landing'
 
 interface RecentActivitiesTableProps {
 	activityData: ZodType<typeof ActivityRecordSchema> | null
@@ -331,9 +330,9 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 	return (
 		<div className="mt-16 max-w-6xl mx-auto">
 			<div className="mb-8">
-				<LinearH3 className="text-2xl font-semibold text-center">
+				<h3 className="text-2xl font-semibold text-slate-50 text-center leading-relaxed tracking-tight">
 					최근 활동 내역
-				</LinearH3>
+				</h3>
 			</div>
 
 			<div className="overflow-x-auto">
@@ -365,23 +364,23 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 									className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
 								>
 									<td className="py-4 px-4 text-center">
-										<LinearText className="font-medium">
+										<p className="font-medium text-sm leading-normal text-slate-50">
 											{activity.school
 												? escapeHtml(activity.school)
 												: '정보 없음'}
-										</LinearText>
+										</p>
 									</td>
 									<td className="py-4 px-4 text-center">
-										<LinearText className="text-white/80">
+										<p className="text-white/80 text-sm leading-normal">
 											{activity.location
 												? escapeHtml(activity.location)
 												: '정보 없음'}
-										</LinearText>
+										</p>
 									</td>
 									<td className="py-4 px-4 text-center">
-										<LinearText className="text-white/80">
+										<p className="text-white/80 text-sm leading-normal">
 											{getLastActivityDate(activity)}
-										</LinearText>
+										</p>
 									</td>
 									<td className="py-4 px-4 text-center">
 										<span
@@ -398,9 +397,9 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 						) : (
 							<tr>
 								<td colSpan={4} className="py-8 px-4 text-center">
-									<LinearText className="text-white/60">
+									<p className="text-white/60 text-sm leading-normal">
 										활동 내역이 없습니다.
-									</LinearText>
+									</p>
 								</td>
 							</tr>
 						)}

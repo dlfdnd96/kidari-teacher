@@ -1,5 +1,5 @@
 import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
-import { CreateContextOptions } from '@/shared/types'
+import { CreateContextOptions } from '@/types'
 
 function isPagesRouterContext(
 	opts: CreateContextOptions,
