@@ -30,4 +30,3 @@ export {
 	LinearDialogFooter,
 	LinearDialogCloseButton,
 } from './dialog'
-export { Timeline } from './timeline'
