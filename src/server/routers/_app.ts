@@ -1,10 +1,10 @@
 import { router } from '@/server/trpc'
-import { historyRouter } from '@/server/routers/history'
 import { activityRouter } from '@/server/routers/activity'
+import { statisticsRouter } from '@/server/routers/statistics'
 
 export const appRouter = router({
-	history: historyRouter,
 	activity: activityRouter,
+	statistics: statisticsRouter,
 })
 
 export type AppRouter = typeof appRouter
