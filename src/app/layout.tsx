@@ -34,10 +34,10 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<TrpcProvider>{children}</TrpcProvider>
+				<Footer
+					bottomText={`Copyright © ${new Date().getFullYear()} 키다리 선생님. All rights reserved.`}
+				/>
 			</body>
-			<Footer
-				bottomText={`Copyright © ${new Date().getFullYear()} 키다리 선생님. All rights reserved.`}
-			/>
 		</html>
 	)
 }
