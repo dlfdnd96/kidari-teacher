@@ -20,7 +20,6 @@ export {
 	LinearLink,
 } from './typography'
 export { Carousel, LinearCarouselItem } from './carousel'
-export { Testimonials, LinearTestimonialCard } from './testimonials'
 export {
 	Dialog,
 	LinearDialogContent,
