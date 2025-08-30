@@ -1,13 +1,35 @@
 'use client'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { httpBatchLink } from '@trpc/client'
-import { createTRPCReact } from '@trpc/react-query'
+import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import React, { useState } from 'react'
 import type { AppRouter } from '@/server/routers/_app'
 import superjson from 'superjson'
+import { TRPCProvider } from '@/utils/trpc'
 
-export const trpc = createTRPCReact<AppRouter>()
+function makeQueryClient() {
+	return new QueryClient({
+		defaultOptions: {
+			queries: {
+				staleTime: 60 * 1000,
+			},
+		},
+	})
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+function getQueryClient() {
+	if (typeof window === 'undefined') {
+		return makeQueryClient()
+	} else {
+		if (!browserQueryClient) {
+			browserQueryClient = makeQueryClient()
+		}
+
+		return browserQueryClient
+	}
+}
 
 function getBaseUrl() {
 	if (typeof window !== 'undefined') {
@@ -20,21 +42,9 @@ function getBaseUrl() {
 }
 
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
-	const [queryClient] = useState(
-		() =>
-			new QueryClient({
-				defaultOptions: {
-					queries: {
-						staleTime: 60 * 1000,
-						refetchOnWindowFocus: false,
-						gcTime: 5 * 60 * 1000,
-					},
-				},
-			}),
-	)
-
+	const queryClient = getQueryClient()
 	const [trpcClient] = useState(() =>
-		trpc.createClient({
+		createTRPCClient<AppRouter>({
 			links: [
 				httpBatchLink({
 					url: `${getBaseUrl()}/api/trpc`,
@@ -50,8 +60,10 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 	)
 
 	return (
-		<trpc.Provider client={trpcClient} queryClient={queryClient}>
-			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-		</trpc.Provider>
+		<QueryClientProvider client={queryClient}>
+			<TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+				{children}
+			</TRPCProvider>
+		</QueryClientProvider>
 	)
 }
