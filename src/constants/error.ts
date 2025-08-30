@@ -1,0 +1,3 @@
+export const ERROR_MESSAGE = {
+	INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+} as const

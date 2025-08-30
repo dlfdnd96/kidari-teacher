@@ -5,8 +5,7 @@ import { ActivityStatistics } from './ActivityStatistics'
 import { RecentActivity } from './RecentActivity'
 import { SchoolLogo } from './SchoolLogo'
 import { SECTION_IDS } from '@/constants/landing'
-import { useActivityData } from '@/hooks/useActivityData'
-import React from 'react'
+import { useActivityData } from '@/components/features/landing/hooks/useActivityData'
 
 export function AchievementsSection() {
 	const { data: activityData, isLoading, isError } = useActivityData()
