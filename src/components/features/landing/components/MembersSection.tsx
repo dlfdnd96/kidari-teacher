@@ -1,12 +1,12 @@
-import { LinearContainer } from '@/components/ui/linear/navigation'
 import { LinearH2, LinearText } from '@/components/ui/linear/typography'
 import { TagCloud } from '@/components/ui/linear/tag-cloud'
 import { PROFESSION_TAGS, SECTION_IDS } from '@/constants/landing'
+import { Container } from '@/components/ui/container'
 
 export function MembersSection() {
 	return (
 		<section id={SECTION_IDS.MEMBERS} className="py-20 bg-[#0A0A0A]">
-			<LinearContainer>
+			<Container>
 				<div className="text-center mb-16">
 					<LinearH2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
 						구성원
@@ -23,7 +23,7 @@ export function MembersSection() {
 						className="justify-center"
 					/>
 				</div>
-			</LinearContainer>
+			</Container>
 		</section>
 	)
 }

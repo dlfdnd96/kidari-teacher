@@ -1,4 +1,3 @@
-import { LinearContainer } from '@/components/ui/linear/navigation'
 import {
 	LinearH2,
 	LinearH4,
@@ -6,11 +5,12 @@ import {
 	LinearTextSecondary,
 } from '@/components/ui/linear/typography'
 import { SECTION_IDS } from '@/constants/landing'
+import { Container } from '@/components/ui/container'
 
 export function PurposeSection() {
 	return (
 		<section id={SECTION_IDS.PURPOSE} className="py-20">
-			<LinearContainer>
+			<Container>
 				<div className="max-w-4xl mx-auto text-center space-y-16">
 					<div className="space-y-6">
 						<LinearH2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
@@ -66,7 +66,7 @@ export function PurposeSection() {
 						</LinearText>
 					</div>
 				</div>
-			</LinearContainer>
+			</Container>
 		</section>
 	)
 }

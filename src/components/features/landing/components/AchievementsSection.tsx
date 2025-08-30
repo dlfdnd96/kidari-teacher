@@ -1,18 +1,19 @@
 'use client'
 
-import { LinearContainer, LinearH2, LinearText } from '@/components/ui/linear'
+import { LinearH2, LinearText } from '@/components/ui/linear'
 import { ActivityStatistics } from './ActivityStatistics'
 import { RecentActivity } from './RecentActivity'
 import { SchoolLogo } from './SchoolLogo'
 import { SECTION_IDS } from '@/constants/landing'
 import { useActivityData } from '@/components/features/landing/hooks/useActivityData'
+import { Container } from '@/components/ui/container'
 
 export function AchievementsSection() {
 	const { data: activityData, isLoading, isError } = useActivityData()
 
 	return (
 		<section id={SECTION_IDS.ACHIEVEMENTS} className="py-20 bg-[#0A0A0A]">
-			<LinearContainer>
+			<Container>
 				<div className="text-center mb-16">
 					<LinearH2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
 						활동 내역
@@ -41,7 +42,7 @@ export function AchievementsSection() {
 						</LinearText>
 					</div>
 				)}
-			</LinearContainer>
+			</Container>
 		</section>
 	)
 }

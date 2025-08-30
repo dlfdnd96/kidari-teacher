@@ -1,19 +1,19 @@
 'use client'
 
 import { Mail } from 'lucide-react'
-import { LinearContainer } from '@/components/ui/linear/navigation'
 import { Button } from '@/components/ui/linear/button'
 import { LinearH2, LinearText } from '@/components/ui/linear/typography'
 import { SECTION_IDS } from '@/constants/landing'
 import * as z from 'zod/mini'
 import { handleEmailContact } from '@/utils/email'
+import { Container } from '@/components/ui/container'
 
 export function ContactSection() {
 	const email = z.email().parse(process.env.NEXT_PUBLIC_CONTACT_EMAIL)
 
 	return (
 		<section id={SECTION_IDS.CONTACT} className="py-20">
-			<LinearContainer>
+			<Container>
 				<div className="max-w-4xl mx-auto text-center space-y-16">
 					<div className="space-y-6">
 						<LinearH2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
@@ -35,7 +35,7 @@ export function ContactSection() {
 						</div>
 					</div>
 				</div>
-			</LinearContainer>
+			</Container>
 		</section>
 	)
 }
