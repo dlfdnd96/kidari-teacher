@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import React from 'react'
 import { TrpcProvider } from '@/components/providers/TrpcProvider'
+import { Footer } from '@/components/layout/Footer'
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -34,6 +35,9 @@ export default function RootLayout({
 			>
 				<TrpcProvider>{children}</TrpcProvider>
 			</body>
+			<Footer
+				bottomText={`Copyright © ${new Date().getFullYear()} 키다리 선생님. All rights reserved.`}
+			/>
 		</html>
 	)
 }

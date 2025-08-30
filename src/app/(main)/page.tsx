@@ -3,7 +3,6 @@
 import {
 	AchievementsSection,
 	ContactSection,
-	FooterSection,
 	HeroSection,
 	HowToCollaborateSection,
 	MembersSection,
@@ -23,7 +22,6 @@ export default function LandingPage() {
 			<SchoolFeedbackSection />
 			<HowToCollaborateSection />
 			<ContactSection />
-			<FooterSection />
 		</div>
 	)
 }
