@@ -29,11 +29,6 @@ export {
 	LinearLink,
 } from './typography'
 export { Carousel, LinearCarouselItem } from './carousel'
-export {
-	ImageCard,
-	LinearImageGallery,
-	LinearHeroImageCard,
-} from './image-card'
 export { Navbar, LinearNavbarLogo } from './navbar'
 export { Testimonials, LinearTestimonialCard } from './testimonials'
 export { LinearTag, TagCloud, linearTagVariants } from './tag-cloud'
