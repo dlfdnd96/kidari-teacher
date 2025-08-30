@@ -35,7 +35,6 @@ export {
 	LinearHeroImageCard,
 } from './image-card'
 export { Navbar, LinearNavbarLogo } from './navbar'
-export { Hero, LinearSimpleHero, LinearFeatureHero } from './hero'
 export { Testimonials, LinearTestimonialCard } from './testimonials'
 export { LinearTag, TagCloud, linearTagVariants } from './tag-cloud'
 export {
