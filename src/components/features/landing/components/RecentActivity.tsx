@@ -27,7 +27,7 @@ import {
 } from '@/schemas/landing'
 
 interface RecentActivitiesTableProps {
-	activityData: ZodType<typeof ActivityRecordSchema> | null
+	activityData: ZodType<typeof ActivityRecordSchema>
 }
 
 const escapeHtml = (text: string): string => {
@@ -72,7 +72,7 @@ const getAllActivityDates = (
 	activity: ZodType<typeof ActivityRecordHistorySchema>,
 ): JSX.Element => {
 	if (!activity?.dates.length) {
-		return <span className="text-white/60">N/A</span>
+		return <span className="text-foreground/60">N/A</span>
 	}
 
 	const validDates = activity.dates
@@ -88,18 +88,18 @@ const getAllActivityDates = (
 		.sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
 
 	if (validDates.length === 0) {
-		return <span className="text-white/60">N/A</span>
+		return <span className="text-foreground/60">N/A</span>
 	}
 
 	if (validDates.length === 1) {
 		const lastDate = validDates[0]
-		return <span className="text-white/60">{lastDate}</span>
+		return <span className="text-foreground/60">{lastDate}</span>
 	}
 
 	return (
 		<span className="flex flex-col space-y-1">
 			{validDates.map((date, index) => (
-				<span key={index} className="px-2 py-1 rounded text-white/60">
+				<span key={index} className="px-2 py-1 rounded text-foreground/60">
 					{date}
 				</span>
 			))}
@@ -175,16 +175,15 @@ const AllActivities = memo(
 			<Dialog>
 				<DialogTrigger asChild>
 					<Button
-						variant="default"
 						size="sm"
-						className="flex items-center gap-2 cursor-pointer"
+						className="flex items-center gap-2 bg-background text-foreground hover:bg-background cursor-pointer"
 					>
 						전체 활동 내역 보기 <ArrowRight className="h-4 w-4" />
 					</Button>
 				</DialogTrigger>
-				<DialogContent className="max-w-[90vw] lg:max-w-4xl h-[80vh] bg-[#0A0B0D] border-[#1C1D20] text-white flex flex-col">
-					<DialogHeader className="border-b border-[#1C1D20] pb-4 mb-0 p-6">
-						<DialogTitle className="text-xl font-semibold text-[#F7F8F8]">
+				<DialogContent className="max-w-[90vw] lg:max-w-4xl h-[80vh] bg-background border-border text-foreground flex flex-col">
+					<DialogHeader className="border-b border-secondary pb-4 mb-0 p-6">
+						<DialogTitle className="text-xl font-semibold text-foreground">
 							전체 봉사활동 내역
 						</DialogTitle>
 					</DialogHeader>
@@ -209,18 +208,18 @@ const AllActivities = memo(
 						<div className="px-6">
 							<div className="overflow-x-auto">
 								<table className="w-full">
-									<thead className="sticky top-0 bg-[#08090A] z-10">
-										<tr className="border-b border-white/10">
-											<th className="text-center py-3 px-4 text-white/70 font-medium">
+									<thead className="sticky top-0 bg-background z-10">
+										<tr className="border-b border-foreground/10">
+											<th className="text-center py-3 px-4 text-foreground/70 font-medium">
 												학교명
 											</th>
-											<th className="text-center py-3 px-4 text-white/70 font-medium">
+											<th className="text-center py-3 px-4 text-foreground/70 font-medium">
 												지역
 											</th>
-											<th className="text-center py-3 px-4 text-white/70 font-medium">
+											<th className="text-center py-3 px-4 text-foreground/70 font-medium">
 												활동일
 											</th>
-											<th className="text-center py-3 px-4 text-white/70 font-medium">
+											<th className="text-center py-3 px-4 text-foreground/70 font-medium">
 												상태
 											</th>
 										</tr>
@@ -230,24 +229,24 @@ const AllActivities = memo(
 											filteredActivities.map((activity) => (
 												<tr
 													key={activity.uniqueKey}
-													className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
+													className="border-b border-foreground/5 hover:bg-foreground/5 transition-colors duration-200"
 												>
 													<td className="py-3 px-4 text-center">
-														<p className="text-sm leading-normal text-slate-50 font-medium">
+														<p className="text-sm leading-normal text-foreground font-medium">
 															{activity.school
 																? escapeHtml(activity.school)
 																: '정보 없음'}
 														</p>
 													</td>
 													<td className="py-3 px-4 text-center">
-														<p className="text-sm leading-normal text-white/80">
+														<p className="text-sm leading-normal text-foreground/80">
 															{activity.location
 																? escapeHtml(activity.location)
 																: '정보 없음'}
 														</p>
 													</td>
 													<td className="py-3 px-4 text-center">
-														<p className="text-sm leading-normal text-white/80">
+														<p className="text-sm leading-normal text-foreground/80">
 															{getAllActivityDates(activity)}
 														</p>
 													</td>
@@ -263,7 +262,7 @@ const AllActivities = memo(
 										) : (
 											<tr>
 												<td colSpan={4} className="py-8 px-4 text-center">
-													<p className="text-sm leading-normal text-white/60">
+													<p className="text-sm leading-normal text-foreground/60">
 														{selectedYear}년 활동 내역이 없습니다.
 													</p>
 												</td>
@@ -291,7 +290,7 @@ AllActivities.displayName = 'AllActivities'
 
 export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 	const sortedActivities = useMemo(() => {
-		if (!activityData?.activities.length) {
+		if (activityData.activities.length === 0) {
 			return []
 		}
 
@@ -321,7 +320,7 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 					new Date(a.lastValidDate).getTime()
 				)
 			})
-	}, [activityData?.activities])
+	}, [activityData.activities])
 
 	const recentActivities = useMemo(() => {
 		return sortedActivities.slice(0, 5)
@@ -330,7 +329,7 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 	return (
 		<div className="mt-16 max-w-6xl mx-auto">
 			<div className="mb-8">
-				<h3 className="text-2xl font-semibold text-slate-50 text-center leading-relaxed tracking-tight">
+				<h3 className="text-2xl font-semibold text-foreground text-center leading-relaxed tracking-tight">
 					최근 활동 내역
 				</h3>
 			</div>
@@ -341,17 +340,17 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 						최근 진행된 멘토링 활동 내역 테이블
 					</caption>
 					<thead>
-						<tr className="border-b border-white/10">
-							<th className="text-center py-4 px-4 text-white/70 font-medium">
+						<tr className="border-b border-foreground/10">
+							<th className="text-center py-4 px-4 text-foreground/70 font-medium">
 								학교명
 							</th>
-							<th className="text-center py-4 px-4 text-white/70 font-medium">
+							<th className="text-center py-4 px-4 text-foreground/70 font-medium">
 								지역
 							</th>
-							<th className="text-center py-4 px-4 text-white/70 font-medium">
+							<th className="text-center py-4 px-4 text-foreground/70 font-medium">
 								최근 활동일
 							</th>
-							<th className="text-center py-4 px-4 text-white/70 font-medium">
+							<th className="text-center py-4 px-4 text-foreground/70 font-medium">
 								상태
 							</th>
 						</tr>
@@ -361,24 +360,24 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 							recentActivities.map((activity) => (
 								<tr
 									key={activity.uniqueKey}
-									className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
+									className="border-b border-foreground/5 hover:bg-foreground/5 transition-colors duration-200"
 								>
 									<td className="py-4 px-4 text-center">
-										<p className="font-medium text-sm leading-normal text-slate-50">
+										<p className="font-medium text-sm leading-normal text-foreground">
 											{activity.school
 												? escapeHtml(activity.school)
 												: '정보 없음'}
 										</p>
 									</td>
 									<td className="py-4 px-4 text-center">
-										<p className="text-white/80 text-sm leading-normal">
+										<p className="text-foreground/80 text-sm leading-normal">
 											{activity.location
 												? escapeHtml(activity.location)
 												: '정보 없음'}
 										</p>
 									</td>
 									<td className="py-4 px-4 text-center">
-										<p className="text-white/80 text-sm leading-normal">
+										<p className="text-foreground/80 text-sm leading-normal">
 											{getLastActivityDate(activity)}
 										</p>
 									</td>
@@ -397,7 +396,7 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 						) : (
 							<tr>
 								<td colSpan={4} className="py-8 px-4 text-center">
-									<p className="text-white/60 text-sm leading-normal">
+									<p className="text-foreground/60 text-sm leading-normal">
 										활동 내역이 없습니다.
 									</p>
 								</td>

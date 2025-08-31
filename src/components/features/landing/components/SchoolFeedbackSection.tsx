@@ -10,17 +10,20 @@ const Testimonial = memo(() => {
 		<section className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 			{SCHOOL_FEEDBACKS.map((testimonial, index) => (
 				<article key={testimonial.id}>
-					<Card className="group h-full p-5 rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur-md text-slate-100">
+					<Card className="group h-full p-5 rounded-xl border border-foreground/10 bg-foreground/[0.04] backdrop-blur-md text-foreground">
 						<div className="relative p-6 h-full flex flex-col">
 							<div className="mb-4">
-								<Quote className="w-6 h-6 text-white/40" aria-hidden="true" />
+								<Quote
+									className="w-6 h-6 text-foreground/40"
+									aria-hidden="true"
+								/>
 							</div>
 							<blockquote
 								className="flex-grow mb-6"
 								role="blockquote"
 								aria-label={`추천사 ${index + 1}번`}
 							>
-								<p className="text-white/90 leading-relaxed text-base md:text-base">
+								<p className="text-foreground/90 leading-relaxed text-base md:text-base">
 									{testimonial.quote}
 								</p>
 							</blockquote>
@@ -39,7 +42,7 @@ export function SchoolFeedbackSection() {
 		<section className="py-20 px-4">
 			<div className="max-w-7xl mx-auto">
 				<div className="text-center mb-16">
-					<h3 className="text-2xl font-semibold text-slate-50 text-center leading-relaxed tracking-tight">
+					<h3 className="text-2xl font-semibold text-foreground text-center leading-relaxed tracking-tight">
 						현장 반응
 					</h3>
 				</div>

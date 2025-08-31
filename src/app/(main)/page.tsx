@@ -13,7 +13,7 @@ import {
 
 export default function LandingPage() {
 	return (
-		<div className="min-h-screen bg-[#08090A] relative">
+		<div className="min-h-screen bg-background relative">
 			<TopNavbar />
 			<HeroSection />
 			<MembersSection />

@@ -65,7 +65,7 @@ export function TopNavbar() {
 	)
 
 	return (
-		<nav className="'w-full z-50 transition-all duration-200 sticky top-0 bg-[rgba(10,10,10,0.8)] backdrop-blur-[20px] border-b border-white/5'">
+		<nav className="w-full z-50 transition-all duration-200 sticky top-0 bg-background">
 			<Container>
 				<div className="flex items-center justify-between h-16">
 					{/* Logo/Brand */}
@@ -82,7 +82,7 @@ export function TopNavbar() {
 								e.currentTarget.style.display = 'none'
 							}}
 						/>
-						<span className="text-lg font-medium text-[#F7F8F8]">
+						<span className="text-lg font-medium text-foreground">
 							{BRAND_INFO.NAME}
 						</span>
 					</div>
@@ -93,7 +93,7 @@ export function TopNavbar() {
 							<a
 								key={item.id}
 								href={item.href}
-								className="text-sm font-medium transition-colors duration-150 hover:text-[#F7F8F8] text-[#8A8F98]"
+								className="text-sm font-medium transition-colors duration-150 hover:text-foreground text-ring"
 								onClick={(e) => handleMenuItemClick(e, item)}
 								onKeyDown={(e) => handleMenuItemKeyDown(e, item)}
 								tabIndex={0}
@@ -106,24 +106,24 @@ export function TopNavbar() {
 					{/* Mobile Menu Button */}
 					<Button
 						size="icon"
-						className="md:hidden"
+						className="md:hidden bg-background"
 						onClick={toggleMenu}
 						aria-label="Toggle menu"
 						aria-expanded={isMenuOpen}
 					>
-						<MenuIcon />
+						<MenuIcon className="text-foreground" />
 					</Button>
 				</div>
 
 				{/* Mobile Menu */}
 				{isMenuOpen && (
-					<div className="md:hidden border-t border-white/8 py-4">
+					<div className="md:hidden border-t border-secondary py-4">
 						<div className="flex flex-col space-y-4">
 							{validatedMenuItems.map((item) => (
 								<a
 									key={item.id}
 									href={item.href}
-									className="text-sm font-medium transition-colors duration-150 text-[#8A8F98] hover:text-[#F7F8F8]"
+									className="text-sm font-medium transition-colors duration-150 text-ring hover:text-foreground"
 									onClick={(e) => handleMenuItemClick(e, item)}
 									onKeyDown={(e) => handleMenuItemKeyDown(e, item)}
 									tabIndex={0}

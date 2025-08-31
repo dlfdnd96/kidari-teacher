@@ -7,14 +7,13 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import { COLLABORATION_STEPS, SECTION_IDS } from '@/constants/landing'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { COLLABORATION_STEPS, SECTION_IDS } from '@/constants/landing'
 
 export interface TimelineEntry {
-	id?: string
+	id: number
 	title: string
 	content: React.ReactNode
-	date?: string
 }
 
 interface TimelineProps {
@@ -66,36 +65,20 @@ const Timeline = React.memo(({ data, className }: TimelineProps) => {
 				>
 					<div className="relative flex flex-col md:flex-row z-40 items-center self-start max-w-xs lg:max-w-sm md:w-full">
 						<div
-							className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-[#08090A] flex items-center justify-center"
+							className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-background flex items-center justify-center"
 							aria-hidden="true"
 						>
-							<div className="h-4 w-4 rounded-full bg-[#E6E6E6]" />
+							<div className="h-4 w-4 rounded-full bg-foreground" />
 						</div>
-						<h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-[#E6E6E6] whitespace-nowrap">
+						<h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-foreground whitespace-nowrap">
 							{item.title}
 						</h3>
-						{item.date && (
-							<time
-								className="hidden md:block text-sm text-gray-400 md:pl-4"
-								dateTime={item.date}
-							>
-								{item.date}
-							</time>
-						)}
 					</div>
 
 					<div className="relative pl-20 pr-4 md:pl-8 w-full flex flex-col justify-center">
-						<h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-[#E6E6E6]">
+						<h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-foreground">
 							{item.title}
 						</h3>
-						{item.date && (
-							<time
-								className="md:hidden block text-sm text-gray-400 mb-2"
-								dateTime={item.date}
-							>
-								{item.date}
-							</time>
-						)}
 						<div role="region" aria-label={`${item.title} 내용`}>
 							{item.content}
 						</div>
@@ -146,7 +129,7 @@ export function HowToCollaborateSection() {
 			<div className="max-w-7xl mx-auto">
 				{/* Header */}
 				<div className="text-center mb-16">
-					<h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white leading-relaxed">
+					<h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-relaxed">
 						협의 방법
 					</h2>
 				</div>
@@ -155,10 +138,11 @@ export function HowToCollaborateSection() {
 				<Timeline
 					data={COLLABORATION_STEPS.map((step) => {
 						return {
+							id: step.id,
 							title: step.title,
 							content: (
 								<div className="flex items-start">
-									<p className="leading-relaxed text-gray-300 text-lg">
+									<p className="leading-relaxed text-foreground/60 text-lg">
 										{step.description}
 									</p>
 								</div>

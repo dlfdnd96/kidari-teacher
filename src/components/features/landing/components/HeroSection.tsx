@@ -1,10 +1,10 @@
+import React, { memo, useCallback } from 'react'
+import { Circle, Mail } from 'lucide-react'
+import { motion } from 'framer-motion'
 import * as z from 'zod/mini'
 import { handleEmailContact } from '@/utils/email'
 import { BRAND_INFO } from '@/constants/landing'
-import { motion } from 'framer-motion'
-import { Circle, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import React, { memo, useCallback } from 'react'
 
 interface HeroAction {
 	label: string
@@ -92,7 +92,7 @@ const ActionButton = memo(({ action }: ActionButtonProps) => {
 	return (
 		<Button
 			{...baseProps}
-			className="px-8 py-4 text-base font-medium tracking-tight rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/90 hover:text-[#08090A] hover:border-white hover:shadow-lg hover:shadow-white/10 cursor-pointer"
+			className="text-base tracking-tight rounded-xl focus-visible:ring-ring border border-input bg-secondary hover:bg-accent hover:text-accent-foreground text-foreground cursor-pointer"
 		>
 			<Mail className="w-5 h-5" />
 			{sanitizeText(action.label)}
@@ -119,24 +119,22 @@ export function HeroSection() {
 
 			<div className="relative z-10 container mx-auto px-4 md:px-6">
 				<div className="max-w-3xl mx-auto text-center">
-					{sanitizedSubtitle && (
-						<motion.div
-							variants={FADE_UP_VARIANTS}
-							initial="hidden"
-							animate="visible"
-							transition={{
-								duration: ANIMATION_CONFIG.durations.fast,
-								delay: ANIMATION_CONFIG.delays.subtitle,
-								ease: ANIMATION_CONFIG.ease,
-							}}
-							className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] mb-8 md:mb-12"
-						>
-							<Circle className="h-2 w-2 fill-rose-500/80" />
-							<span className="text-sm text-white/60 tracking-wide">
-								{sanitizedSubtitle}
-							</span>
-						</motion.div>
-					)}
+					<motion.div
+						variants={FADE_UP_VARIANTS}
+						initial="hidden"
+						animate="visible"
+						transition={{
+							duration: ANIMATION_CONFIG.durations.fast,
+							delay: ANIMATION_CONFIG.delays.subtitle,
+							ease: ANIMATION_CONFIG.ease,
+						}}
+						className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-input mb-8 md:mb-12"
+					>
+						<Circle className="h-2 w-2 fill-rose-500/80" />
+						<span className="text-sm text-foreground/60 tracking-wide">
+							{sanitizedSubtitle}
+						</span>
+					</motion.div>
 
 					<motion.div
 						variants={FADE_UP_VARIANTS}
@@ -148,7 +146,7 @@ export function HeroSection() {
 							ease: ANIMATION_CONFIG.ease,
 						}}
 					>
-						<h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight text-white">
+						<h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight text-foreground">
 							{sanitizedTitle}
 						</h1>
 					</motion.div>
@@ -163,7 +161,7 @@ export function HeroSection() {
 							ease: ANIMATION_CONFIG.ease,
 						}}
 					>
-						<p className="text-base sm:text-lg md:text-xl text-white/70 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
+						<p className="text-base sm:text-lg md:text-xl text-foreground/70 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
 							{sanitizedDescription}
 						</p>
 					</motion.div>
