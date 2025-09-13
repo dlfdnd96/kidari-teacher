@@ -185,7 +185,7 @@ jobs:
         run: |
           cd $HOME/app-production
           echo "📋 Current directory: $(pwd)"
-          
+
           BACKUP_DIR="$HOME/backups/nextjs-$(date +%Y%m%d_%H%M%S)"
           mkdir -p $BACKUP_DIR
           if pm2 list | grep -q nextjs-app; then
@@ -221,14 +221,14 @@ jobs:
 
           echo "📁 Creating logs directory..."
           mkdir -p logs
-          
+
           echo "📦 Package.json scripts:"
           grep -A 5 '"scripts"' package.json || true
 
       - name: Start production server
         run: |
           echo "🚀 Starting production server with PM2..."
-          
+
           cd $HOME/app-production
           echo "📋 Current directory: $(pwd)"
 
@@ -292,25 +292,25 @@ jobs:
       - name: Cleanup old backups
         run: |
           echo "🧹 Cleaning up old backups..."
-          
+
           cd $HOME/backups || exit 1
-          
+
           if ! ls nextjs-* >/dev/null 2>&1; then
             echo "ℹ️ No backup directories found"
             exit 0
           fi
-          
+
           backup_count=$(ls -1d nextjs-* | wc -l)
           echo "📊 Current backup count: $backup_count"
-          
+
           if [ "$backup_count" -le 5 ]; then
             echo "ℹ️ Only $backup_count backups found, no cleanup needed"
             exit 0
           fi
-          
+
           delete_count=$((backup_count - 5))
           echo "🗑️ Will delete $delete_count old backups"
-          
+
           ls -1td nextjs-* | tail -n "$delete_count" | while read -r backup; do
             echo "  Deleting: $backup"
             rm -rf "$backup"
@@ -320,10 +320,10 @@ jobs:
               echo "  ❌ Failed to delete: $backup"
             fi
           done
-          
+
           final_count=$(ls -1d nextjs-* 2>/dev/null | wc -l)
           echo "✅ Cleanup completed. Remaining backups: $final_count"
-          
+
           echo "📋 Remaining backups:"
           ls -1td nextjs-* | head -5
 
