@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## IMPORTANT
+
+- ALWAYS use Shadcn MCP to create UI
+- ALWAYS ask user for permission when implementing a plan
+- NEVER use emoji for design
+- ALWAYS prioritize server component over client component
+
 ## Project Overview
 
 키다리 선생님 - A professional volunteer platform connecting experts with high school students for career mentoring. This is a Next.js application serving as a landing page for managing volunteer activities and showcasing achievements.
@@ -62,8 +69,21 @@ npm run format
 #### Component Organization
 
 - `components/ui/` - Basic UI components (buttons, inputs, cards, etc.)
-- `components/features/landing/` - Landing page specific components
+- `components/common/` - Reusable components shared across multiple features
+  - `common/forms/` - Common form-related components (FormField, FormSubmit, ValidationMessage)
+  - `common/navigation/` - Navigation components (Breadcrumb, Pagination, TabNavigation)
+  - `common/feedback/` - User feedback components (Toast, Alert, LoadingSpinner)
+  - `common/data-display/` - Data visualization components (Table, Chart, StatCard)
+- `components/layout/` - Layout components (Header, Footer, Sidebar)
+- `components/features/` - Feature-specific components organized by domain
+  - `features/landing/` - Landing page specific components
+  - `features/statistics/` - Statistics page specific components
 - `components/providers/` - React context providers
+  **Component Classification Rules:**
+- `ui/`: Basic building blocks (shadcn/ui style components)
+- `common/`: Components used by 2+ features
+- `features/`: Components specific to one feature/domain
+- `layout/`: Page structure components
 
 ### tRPC API Structure
 
