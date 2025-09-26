@@ -4,26 +4,26 @@ import * as z from 'zod/mini'
 import { TRPCError } from '@trpc/server'
 import { VolunteerActivityStatisticsListSchema } from '@/schemas/statistics'
 import { ERROR_MESSAGE } from '@/constants/error'
+import { createSupabaseClient } from '@/server/api/supabase'
 
 export const statisticsRouter = createTRPCRouter({
 	fetch: procedure.query(async () => {
-		const appScriptUrl = z.string().parse(process.env.APP_SCRIPT_URL)
+		const bucketName = z.string().parse(process.env.SUPABASE_BUCKET_NAME)
 
-		const response = await fetch(appScriptUrl, {
-			method: 'GET',
-			headers: {
-				'Cache-Control': 'no-cache',
-			},
-		})
+		const supabase = await createSupabaseClient()
 
-		if (!response.ok) {
+		const { data, error } = await supabase.storage
+			.from(bucketName)
+			.download('statistics/volunteer-statistics.json')
+
+		if (error) {
 			throw new TRPCError({
 				code: ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
-				message: `Failed to fetch data from statistics: ${response.status} ${response.statusText}`,
+				message: `Failed to fetch activity data: ${error.message}`,
 			})
 		}
 
-		const rawData = await response.json()
-		return VolunteerActivityStatisticsListSchema.parse(rawData)
+		const text = await data.text()
+		return VolunteerActivityStatisticsListSchema.parse(JSON.parse(text))
 	}),
 })

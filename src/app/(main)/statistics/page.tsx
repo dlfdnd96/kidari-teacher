@@ -4,7 +4,7 @@ import { Statistics } from '@/components/features/statistics/components/Statisti
 
 export default function StatisticsPage() {
 	return (
-		<div>
+		<div className="min-h-screen bg-background relative">
 			<Statistics />
 		</div>
 	)
