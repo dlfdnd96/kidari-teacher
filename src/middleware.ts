@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
 	if (
-		request.nextUrl.pathname === '/components' &&
-		process.env.NODE_ENV !== 'development'
+		request.nextUrl.pathname === '/statistics' &&
+		process.env.NODE_ENV === 'production'
 	) {
 		return NextResponse.rewrite(new URL('/not-found', request.url))
 	}
