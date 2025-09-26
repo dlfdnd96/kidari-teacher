@@ -1,29 +1,41 @@
-import { LinearContainer } from '@/components/ui/linear/linear-navigation'
-import { LinearH2, LinearText } from '@/components/ui/linear/linear-typography'
-import { LinearTagCloud } from '@/components/ui/linear/linear-tag-cloud'
+import { memo } from 'react'
 import { PROFESSION_TAGS, SECTION_IDS } from '@/constants/landing'
+import { Container } from '@/components/ui/container'
+
+const TagCloud = memo(() => {
+	return (
+		<div className="flex flex-wrap items-center gap-2 justify-center">
+			{PROFESSION_TAGS.map((tag) => (
+				<span
+					className="h-12 px-6 inline-flex items-center font-medium text-base tracking-tight rounded-xl focus-visible:ring-ring border border-input bg-secondary hover:bg-accent hover:text-accent-foreground text-foreground"
+					key={tag.id}
+				>
+					{tag.label}
+				</span>
+			))}
+		</div>
+	)
+})
+
+TagCloud.displayName = 'TagCloud'
 
 export function MembersSection() {
 	return (
-		<section id={SECTION_IDS.MEMBERS} className="py-20 bg-[#0A0A0A]">
-			<LinearContainer>
+		<section id={SECTION_IDS.MEMBERS} className="py-20">
+			<Container>
 				<div className="text-center mb-16">
-					<LinearH2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
+					<h2 className="text-5xl font-bold tracking-tight text-foreground leading-relaxed">
 						구성원
-					</LinearH2>
-					<LinearText className="text-lg text-white/90 leading-loose tracking-wide max-w-2xl mx-auto mt-4">
+					</h2>
+					<p className="text-lg text-foreground/90 leading-loose tracking-wide max-w-2xl mx-auto mt-4">
 						다양한 전문직 멘토 약 100명이 학생들의 진로 탐색을 함께합니다
-					</LinearText>
+					</p>
 				</div>
 
 				<div className="max-w-4xl mx-auto px-8">
-					<LinearTagCloud
-						tags={PROFESSION_TAGS}
-						spacing="normal"
-						className="justify-center"
-					/>
+					<TagCloud />
 				</div>
-			</LinearContainer>
+			</Container>
 		</section>
 	)
 }

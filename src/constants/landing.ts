@@ -1,10 +1,3 @@
-import type {
-	MenuItem,
-	ProfessionTag,
-	SchoolLogo,
-	TestimonialItem,
-} from '@/types/landing'
-
 export const ACTIVITY_STATUS = {
 	COMPLETED: '완료',
 	IN_PROGRESS: '진행중',
@@ -19,37 +12,37 @@ export const ACTIVITY_TYPE = {
 	VOLUNTEER: '봉사활동',
 } as const
 
-export const MENU_ITEMS: MenuItem[] = [
+export const MENU_ITEMS = [
 	{ id: 'members', label: '구성원', href: '#members' },
 	{ id: 'purpose', label: '활동 목적', href: '#purpose' },
 	{ id: 'achievements', label: '활동 내역', href: '#achievements' },
 	{ id: 'collaboration', label: '협의 방법', href: '#collaboration' },
 	{ id: 'contact', label: '연락처', href: '#contact' },
-]
+] as const
 
-export const PROFESSION_TAGS: ProfessionTag[] = [
-	{ id: '1', label: '한의사', variant: 'primary', size: 'xl' },
-	{ id: '2', label: '치과의사', variant: 'primary', size: 'xl' },
-	{ id: '3', label: '의사', variant: 'primary', size: 'xl' },
-	{ id: '4', label: '회계사', variant: 'primary', size: 'xl' },
-	{ id: '5', label: '변호사', variant: 'primary', size: 'xl' },
-	{ id: '6', label: '세무사', variant: 'primary', size: 'xl' },
-	{ id: '7', label: '노무사', variant: 'primary', size: 'xl' },
-	{ id: '8', label: '법무사', variant: 'primary', size: 'xl' },
-	{ id: '9', label: '행정사', variant: 'primary', size: 'xl' },
-	{ id: '10', label: '감정평가사', variant: 'primary', size: 'xl' },
-	{ id: '11', label: 'IT 개발자', variant: 'primary', size: 'xl' },
-	{ id: '12', label: 'IT 기획자', variant: 'primary', size: 'xl' },
-	{ id: '13', label: '의학연구자', variant: 'primary', size: 'xl' },
-	{ id: '14', label: '보험계리사', variant: 'primary', size: 'xl' },
-	{ id: '15', label: '약사', variant: 'primary', size: 'xl' },
-	{ id: '16', label: '변리사', variant: 'primary', size: 'xl' },
-	{ id: '17', label: '생명공학', variant: 'primary', size: 'xl' },
-	{ id: '18', label: '기계공학', variant: 'primary', size: 'xl' },
-	{ id: '19', label: '산업공학', variant: 'primary', size: 'xl' },
-]
+export const PROFESSION_TAGS = [
+	{ id: '1', label: '한의사' },
+	{ id: '2', label: '치과의사' },
+	{ id: '3', label: '의사' },
+	{ id: '4', label: '회계사' },
+	{ id: '5', label: '변호사' },
+	{ id: '6', label: '세무사' },
+	{ id: '7', label: '노무사' },
+	{ id: '8', label: '법무사' },
+	{ id: '9', label: '행정사' },
+	{ id: '10', label: '감정평가사' },
+	{ id: '11', label: 'IT 개발자' },
+	{ id: '12', label: 'IT 기획자' },
+	{ id: '13', label: '의학연구자' },
+	{ id: '14', label: '보험계리사' },
+	{ id: '15', label: '약사' },
+	{ id: '16', label: '변리사' },
+	{ id: '17', label: '생명공학' },
+	{ id: '18', label: '기계공학' },
+	{ id: '19', label: '산업공학' },
+] as const
 
-export const SCHOOL_LOGOS: SchoolLogo[] = [
+export const SCHOOL_LOGOS = [
 	{
 		src: '/images/school-logo/whimoon-dark.svg',
 		alt: '휘문고등학교',
@@ -182,9 +175,9 @@ export const SCHOOL_LOGOS: SchoolLogo[] = [
 		width: 180,
 		height: 65,
 	},
-]
+] as const
 
-export const SCHOOL_FEEDBACKS: TestimonialItem[] = [
+export const SCHOOL_FEEDBACKS = [
 	{
 		id: '1',
 		quote:
@@ -200,7 +193,7 @@ export const SCHOOL_FEEDBACKS: TestimonialItem[] = [
 		quote:
 			'또 같은 말이라도 선생님들이 이야기하면 잘 듣지 않는데, 아무래도 희망하는 직업을 가지신 분들이 이야기해 주시니 학생들이 더 느끼는게 많은 것 같아요^^',
 	},
-]
+] as const
 
 export const COLLABORATION_STEPS = [
 	{
@@ -227,7 +220,7 @@ export const COLLABORATION_STEPS = [
 		description:
 			'학교에서 학생들의 진로 교육 희망 분야를 취합한 최종 수요와 봉사 당일 세부사항을 안내합니다.',
 	},
-]
+] as const
 
 export const SECTION_IDS = {
 	MEMBERS: 'members',

@@ -1,16 +1,10 @@
 import { router } from '@/server/trpc'
-import { noticeRouter } from '@/server/routers/notice'
-import { volunteerActivityRouter } from '@/server/routers/volunteer-activity'
-import { applicationRouter } from '@/server/routers/application'
-import { userRouter } from '@/server/routers/user'
-import { userProfileRouter } from '@/server/routers/user-profile'
+import { activityRouter } from '@/server/routers/activity'
+import { statisticsRouter } from '@/server/routers/statistics'
 
 export const appRouter = router({
-	notice: noticeRouter,
-	volunteerActivity: volunteerActivityRouter,
-	application: applicationRouter,
-	user: userRouter,
-	userProfile: userProfileRouter,
+	activity: activityRouter,
+	statistics: statisticsRouter,
 })
 
 export type AppRouter = typeof appRouter

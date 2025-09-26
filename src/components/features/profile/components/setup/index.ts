@@ -1,7 +1,0 @@
-export { NameField } from './NameField'
-export { EmailField } from './EmailField'
-export { PhoneField } from './PhoneField'
-export { OrganizationField } from './OrganizationField'
-export { ProfessionField } from './ProfessionField'
-export { ProfileSetupForm } from './ProfileSetupForm'
-export { useProfileSetup } from './hooks'
