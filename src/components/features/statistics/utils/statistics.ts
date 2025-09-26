@@ -85,8 +85,10 @@ export const getThisMonthStatistics = (params: {
 
 export const getCategoryStatistics = (
 	data: ZodType<typeof VolunteerActivityStatisticsListSchema>,
+	year?: number,
 ) => {
-	return data.reduce((acc: Record<string, number>, item) => {
+	const filteredData = filterDataByYear(data, year)
+	return filteredData.reduce((acc: Record<string, number>, item) => {
 		acc[item.category] = (acc[item.category] || 0) + 1
 		return acc
 	}, {})
@@ -95,20 +97,31 @@ export const getCategoryStatistics = (
 export const getMonthlyTrend = (
 	data: ZodType<typeof VolunteerActivityStatisticsListSchema>,
 	now: TZDate,
+	year?: number,
 ) => {
 	const monthlyStats: Record<string, number> = {}
 
-	// 최근 6개월 데이터 생성
-	for (let i = 5; i >= 0; i--) {
-		const date = new TZDate(now)
-		date.setMonth(date.getMonth() - i)
+	if (year) {
+		for (let month = 1; month <= 12; month++) {
+			const monthLabel = `${month}월`
+			const count = data.filter(
+				(item) => item.year === year && item.month === month,
+			).length
+			monthlyStats[monthLabel] = count
+		}
+	} else {
+		for (let i = 5; i >= 0; i--) {
+			const date = new TZDate(now)
+			date.setMonth(date.getMonth() - i)
 
-		const monthLabel = `${date.getMonth() + 1}월`
-		const count = data.filter(
-			(item) =>
-				item.year === date.getFullYear() && item.month === date.getMonth() + 1,
-		).length
-		monthlyStats[monthLabel] = count
+			const monthLabel = `${date.getMonth() + 1}월`
+			const count = data.filter(
+				(item) =>
+					item.year === date.getFullYear() &&
+					item.month === date.getMonth() + 1,
+			).length
+			monthlyStats[monthLabel] = count
+		}
 	}
 
 	return Object.entries(monthlyStats).map(([month, activities]) => ({
@@ -119,4 +132,21 @@ export const getMonthlyTrend = (
 
 export const getMonthlyChangeWord = (monthlyChange: number) => {
 	return monthlyChange >= 0 ? 'increase' : 'decrease'
+}
+
+export const getAvailableYears = (
+	data: ZodType<typeof VolunteerActivityStatisticsListSchema>,
+): number[] => {
+	const years = [...new Set(data.map((item) => item.year))]
+	return years.sort((a, b) => b - a)
+}
+
+export const filterDataByYear = (
+	data: ZodType<typeof VolunteerActivityStatisticsListSchema>,
+	year?: number,
+) => {
+	if (!year) {
+		return data
+	}
+	return data.filter((item) => item.year === year)
 }

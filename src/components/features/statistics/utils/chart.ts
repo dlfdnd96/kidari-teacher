@@ -11,11 +11,16 @@ export const createPieChartData = (category: Record<string, number>) => {
 
 export const createLocationBarChartData = (
 	data: ZodType<typeof VolunteerActivityStatisticsListSchema>,
+	year?: number,
 ) => {
-	const locationStats = data.reduce((acc: Record<string, number>, item) => {
-		acc[item.location] = (acc[item.location] || 0) + 1
-		return acc
-	}, {})
+	const filteredData = year ? data.filter((item) => item.year === year) : data
+	const locationStats = filteredData.reduce(
+		(acc: Record<string, number>, item) => {
+			acc[item.location] = (acc[item.location] || 0) + 1
+			return acc
+		},
+		{},
+	)
 
 	return Object.entries(locationStats)
 		.sort(([, a], [, b]) => b - a)
@@ -29,12 +34,14 @@ export const createLocationBarChartData = (
 export const createRankingData = (
 	data: ZodType<typeof VolunteerActivityStatisticsListSchema>,
 	maxItems: number,
+	year?: number,
 ) => {
+	const filteredData = year ? data.filter((item) => item.year === year) : data
 	const participantStats = new Map<
 		string,
 		{ count: number; activities: Set<string> }
 	>()
-	data.forEach((activity) => {
+	filteredData.forEach((activity) => {
 		activity.participants.forEach((participant) => {
 			if (!participantStats.has(participant)) {
 				participantStats.set(participant, { count: 0, activities: new Set() })

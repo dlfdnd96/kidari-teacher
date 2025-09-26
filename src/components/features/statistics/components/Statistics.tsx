@@ -1,3 +1,6 @@
+'use client'
+
+import { useMemo, useState } from 'react'
 import { useStatisticsData } from '@/components/features/statistics/hooks/useStatisticsData'
 import {
 	BarChart,
@@ -6,9 +9,12 @@ import {
 	PieChart,
 	RankingList,
 	StatisticsCard,
+	YearFilter,
 } from '.'
 import { TZDate } from '@date-fns/tz'
 import {
+	filterDataByYear,
+	getAvailableYears,
 	getCategoryStatistics,
 	getMonthlyChangeWord,
 	getMonthlyTrend,
@@ -205,6 +211,17 @@ function getStatisticsView({ statistics, chart }: StatisticsViewParams) {
 
 export function Statistics() {
 	const { data: allStatisticsData } = useStatisticsData()
+	const [selectedYear, setSelectedYear] = useState<number | undefined>()
+
+	const availableYears = useMemo(() => {
+		if (!allStatisticsData) return []
+		return getAvailableYears(allStatisticsData)
+	}, [allStatisticsData])
+
+	const filteredData = useMemo(() => {
+		if (!allStatisticsData) return []
+		return filterDataByYear(allStatisticsData, selectedYear)
+	}, [allStatisticsData, selectedYear])
 
 	if (!allStatisticsData || allStatisticsData.length === 0) {
 		return <EmptyStatistics />
@@ -213,21 +230,24 @@ export function Statistics() {
 	const now = new TZDate(new Date(), 'Asia/Seoul')
 	const currentMonth = now.getMonth() + 1
 
-	// 통계 계산
-	const total = getTotalStatistics(allStatisticsData)
+	// 통계 계산 (필터링된 데이터 사용)
+	const total = getTotalStatistics(filteredData)
 	const thisMonthStatistics = getThisMonthStatistics({
-		data: allStatisticsData,
+		data: filteredData,
 		now,
 		currentMonth,
 	})
-	// 카테고리별 통계 계산
-	const categoryStats = getCategoryStatistics(allStatisticsData)
-	// 월별 추이 데이터 계산
-	const monthlyTrendData = getMonthlyTrend(allStatisticsData, now)
+	// 카테고리별 통계 계산 (연도 필터링 적용)
+	const categoryStats = getCategoryStatistics(allStatisticsData, selectedYear)
+	// 월별 추이 데이터 계산 (연도 필터링 적용)
+	const monthlyTrendData = getMonthlyTrend(allStatisticsData, now, selectedYear)
 
 	const pieChartData = createPieChartData(categoryStats)
-	const locationBarData = createLocationBarChartData(allStatisticsData)
-	const rankingData = createRankingData(allStatisticsData, 10)
+	const locationBarData = createLocationBarChartData(
+		allStatisticsData,
+		selectedYear,
+	)
+	const rankingData = createRankingData(allStatisticsData, 10, selectedYear)
 
 	const { metrics, leftSection, combinedChartsSection, rankingSection } =
 		getStatisticsView({
@@ -247,6 +267,16 @@ export function Statistics() {
 
 	return (
 		<div className="container mx-auto px-4 py-8 space-y-6">
+			{/* 연도 필터 섹션 */}
+			<div className="flex items-center justify-between bg-card rounded-lg border border-primary/20 p-4">
+				<h2 className="text-xl font-semibold text-foreground">봉사활동 통계</h2>
+				<YearFilter
+					availableYears={availableYears}
+					selectedYear={selectedYear}
+					onYearChange={setSelectedYear}
+				/>
+			</div>
+
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 				{metrics}
 			</div>
