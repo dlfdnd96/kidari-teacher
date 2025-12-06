@@ -60,3 +60,4 @@ cypress/screenshots
 
 # claude code
 .claude/**/*.local.json
+.env*.local
