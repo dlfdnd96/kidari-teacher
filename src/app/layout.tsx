@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import React from 'react'
-import { QueryProvider } from '@/providers/QueryProvider'
+import { TrpcProvider } from '@/components/providers/TrpcProvider'
+import { Footer } from '@/components/layout/Footer'
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -28,11 +29,14 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" className="dark">
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<QueryProvider>{children}</QueryProvider>
+				<TrpcProvider>{children}</TrpcProvider>
+				<Footer
+					bottomText={`Copyright © ${new Date().getFullYear()} 키다리 선생님. All rights reserved.`}
+				/>
 			</body>
 		</html>
 	)

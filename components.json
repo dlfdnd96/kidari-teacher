@@ -4,17 +4,21 @@
 	"rsc": true,
 	"tsx": true,
 	"tailwind": {
-		"config": "tailwind.config.ts",
+		"config": "",
 		"css": "src/app/globals.css",
 		"baseColor": "neutral",
 		"cssVariables": true,
 		"prefix": ""
 	},
+	"iconLibrary": "lucide",
 	"aliases": {
 		"components": "@/components",
 		"utils": "@/lib/utils",
 		"ui": "@/components/ui",
-		"lib": "@/lib"
+		"lib": "@/lib",
+		"hooks": "@/hooks"
 	},
-	"iconLibrary": "lucide"
+	"registries": {
+		"@acme": "https://acme.com/r/{name}.json"
+	}
 }

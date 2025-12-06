@@ -3,7 +3,6 @@
 import {
 	AchievementsSection,
 	ContactSection,
-	FooterSection,
 	HeroSection,
 	HowToCollaborateSection,
 	MembersSection,
@@ -14,7 +13,7 @@ import {
 
 export default function LandingPage() {
 	return (
-		<div className="min-h-screen bg-[#08090A] relative">
+		<div className="min-h-screen bg-background relative">
 			<TopNavbar />
 			<HeroSection />
 			<MembersSection />
@@ -23,7 +22,6 @@ export default function LandingPage() {
 			<SchoolFeedbackSection />
 			<HowToCollaborateSection />
 			<ContactSection />
-			<FooterSection />
 		</div>
 	)
 }

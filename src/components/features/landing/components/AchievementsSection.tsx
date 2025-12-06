@@ -1,33 +1,32 @@
 'use client'
 
-import { LinearContainer, LinearH2, LinearText } from '@/components/ui/linear'
 import { ActivityStatistics } from './ActivityStatistics'
 import { RecentActivity } from './RecentActivity'
 import { SchoolLogo } from './SchoolLogo'
 import { SECTION_IDS } from '@/constants/landing'
-import { useActivityData } from '@/hooks/useActivityData'
-import React from 'react'
+import { useActivityData } from '@/components/features/landing/hooks/useActivityData'
+import { Container } from '@/components/ui/container'
 
 export function AchievementsSection() {
 	const { data: activityData, isLoading, isError } = useActivityData()
 
 	return (
-		<section id={SECTION_IDS.ACHIEVEMENTS} className="py-20 bg-[#0A0A0A]">
-			<LinearContainer>
+		<section id={SECTION_IDS.ACHIEVEMENTS} className="py-20">
+			<Container>
 				<div className="text-center mb-16">
-					<LinearH2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
+					<h2 className="text-5xl font-bold tracking-tight text-foreground leading-relaxed">
 						활동 내역
-					</LinearH2>
-					<LinearText className="text-lg text-white/90 leading-loose tracking-wide max-w-2xl mx-auto mt-4">
+					</h2>
+					<p className="text-lg text-foreground/90 leading-loose tracking-wide max-w-2xl mx-auto mt-4">
 						2022년부터 현재까지 다양한 학교에서 진로 멘토링 활동을 하고 있습니다
-					</LinearText>
+					</p>
 				</div>
 
 				{isLoading ? (
 					<div className="text-center py-16">
-						<LinearText className="text-white/60 text-lg">
+						<p className="text-foreground/60 text-lg leading-normal">
 							활동 데이터를 불러오는 중...
-						</LinearText>
+						</p>
 					</div>
 				) : activityData && !isError ? (
 					<>
@@ -37,12 +36,12 @@ export function AchievementsSection() {
 					</>
 				) : (
 					<div className="text-center py-16">
-						<LinearText className="text-white/60 text-lg">
+						<p className="text-foreground/60 text-lg leading-normal">
 							활동 데이터를 불러올 수 없습니다.
-						</LinearText>
+						</p>
 					</div>
 				)}
-			</LinearContainer>
+			</Container>
 		</section>
 	)
 }

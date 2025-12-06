@@ -1,0 +1,436 @@
+name: Deploy to Production VM
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy-production:
+    runs-on: [self-hosted, production]
+    environment: production
+
+    env:
+      NODE_ENV: production
+      PORT: 3000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Send deployment start notification
+        run: |
+          CURRENT_TIME=$(TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)
+          COMMIT_SHA="${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TRIGGER_TYPE="🔧 수동 배포"
+            TRIGGER_DESCRIPTION="**master** 브랜치를 수동으로 배포합니다."
+          else
+            TRIGGER_TYPE="🚀 자동 배포"
+            TRIGGER_DESCRIPTION="**master** 브랜치에 푸시되어 자동 배포합니다."
+          fi
+
+          cat > discord_payload.json << EOF
+          {
+            "embeds": [{
+              "title": "🔥 프로덕션 배포 시작",
+              "description": "**master** 브랜치 프로덕션 배포를 시작합니다.",
+              "color": 16776960,
+              "fields": [
+                {
+                  "name": "브랜치",
+                  "value": "\`${BRANCH_NAME}\`",
+                  "inline": true
+                },
+                {
+                  "name": "커밋",
+                  "value": "\`${COMMIT_SHA:0:8}\`",
+                  "inline": true
+                },
+                {
+                  "name": "환경",
+                  "value": "**🚨 PRODUCTION 🚨**",
+                  "inline": true
+                },
+                {
+                  "name": "배포자",
+                  "value": "${ACTOR}",
+                  "inline": true
+                }
+              ],
+              "timestamp": "${CURRENT_TIME}"
+            }]
+          }
+          EOF
+
+          if curl -f -H "Content-Type: application/json" \
+                  -H "User-Agent: GitHub-Actions" \
+                  -X POST \
+                  -d @discord_payload.json \
+                  "${{ secrets.DISCORD_WEBHOOK_URL }}"; then
+            echo "✅ Discord notification sent successfully"
+          else
+            echo "❌ Failed to send Discord notification"
+          fi
+
+      - name: Create production environment file
+        run: |
+          echo "Creating .env for production environment..."
+
+          cat > .env << 'EOF'
+          BLOB_READ_WRITE_TOKEN=${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          VERCEL_OIDC_TOKEN=${{ secrets.VERCEL_OIDC_TOKEN }}
+          NEXT_PUBLIC_CONTACT_EMAIL=${{ secrets.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NODE_ENV=production
+          NEXT_PUBLIC_ENVIRONMENT=production
+          NEXT_PUBLIC_BUILD_TIME=$(TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)
+          NEXT_PUBLIC_COMMIT_SHA=${{ github.sha }}
+          NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
+          EOF
+
+          echo "✅ Production environment file created"
+
+          echo "📋 Environment variables loaded:"
+          grep -E "^(NODE_ENV|NEXT_PUBLIC_ENVIRONMENT)=" .env || true
+
+      - name: Validate environment variables
+        run: |
+          echo "🔍 Validating required environment variables..."
+
+          required_vars=(
+            "BLOB_READ_WRITE_TOKEN"
+            "VERCEL_OIDC_TOKEN"
+            "NEXT_PUBLIC_CONTACT_EMAIL"
+          )
+
+          missing_vars=()
+          for var in "${required_vars[@]}"; do
+            if grep -q "^${var}=" .env && [ -n "$(grep "^${var}=" .env | cut -d'=' -f2)" ]; then
+              echo "✅ $var is set"
+            else
+              echo "❌ $var is missing or empty!"
+              missing_vars+=("$var")
+            fi
+          done
+
+          if [ ${#missing_vars[@]} -ne 0 ]; then
+            echo "💥 Missing required environment variables: ${missing_vars[*]}"
+            exit 1
+          fi
+
+          echo "✅ All required environment variables are validated!"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --include=dev
+        timeout-minutes: 15
+
+      - name: Setup PM2
+        run: |
+          echo "🔧 Setting up PM2..."
+
+          if command -v pm2 &> /dev/null; then
+            echo "✅ PM2 is already installed: $(pm2 --version)"
+          else
+            echo "📦 Installing PM2 globally..."
+            npm install -g pm2
+
+            if command -v pm2 &> /dev/null; then
+              echo "✅ PM2 installed successfully: $(pm2 --version)"
+            else
+              echo "❌ PM2 installation failed"
+              exit 1
+            fi
+          fi
+
+          pm2 ping &> /dev/null || pm2 kill && pm2 resurrect
+
+      - name: Build Next.js app
+        run: |
+          echo "🏗️ Building with production configuration..."
+          npm run build
+
+      - name: Create backup
+        run: |
+          cd $HOME/app-production
+          echo "📋 Current directory: $(pwd)"
+
+          BACKUP_DIR="$HOME/backups/nextjs-$(date +%Y%m%d_%H%M%S)"
+          mkdir -p $BACKUP_DIR
+          if pm2 list | grep -q nextjs-app; then
+            cp -r .next $BACKUP_DIR/ 2>/dev/null || true
+            cp package.json $BACKUP_DIR/ 2>/dev/null || true
+            echo "📦 Backup created at $BACKUP_DIR"
+          else
+            echo "ℹ️ No existing nextjs-app process found to backup"
+          fi
+
+      - name: Stop existing production server
+        run: |
+          echo "🛑 Stopping existing production server..."
+          pm2 stop nextjs-app || echo "ℹ️ nextjs-app was not running"
+          pm2 delete nextjs-app || echo "ℹ️ nextjs-app was not in PM2 list"
+
+      - name: Deploy to production
+        run: |
+          echo "🚀 Starting deployment process..."
+
+      - name: Copy build to production dir
+        run: |
+          rm -rf $HOME/app-production
+          mkdir -p $HOME/app-production
+          shopt -s dotglob
+          cp -r ./* $HOME/app-production
+          shopt -u dotglob
+
+      - name: Prepare for PM2 startup
+        run: |
+          cd $HOME/app-production
+          echo "📋 Current directory: $(pwd)"
+
+          echo "📁 Creating logs directory..."
+          mkdir -p logs
+
+          echo "📦 Package.json scripts:"
+          grep -A 5 '"scripts"' package.json || true
+
+      - name: Start production server
+        run: |
+          echo "🚀 Starting production server with PM2..."
+
+          cd $HOME/app-production
+          echo "📋 Current directory: $(pwd)"
+
+          if pm2 start ecosystem.config.js --env production; then
+            echo "✅ PM2 started successfully"
+            pm2 save
+            echo "✅ PM2 configuration saved"
+
+            echo "📊 PM2 Status:"
+            pm2 list
+          else
+            echo "❌ PM2 start failed, trying alternative method..."
+
+            echo "🔄 Trying direct npm start..."
+            pm2 start npm --name "nextjs-app" -- start
+            pm2 save
+          fi
+
+      - name: Health check
+        run: |
+          echo "🏥 Performing health check..."
+          sleep 15
+
+          for i in {1..10}; do
+            if curl -f -s http://localhost:3000 > /dev/null; then
+              echo "✅ Health check passed on attempt $i"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying in 5 seconds..."
+              sleep 5
+              if [ $i -eq 10 ]; then
+                echo "❌ Health check failed after 10 attempts"
+                pm2 logs nextjs-app --lines 20
+                exit 1
+              fi
+            fi
+          done
+        timeout-minutes: 15
+
+      - name: Production deployment verification
+        run: |
+          echo "🔍 Production deployment verification..."
+
+          echo "📊 PM2 Process Status:"
+          pm2 list
+
+          echo "⏱️ Service Response Time:"
+          time curl -s http://localhost:3000 > /dev/null
+
+          echo "💾 Memory Usage:"
+          free -h
+
+          echo "💿 Disk Usage:"
+          df -h
+
+          echo "🔧 Environment:"
+          echo "NODE_ENV: $(grep NODE_ENV .env | cut -d'=' -f2)"
+          echo "Build Time: $(grep NEXT_PUBLIC_BUILD_TIME .env | cut -d'=' -f2)"
+          echo "Commit SHA: $(grep NEXT_PUBLIC_COMMIT_SHA .env | cut -d'=' -f2)"
+
+      - name: Cleanup old backups
+        run: |
+          echo "🧹 Cleaning up old backups..."
+
+          cd $HOME/backups || exit 1
+
+          if ! ls nextjs-* >/dev/null 2>&1; then
+            echo "ℹ️ No backup directories found"
+            exit 0
+          fi
+
+          backup_count=$(ls -1d nextjs-* | wc -l)
+          echo "📊 Current backup count: $backup_count"
+
+          if [ "$backup_count" -le 5 ]; then
+            echo "ℹ️ Only $backup_count backups found, no cleanup needed"
+            exit 0
+          fi
+
+          delete_count=$((backup_count - 5))
+          echo "🗑️ Will delete $delete_count old backups"
+
+          ls -1td nextjs-* | tail -n "$delete_count" | while read -r backup; do
+            echo "  Deleting: $backup"
+            rm -rf "$backup"
+            if [ $? -eq 0 ]; then
+              echo "  ✅ Successfully deleted: $backup"
+            else
+              echo "  ❌ Failed to delete: $backup"
+            fi
+          done
+
+          final_count=$(ls -1d nextjs-* 2>/dev/null | wc -l)
+          echo "✅ Cleanup completed. Remaining backups: $final_count"
+
+          echo "📋 Remaining backups:"
+          ls -1td nextjs-* | head -5
+
+      - name: Send production deployment success notification
+        if: success()
+        run: |
+          CURRENT_TIME=$(TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)
+          DEPLOY_TIME=$(TZ=Asia/Seoul date +"%Y-%m-%d %H:%M:%S KST")
+          COMMIT_SHA="${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+
+          COMMIT_MSG="${{ github.event.head_commit.message || 'Manual deployment' }}"
+          COMMIT_MSG=$(echo "$COMMIT_MSG" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | head -c 100)
+
+          cat > success_payload.json << EOF
+          {
+            "content": "@everyone 프로덕션 배포 완료!",
+            "embeds": [{
+              "title": "🎉 프로덕션 배포 성공!",
+              "description": "**Production** 환경 배포가 성공적으로 완료되었습니다!",
+              "color": 5763719,
+              "fields": [
+                {
+                  "name": "🌐 사이트 URL",
+                  "value": "[키다리 선생님](https://kidariteacher.com)",
+                  "inline": false
+                },
+                {
+                  "name": "📋 배포 정보",
+                  "value": "**브랜치:** \`${BRANCH_NAME}\`\n**커밋:** \`${COMMIT_SHA:0:8}\`\n**배포자:** ${ACTOR}",
+                  "inline": true
+                },
+                {
+                  "name": "💬 커밋 메시지",
+                  "value": "${COMMIT_MSG}",
+                  "inline": false
+                },
+                {
+                  "name": "🕒 배포 시간",
+                  "value": "${DEPLOY_TIME}",
+                  "inline": true
+                },
+                {
+                  "name": "⚡ 서버 상태",
+                  "value": "Production VM - 정상 구동",
+                  "inline": true
+                }
+              ],
+              "timestamp": "${CURRENT_TIME}"
+            }]
+          }
+          EOF
+
+          if curl -f -H "Content-Type: application/json" \
+                  -H "User-Agent: GitHub-Actions" \
+                  -X POST \
+                  -d @success_payload.json \
+                  "${{ secrets.DISCORD_WEBHOOK_URL }}"; then
+            echo "✅ Success notification sent"
+          else
+            echo "❌ Failed to send success notification"
+          fi
+
+      - name: Send production deployment failure notification
+        if: failure()
+        run: |
+          CURRENT_TIME=$(TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)
+          FAIL_TIME=$(TZ=Asia/Seoul date +"%Y-%m-%d %H:%M:%S KST")
+          COMMIT_SHA="${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+          RUN_ID="${{ github.run_id }}"
+          REPO="${{ github.repository }}"
+
+          cat > failure_payload.json << EOF
+          {
+            "content": "@here 🚨 프로덕션 배포 실패!",
+            "embeds": [{
+              "title": "💥 프로덕션 배포 실패",
+              "description": "**Production** 환경 배포가 실패했습니다. 즉시 확인이 필요합니다!",
+              "color": 15158332,
+              "fields": [
+                {
+                  "name": "브랜치",
+                  "value": "\`${BRANCH_NAME}\`",
+                  "inline": true
+                },
+                {
+                  "name": "커밋",
+                  "value": "\`${COMMIT_SHA:0:8}\`",
+                  "inline": true
+                },
+                {
+                  "name": "배포자",
+                  "value": "${ACTOR}",
+                  "inline": true
+                },
+                {
+                  "name": "실패 시간",
+                  "value": "${FAIL_TIME}",
+                  "inline": true
+                },
+                {
+                  "name": "로그 확인",
+                  "value": "[GitHub Actions 로그 보기](https://github.com/${REPO}/actions/runs/${RUN_ID})",
+                  "inline": false
+                }
+              ],
+              "timestamp": "${CURRENT_TIME}"
+            }]
+          }
+          EOF
+
+          if curl -f -H "Content-Type: application/json" \
+                  -H "User-Agent: GitHub-Actions" \
+                  -X POST \
+                  -d @failure_payload.json \
+                  "${{ secrets.DISCORD_WEBHOOK_URL }}"; then
+            echo "✅ Failure notification sent"
+          else
+            echo "❌ Failed to send failure notification"
+          fi
+
+      - name: Notify deployment success
+        run: |
+          echo "🚀 Production deployment completed on $(hostname)"
+          echo "Environment: production"
+          echo "Database: $(grep POSTGRES_DB .env | cut -d'=' -f2)"
+          echo "Build time: $(grep NEXT_PUBLIC_BUILD_TIME .env | cut -d'=' -f2)"
+          echo "PM2 processes:"
+          pm2 list
