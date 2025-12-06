@@ -81,9 +81,8 @@ jobs:
           echo "Creating .env for production environment..."
 
           cat > .env << 'EOF'
-          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_BUCKET_NAME=${{ secrets.SUPABASE_BUCKET_NAME }}
+          BLOB_READ_WRITE_TOKEN=${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          VERCEL_OIDC_TOKEN=${{ secrets.VERCEL_OIDC_TOKEN }}
           NEXT_PUBLIC_CONTACT_EMAIL=${{ secrets.NEXT_PUBLIC_CONTACT_EMAIL }}
           NODE_ENV=production
           NEXT_PUBLIC_ENVIRONMENT=production
@@ -102,9 +101,8 @@ jobs:
           echo "🔍 Validating required environment variables..."
 
           required_vars=(
-            "SUPABASE_URL"
-            "SUPABASE_ANON_KEY"
-            "SUPABASE_BUCKET_NAME"
+            "BLOB_READ_WRITE_TOKEN"
+            "VERCEL_OIDC_TOKEN"
             "NEXT_PUBLIC_CONTACT_EMAIL"
           )
 
