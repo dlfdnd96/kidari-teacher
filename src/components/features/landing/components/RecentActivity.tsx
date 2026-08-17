@@ -18,7 +18,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
+import { ACTIVITY_STATUS, SCHOOL_ACTIVITY_TYPES } from '@/constants/landing'
 import { createDateStringFormat } from '@/utils/date'
 import { ZodType } from '@/types'
 import {
@@ -294,13 +294,13 @@ export function RecentActivity({ activityData }: RecentActivitiesTableProps) {
 			return []
 		}
 
-		const completedHighSchoolActivities = activityData.activities.filter(
+		const completedSchoolActivities = activityData.activities.filter(
 			(activity) =>
 				activity.status === ACTIVITY_STATUS.COMPLETED &&
-				activity.type === ACTIVITY_TYPE.HIGH_SCHOOL,
+				SCHOOL_ACTIVITY_TYPES.includes(activity.type),
 		)
 
-		return completedHighSchoolActivities
+		return completedSchoolActivities
 			.map((activity, index) => ({
 				...activity,
 				lastValidDate: getLastValidDate(activity),
