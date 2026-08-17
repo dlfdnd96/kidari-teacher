@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ACTIVITY_STATUS, ACTIVITY_TYPE } from '@/constants/landing'
+import { ACTIVITY_STATUS, SCHOOL_ACTIVITY_TYPES } from '@/constants/landing'
 import { ZodType } from '@/types'
 import { ActivityRecordSchema } from '@/schemas/landing'
 
@@ -13,7 +13,7 @@ export function ActivityStatistics({ activityData }: ActivityStatisticsProps) {
 			activityData.activities.filter(
 				(activity) =>
 					activity.status === ACTIVITY_STATUS.COMPLETED &&
-					activity.type === ACTIVITY_TYPE.HIGH_SCHOOL,
+					SCHOOL_ACTIVITY_TYPES.includes(activity.type),
 			).length ?? 0
 		)
 	}, [activityData])

@@ -7,7 +7,7 @@ export const ActivityRecordHistorySchema = z.strictObject({
 	location: z.string(),
 	dates: z.array(z.iso.date()),
 	status: z.enum(['완료', '2학기 예정']),
-	type: z.enum(['고등학교', '봉사활동']),
+	type: z.enum(['고등학교', '중학교', '봉사활동']),
 })
 
 export const ActivityRecordHistoryListSchema = z.strictObject({
