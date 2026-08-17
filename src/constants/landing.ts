@@ -8,9 +8,13 @@ export const ACTIVITY_STATUS = {
 export const ACTIVITY_TYPE = {
 	HIGH_SCHOOL: '고등학교',
 	MIDDLE_SCHOOL: '중학교',
-	UNIVERSITY: '대학교',
 	VOLUNTEER: '봉사활동',
 } as const
+
+export const SCHOOL_ACTIVITY_TYPES: readonly string[] = [
+	ACTIVITY_TYPE.HIGH_SCHOOL,
+	ACTIVITY_TYPE.MIDDLE_SCHOOL,
+]
 
 export const MENU_ITEMS = [
 	{ id: 'members', label: '구성원', href: '#members' },
@@ -172,6 +176,24 @@ export const SCHOOL_LOGOS = [
 	{
 		src: '/images/school-logo/baemyeong-dark.svg',
 		alt: '배명고등학교',
+		width: 180,
+		height: 65,
+	},
+	{
+		src: '/images/school-logo/hanam-dark.svg',
+		alt: '하남고등학교',
+		width: 180,
+		height: 65,
+	},
+	{
+		src: '/images/school-logo/chunghyun-dark.svg',
+		alt: '충현고등학교',
+		width: 180,
+		height: 65,
+	},
+	{
+		src: '/images/school-logo/jamsil-dark.svg',
+		alt: '잠실중학교',
 		width: 180,
 		height: 65,
 	},
