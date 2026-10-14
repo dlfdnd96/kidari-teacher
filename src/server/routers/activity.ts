@@ -1,4 +1,3 @@
-import * as z from 'zod/mini'
 import { list } from '@vercel/blob'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter } from '@/server/api/trpc'
@@ -9,10 +8,9 @@ import { ERROR_MESSAGE } from '@/constants/error'
 export const activityRouter = createTRPCRouter({
 	fetch: procedure.query(async () => {
 		try {
-			const token = z.string().parse(process.env.BLOB_READ_WRITE_TOKEN)
+			// token 옵션을 넘기면 OIDC(VERCEL_OIDC_TOKEN + BLOB_STORE_ID)보다 우선하므로 넘기지 않는다
 			const { blobs } = await list({
 				prefix: 'landing/activity-records.json',
-				token,
 			})
 
 			if (blobs.length === 0) {
